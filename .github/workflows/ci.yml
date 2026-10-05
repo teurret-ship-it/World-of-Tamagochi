@@ -74,7 +74,20 @@ jobs:
         run: ./gradlew :app:assembleRelease
 
       - name: APK size budget
-        run: scripts/check-apk-size.sh app/build/outputs/apk/release/app-release-unsigned.apk
+        run: scripts/check-apk-size.sh app/build/outputs/apk/release/app-release.apk
+
+      # A phone-installable test build of every green main, at a fixed link:
+      # github.com/<repo>/releases/tag/test-build (signed with the test key).
+      - name: Publish test build
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk world-of-tamagochi.apk
+          gh release delete test-build --yes --cleanup-tag || true
+          gh release create test-build world-of-tamagochi.apk --prerelease --target "$GITHUB_SHA" \
+            --title "Test build ${GITHUB_SHA::7}" \
+            --notes "Latest green build of main (${GITHUB_SHA::7}). On Android: open this page on the phone, download world-of-tamagochi.apk, allow installing from this source, install. Offline build: online races appear once the server is deployed (ADR-008)."
 
       - name: Failure summary
         if: failure()

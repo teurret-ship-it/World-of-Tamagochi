@@ -78,3 +78,13 @@ Screenshots: `./gradlew recordRoborazziDebug` records reference images into
 
 Write what you notice into `docs/FEEDBACK.md`. Items marked `[!]` are
 handled before anything else in the next iteration.
+
+## Try it on a phone
+
+Every green build of `main` is published as a pre-release:
+<https://github.com/teurret-ship-it/World-of-Tamagochi/releases/tag/test-build>.
+Open the link on an Android phone (Android 8 or newer), download
+`world-of-tamagochi.apk`, allow installing apps from that source when asked,
+and install. New builds install over the old one and keep the save. Online
+races appear once the racing server is deployed (ADR-008).
+

@@ -19,8 +19,21 @@ android {
         buildConfig = true
     }
 
+    // Test builds only: a public key committed on purpose, so every CI build
+    // installs over the previous one and keeps the save. The Play release key
+    // never lives in the repository (iteration 34).
+    signingConfigs {
+        create("test") {
+            storeFile = file("test-signing.keystore")
+            storePassword = "worldoftamagochi"
+            keyAlias = "test"
+            keyPassword = "worldoftamagochi"
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("test")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
