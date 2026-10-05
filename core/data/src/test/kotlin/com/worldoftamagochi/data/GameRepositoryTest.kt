@@ -40,7 +40,17 @@ class GameRepositoryTest {
     @Test
     fun `pet and progress survive a round trip exactly`() {
         assertEquals(pet, pet.toSave(seed = 42, name = "Mochi").toState())
-        val progress = PlayerProgress(xp = 1234, coins = 56, careCoinsToday = 7, careCoinsDay = 20_000)
+        val progress =
+            PlayerProgress(
+                1234,
+                56,
+                careCoinsToday = 7,
+                careCoinsDay = 20_000,
+                raceCoinsToday = 9,
+                raceCoinsDay = 20_001,
+                treatsToday = 2,
+                treatsDay = 20_002,
+            )
         assertEquals(progress, progress.toSave().toProgress())
     }
 

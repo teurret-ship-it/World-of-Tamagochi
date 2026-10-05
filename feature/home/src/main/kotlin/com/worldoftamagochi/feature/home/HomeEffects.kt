@@ -137,6 +137,7 @@ private fun celebrate(
         CareAction.STROKE -> fx.burst(FxKind.HEART, TOP, count = BURST_SMALL)
         CareAction.NAP -> fx.burst(FxKind.ZZZ, TOP, count = BURST_MEDIUM)
         CareAction.WAKE -> fx.burst(FxKind.SPARKLE, TOP, count = BURST_MEDIUM)
+        CareAction.TREAT -> fx.burst(FxKind.HEART, MOUTH, count = BURST_LARGE)
     }
     effect.changes.entries
         .filter { it.value > 0 && effect.action != CareAction.STROKE }
@@ -153,6 +154,7 @@ private fun CareAction.sound(): Sfx =
         CareAction.STROKE -> Sfx.TAP
         CareAction.NAP -> Sfx.TOGGLE_OFF
         CareAction.WAKE -> Sfx.TOGGLE_ON
+        CareAction.TREAT -> Sfx.POSITIVE
     }
 
 private fun Refusal.messageRes(): Int =
@@ -162,5 +164,7 @@ private fun Refusal.messageRes(): Int =
         Refusal.TOO_TIRED -> R.string.refused_tired
         Refusal.NOT_SLEEPY -> R.string.refused_not_sleepy
         Refusal.ASLEEP -> R.string.refused_asleep
+        Refusal.NO_COINS -> R.string.refused_no_coins
+        Refusal.NO_TREATS_LEFT -> R.string.refused_no_treats
         Refusal.NOT_NAPPING, Refusal.EGG -> R.string.refused_other
     }

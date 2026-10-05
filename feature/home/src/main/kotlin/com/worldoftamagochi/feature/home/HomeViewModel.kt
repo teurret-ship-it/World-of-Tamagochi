@@ -22,6 +22,7 @@ import com.worldoftamagochi.sim.PetState
 import com.worldoftamagochi.sim.PlayerProgress
 import com.worldoftamagochi.sim.ProgressRules
 import com.worldoftamagochi.sim.SleepWindow
+import com.worldoftamagochi.sim.TreatRules
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -39,6 +40,7 @@ data class HomeRules(
     val care: CareRules = CareRules.DEFAULT,
     val progression: ProgressRules = ProgressRules.DEFAULT,
     val expressions: ExpressionRules = ExpressionRules.DEFAULT,
+    val treats: TreatRules = TreatRules.DEFAULT,
 )
 
 /**
@@ -56,6 +58,7 @@ class HomeViewModel(
     private val care = rules.care
     private val progression = rules.progression
     private val expressions = rules.expressions
+    private val treats = rules.treats
     private var seed = 0L
     private var name = DEFAULT_NAME
     private var genome: Genome? = null
@@ -164,6 +167,17 @@ class HomeViewModel(
 
     fun onPlay() = perform(CareAction.PLAY)
 
+    /** A bought treat: paid with coins, a few a day. */
+    fun onTreat() {
+        if (genome == null) return
+        val refusal = treats.refusal(progress, today())
+        if (refusal != null) {
+            _effects.trySend(HomeEffect.Refused(CareAction.TREAT, refusal))
+        } else {
+            perform(CareAction.TREAT)
+        }
+    }
+
     /** Picks up or puts down the soap. */
     fun onToggleSoap() {
         if (!washing && pet.needs.gauge(Need.HYGIENE).isFull) {
@@ -187,13 +201,9 @@ class HomeViewModel(
 
             is CareResult.Done -> {
                 pet = result.pet
-                val day =
-                    Instant
-                        .ofEpochMilli(clock())
-                        .atZone(zone)
-                        .toLocalDate()
-                        .toEpochDay()
-                val update = progression.reward(progress, result, action, day)
+                val day = today()
+                val paid = if (action == CareAction.TREAT) treats.pay(progress, day) else progress
+                val update = progression.reward(paid, result, action, day)
                 progress = update.progress
                 viewModelScope.launch { repository.updateGame { it.copy(progress = update.progress.toSave()) } }
                 if (action == CareAction.STROKE) strokes++
@@ -233,6 +243,13 @@ class HomeViewModel(
         }
     }
 
+    private fun today(): Long =
+        Instant
+            .ofEpochMilli(clock())
+            .atZone(zone)
+            .toLocalDate()
+            .toEpochDay()
+
     private fun isNapping(): Boolean = pet.napUntilEpochMillis?.let { it > pet.updatedAtEpochMillis } == true
 
     private fun publish() {
@@ -254,6 +271,8 @@ class HomeViewModel(
             level = level,
             levelProgress = ((progress.xp - start).toFloat() / span).coerceIn(0f, 1f),
             coins = progress.coins,
+            treatsLeft = treats.leftToday(progress, today()),
+            treatPrice = treats.price,
             wearing = wearing,
             napping = isNapping(),
             washing = washing,

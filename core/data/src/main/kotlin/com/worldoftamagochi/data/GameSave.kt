@@ -56,6 +56,8 @@ data class ProgressSave(
     val careCoinsDay: Long = 0,
     val raceCoinsToday: Int = 0,
     val raceCoinsDay: Long = 0,
+    val treatsToday: Int = 0,
+    val treatsDay: Long = 0,
 )
 
 /** The best run on one track: its exact time and the inputs that made it (the ghost). */
@@ -128,9 +130,11 @@ fun PetState.toSave(
         napUntilEpochMillis = napUntilEpochMillis,
     )
 
-fun ProgressSave.toProgress(): PlayerProgress = PlayerProgress(xp, coins, careCoinsToday, careCoinsDay, raceCoinsToday, raceCoinsDay)
+fun ProgressSave.toProgress(): PlayerProgress =
+    PlayerProgress(xp, coins, careCoinsToday, careCoinsDay, raceCoinsToday, raceCoinsDay, treatsToday, treatsDay)
 
-fun PlayerProgress.toSave(): ProgressSave = ProgressSave(xp, coins, careCoinsToday, careCoinsDay, raceCoinsToday, raceCoinsDay)
+fun PlayerProgress.toSave(): ProgressSave =
+    ProgressSave(xp, coins, careCoinsToday, careCoinsDay, raceCoinsToday, raceCoinsDay, treatsToday, treatsDay)
 
 /** Unknown ids (an item removed from the catalog) are dropped instead of crashing. */
 fun WardrobeSave.toWardrobe(): Wardrobe {

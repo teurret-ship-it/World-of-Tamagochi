@@ -14,6 +14,9 @@ data class PlayerProgress(
     /** Coins paid today for simply finishing races (capped; medals are separate). */
     val raceCoinsToday: Int = 0,
     val raceCoinsDay: Long = 0,
+    /** Treats bought today (capped by [TreatRules.perDay]). */
+    val treatsToday: Int = 0,
+    val treatsDay: Long = 0,
 ) {
     val level: Int get() = ProgressRules.DEFAULT.levelFor(xp)
 }
@@ -60,7 +63,8 @@ data class ProgressRules(
         // A clock wound back to an earlier day must not reset the daily cap.
         val day = maxOf(localEpochDay, progress.careCoinsDay)
         val todayCount = if (progress.careCoinsDay == day) progress.careCoinsToday else 0
-        val wanted = if (result.answeredNeed) coinsForAnsweredNeed else 0
+        // Treats are bought with coins: paying coins back for them would be a loop.
+        val wanted = if (result.answeredNeed && action != CareAction.TREAT) coinsForAnsweredNeed else 0
         val coins = wanted.coerceAtMost(careCoinCapPerDay - todayCount).coerceAtLeast(0)
         val earned = Reward(xp + bonusXp, coins)
         val next =

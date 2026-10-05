@@ -80,7 +80,7 @@ the core care loop, and every iteration from 3 on pays the player something.
     track list, race a real player's ghost; works offline and syncs later.
   - Needs a deployed server (ADR-008): until then the app hides online
     features.
-- [x] **7. Shop and wardrobe.** Goal: spend what you earn. (Moved ahead of
+- [x] **7. Shop and wardrobe.** (f15bfb0, CI green) Goal: spend what you earn. (Moved ahead of
   agility: coins had nothing to buy, so rewards felt empty.)
   - 14 cosmetics (head, face, neck) drawn on the rig from Fluent Emoji 3D,
     following breath and squash; worn at home, in races and by your ghost.
@@ -88,8 +88,9 @@ the core care loop, and every iteration from 3 on pays the player something.
     gentle "N more coins to go" with where coins come from.
   - Economy test: a first item on day one, something new at least weekly,
     the whole wardrobe in about five weeks.
-- [ ] **7b. Treats.** Coins buy treats (cookie, strawberry) that cheer the
-  pet up: a repeatable sink once the wardrobe is complete; daily cap.
+- [x] **7b. Treats.** Coins buy treats that cheer the pet up: a repeatable
+  sink once the wardrobe is complete. 15 coins, 3 a day, refused when
+  full, never paid back in coins; a badge shows how many are left today.
 - [ ] **8. Agility course.** Slalom, tunnel, seesaw, hurdles, tyre; faults
   add time; one-thumb controls; online ghosts and leaderboard reuse 6.
 - [ ] **9. Training and race form.** Exercises raise speed, stamina,

@@ -18,6 +18,11 @@
     <string name="care_play">Play</string>
     <string name="care_lights_off">Lights off</string>
     <string name="care_lights_on">Wake up</string>
+    <string name="care_treat">Treat</string>
+    <plurals name="treats_left">
+        <item quantity="one">%1$s, %2$d treat left today</item>
+        <item quantity="other">%1$s, %2$d treats left today</item>
+    </plurals>
 
     <string name="refused_full">I\'m full!</string>
     <string name="refused_clean">I\'m already sparkling!</string>
@@ -25,6 +30,8 @@
     <string name="refused_not_sleepy">I\'m not sleepy!</string>
     <string name="refused_asleep">Shhh… sleeping</string>
     <string name="refused_other">Not now!</string>
+    <string name="refused_no_coins">Race for coins, then treats!</string>
+    <string name="refused_no_treats">Yum! No more treats today</string>
 
     <string name="level_badge">Level %1$d</string>
     <string name="level_up">Level %1$d!</string>

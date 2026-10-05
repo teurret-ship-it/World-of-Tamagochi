@@ -4,6 +4,18 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 7b: treats
+
+- A Treat button (cookie) in the care bar: 15 coins for a little food and a
+  lot of joy, with hearts and a happy jingle; three a day, shown on a badge.
+- Friendly refusals: "Race for coins, then treats!" and "Yum! No more
+  treats today"; a full pet still says "I'm full!".
+- Treats never pay coins back (no earn-spend loop); the daily limit
+  survives a wound-back clock.
+
+Self-review: clarity 4, game feel 4, retention 4, ethics 5, performance 5,
+accessibility 4 (the button announces how many treats are left).
+
 ## Iteration 7: shop and wardrobe
 
 - 14 cosmetics in three slots (head, face, neck), drawn on the rig with

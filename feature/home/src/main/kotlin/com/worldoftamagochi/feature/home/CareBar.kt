@@ -5,11 +5,13 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,11 +26,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.worldoftamagochi.ui.R as UiR
@@ -49,6 +53,13 @@ internal fun CareBar(
             selected = state.washing,
         )
         CareButton(UiR.drawable.item_ball, stringResource(R.string.care_play), callbacks.onPlay, Modifier.weight(1f))
+        CareButton(
+            UiR.drawable.item_cookie,
+            stringResource(R.string.care_treat),
+            callbacks.onTreat,
+            Modifier.weight(1f),
+            badge = state.treatsLeft,
+        )
         if (state.napping) {
             CareButton(UiR.drawable.item_light, stringResource(R.string.care_lights_on), callbacks.onLights, Modifier.weight(1f))
         } else {
@@ -98,15 +109,18 @@ private fun CareButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
+    badge: Int? = null,
 ) {
     val colors = MaterialTheme.colorScheme
+    val description = badge?.let { pluralStringResource(R.plurals.treats_left, it, label, it) } ?: label
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(22.dp),
         color = if (selected) colors.secondaryContainer else colors.surfaceVariant,
         border = if (selected) BorderStroke(3.dp, colors.secondary) else null,
         modifier =
-            modifier.semantics {
+            modifier.clearAndSetSemantics {
+                contentDescription = description
                 role = Role.Button
                 this.selected = selected
             },
@@ -116,11 +130,18 @@ private fun CareButton(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Image(
-                painter = painterResource(image),
-                contentDescription = null,
-                modifier = Modifier.size(52.dp).graphicsLayer { if (selected) rotationZ = SELECTED_TILT },
-            )
+            Box {
+                Image(
+                    painter = painterResource(image),
+                    contentDescription = null,
+                    modifier =
+                        Modifier.size(52.dp).graphicsLayer {
+                            if (selected) rotationZ = SELECTED_TILT
+                            if (badge == 0) alpha = SPENT_ALPHA
+                        },
+                )
+                badge?.let { Badge(it, Modifier.align(Alignment.TopEnd)) }
+            }
             Text(label, style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center, maxLines = 2)
         }
     }
@@ -132,4 +153,17 @@ private class FoodDrag {
     var at: Offset = Offset.Zero
 }
 
+@Composable
+private fun Badge(
+    count: Int,
+    modifier: Modifier,
+) {
+    Surface(shape = CircleShape, color = MaterialTheme.colorScheme.tertiary, modifier = modifier.size(22.dp)) {
+        Box(contentAlignment = Alignment.Center) {
+            Text(count.toString(), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onTertiary)
+        }
+    }
+}
+
 private const val SELECTED_TILT = -12f
+private const val SPENT_ALPHA = 0.45f

@@ -8,6 +8,9 @@ enum class CareAction {
     NAP,
     WAKE,
     STROKE,
+
+    /** A bought snack: a little food and a lot of joy. Paid for with [TreatRules]. */
+    TREAT,
 }
 
 /** Why the pet said no. The UI turns each into a friendly reaction, never a scolding. */
@@ -19,6 +22,8 @@ enum class Refusal {
     NOT_SLEEPY,
     NOT_NAPPING,
     EGG,
+    NO_COINS,
+    NO_TREATS_LEFT,
 }
 
 /** What one care action earned the player. */
@@ -63,6 +68,8 @@ data class CareRules(
     val playEnergyCost: Int = 8,
     val playSatietyCost: Int = 4,
     val strokeHappiness: Int = 2,
+    val treatSatiety: Int = 10,
+    val treatHappiness: Int = 20,
     val napMinutes: Int = 45,
     /** Above this the pet is full and politely refuses food. */
     val fullAt: Int = 95,
@@ -95,6 +102,10 @@ data class CareRules(
 
                 CareAction.STROKE -> {
                     pet.change(Need.HAPPINESS to strokeHappiness)
+                }
+
+                CareAction.TREAT -> {
+                    pet.change(Need.SATIETY to treatSatiety, Need.HAPPINESS to treatHappiness)
                 }
 
                 CareAction.NAP -> {
@@ -131,7 +142,7 @@ data class CareRules(
     ): Refusal? {
         fun level(need: Need) = needs.gauge(need).value
         return when (action) {
-            CareAction.FEED -> Refusal.FULL.takeIf { level(Need.SATIETY) >= fullAt }
+            CareAction.FEED, CareAction.TREAT -> Refusal.FULL.takeIf { level(Need.SATIETY) >= fullAt }
             CareAction.WASH -> Refusal.ALREADY_CLEAN.takeIf { level(Need.HYGIENE) >= HYGIENE_FULL }
             CareAction.PLAY -> Refusal.TOO_TIRED.takeIf { level(Need.ENERGY) < minEnergyToPlay }
             CareAction.NAP -> Refusal.NOT_SLEEPY.takeIf { level(Need.ENERGY) >= napBelowEnergy }
@@ -150,6 +161,7 @@ data class CareRules(
             CareAction.FEED -> setOf(Need.SATIETY)
             CareAction.WASH -> setOf(Need.HYGIENE)
             CareAction.PLAY, CareAction.STROKE -> setOf(Need.HAPPINESS)
+            CareAction.TREAT -> setOf(Need.HAPPINESS, Need.SATIETY)
             CareAction.NAP -> setOf(Need.ENERGY)
             CareAction.WAKE -> emptySet()
         }

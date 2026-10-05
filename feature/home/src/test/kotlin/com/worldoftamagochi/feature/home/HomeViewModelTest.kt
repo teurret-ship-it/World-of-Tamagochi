@@ -189,6 +189,27 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `treats cost coins, cheer the pet up and stop after three a day`() {
+        val vm = viewModel()
+        now = at(hour = 16) // hungry, so not too full for a treat
+        assertEquals(Refusal.NO_COINS, (vm.effectsOf { onTreat() }.single() as HomeEffect.Refused).reason)
+        kotlinx.coroutines.runBlocking { repository.updateGame { it.copy(progress = it.progress.copy(coins = 100)) } }
+        dispatcher.scheduler.runCurrent()
+        assertEquals(3, vm.ui.treatsLeft)
+        val treat = vm.effectsOf { onTreat() }.single() as HomeEffect.Cared
+        assertEquals(CareAction.TREAT, treat.action)
+        assertEquals(10, treat.changes[Need.SATIETY])
+        assertEquals(0, treat.reward.coins)
+        assertEquals(85L, vm.ui.coins)
+        vm.onTreat()
+        vm.onTreat()
+        assertEquals(Refusal.NO_TREATS_LEFT, (vm.effectsOf { onTreat() }.single() as HomeEffect.Refused).reason)
+        assertEquals(0, vm.ui.treatsLeft)
+        dispatcher.scheduler.runCurrent()
+        assertEquals(55L, requireNotNull(repository.saved).progress.coins)
+    }
+
+    @Test
     fun `settings toggles are stored`() {
         val vm = viewModel()
         vm.onSoundToggled(false)

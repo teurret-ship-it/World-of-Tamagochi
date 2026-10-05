@@ -18,6 +18,7 @@ while IFS='|' read -r folder stem name; do
   echo "$name.webp <- $folder"
 done <<'LIST'
 Red apple|red_apple|item_apple
+Cookie|cookie|item_cookie
 Soap|soap|item_soap
 Bubbles|bubbles|fx_bubbles
 Soccer ball|soccer_ball|item_ball

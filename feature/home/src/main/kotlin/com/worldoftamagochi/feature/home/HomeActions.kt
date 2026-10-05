@@ -91,16 +91,20 @@ class HomeActions(
     val onDismissAway: () -> Unit = {},
     val onSound: (Boolean) -> Unit = {},
     val onHaptics: (Boolean) -> Unit = {},
+    val onTreat: () -> Unit = {},
     val onOpenRaces: () -> Unit = {},
     val onOpenShop: () -> Unit = {},
 )
 
 /** Callbacks for the care bar; the food button can also be dragged onto the pet. */
 internal class CareCallbacks(
-    val onFeed: () -> Unit,
-    val onWash: () -> Unit,
-    val onPlay: () -> Unit,
-    val onLights: () -> Unit,
+    actions: HomeActions,
     val onFoodDrag: (rootPosition: Offset?) -> Unit,
     val onFoodDrop: (rootPosition: Offset) -> Unit,
-)
+) {
+    val onFeed: () -> Unit = actions.onFeed
+    val onWash: () -> Unit = actions.onWash
+    val onPlay: () -> Unit = actions.onPlay
+    val onLights: () -> Unit = actions.onLights
+    val onTreat: () -> Unit = actions.onTreat
+}

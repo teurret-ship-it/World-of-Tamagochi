@@ -101,6 +101,7 @@ fun HomeRoute(
                 onWash = viewModel::onToggleSoap,
                 onPlay = viewModel::onPlay,
                 onLights = viewModel::onLights,
+                onTreat = viewModel::onTreat,
                 onDismissAway = viewModel::onDismissAway,
                 onSound = viewModel::onSoundToggled,
                 onHaptics = viewModel::onHapticsToggled,
@@ -146,10 +147,7 @@ fun HomeScreen(
     }
     val care =
         CareCallbacks(
-            onFeed = actions.onFeed,
-            onWash = actions.onWash,
-            onPlay = actions.onPlay,
-            onLights = actions.onLights,
+            actions = actions,
             onFoodDrag = { draggedFood = it },
             onFoodDrop = { if (petBounds.contains(it)) actions.onFeed() },
         )

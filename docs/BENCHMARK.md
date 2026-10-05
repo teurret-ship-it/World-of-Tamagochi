@@ -175,3 +175,12 @@ test of the economy: something new on day one, a new goal at least weekly,
 the whole wardrobe in about five weeks. We do not take loot boxes, timed
 "only today" offers or premium-only items: everything is bought with coins
 earned by caring and racing, at a price shown up front.
+
+## Iteration 7b: treats
+
+Pou sells snacks that are both food and fun, and Tamagotchi's snack raises
+happiness but can be overdone; both give a reason to keep spending after
+the wardrobe is full. We take a cheap treat that cheers the pet up, refused
+when the pet is full, and a visible daily limit of three. We do not take
+paid energy refills or snacks that unlock anything: a treat is a kindness,
+not a shortcut.
