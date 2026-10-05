@@ -35,6 +35,7 @@ class GameRepositoryTest {
             sleep = SleepWindow(21 * 60, 6 * 60 + 30, ZoneId.of("Europe/Warsaw")),
             updatedAtEpochMillis = 1_790_000_000_000,
             napUntilEpochMillis = 1_790_000_100_000,
+            awakeUntilEpochMillis = 1_790_000_200_000,
         )
 
     @Test

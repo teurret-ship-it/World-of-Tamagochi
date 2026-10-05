@@ -55,6 +55,15 @@ class HomeScreenScreenshotTest {
         }
 
     @Test
+    fun asleepAtNight() =
+        capture("home_phone_night") {
+            Home(happy.copy(expression = Expression.ASLEEP, urgentNeed = null, wearing = listOf("crown")), dark = true)
+        }
+
+    @Test
+    fun upLate() = capture("home_phone_up_late") { Home(happy.copy(upLate = true, wearing = listOf("sunglasses", "bell")), dark = true) }
+
+    @Test
     fun welcomeBack() =
         capture("home_welcome_back") {
             Home(

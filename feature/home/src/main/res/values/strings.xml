@@ -8,7 +8,14 @@
     <string name="need_urgent">%1$s needs you</string>
     <string name="stroke_action">Stroke %1$s</string>
     <string name="stroke_hint">Rub %1$s gently to say hello</string>
-    <string name="asleep_hint">%1$s is asleep. Let them rest.</string>
+    <string name="asleep_hint">%1$s is asleep until %2$s. Tap Wake up to play now!</string>
+    <string name="up_late_hint">%1$s is up late! Lights off puts %1$s back to bed.</string>
+    <string name="settings_sleep_title">Sleep time</string>
+    <string name="settings_sleep_hint">%1$s sleeps when you sleep.</string>
+    <string name="settings_bedtime">Bedtime</string>
+    <string name="settings_wake_up">Wake-up</string>
+    <string name="settings_earlier">%1$s earlier</string>
+    <string name="settings_later">%1$s later</string>
     <string name="napping_hint">%1$s is napping. Tap the light to wake them.</string>
     <string name="washing_hint">Rub %1$s to scrub them clean!</string>
     <string name="feed_hint">Drag the apple to %1$s\'s mouth</string>

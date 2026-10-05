@@ -71,6 +71,8 @@ data class CareRules(
     val treatSatiety: Int = 10,
     val treatHappiness: Int = 20,
     val napMinutes: Int = 45,
+    /** Woken at night, the pet stays up this long before dozing off again. */
+    val upLateMinutes: Int = 60,
     /** Above this the pet is full and politely refuses food. */
     val fullAt: Int = 95,
     /** Below this energy the pet is too tired to play. */
@@ -109,11 +111,21 @@ data class CareRules(
                 }
 
                 CareAction.NAP -> {
-                    pet.copy(napUntilEpochMillis = pet.updatedAtEpochMillis + napMinutes * MILLIS_PER_MINUTE)
+                    // Up late: lights off simply sends the pet back to bed.
+                    if (pet.isUpLate()) {
+                        pet.copy(awakeUntilEpochMillis = null)
+                    } else {
+                        pet.copy(napUntilEpochMillis = pet.updatedAtEpochMillis + napMinutes * MILLIS_PER_MINUTE)
+                    }
                 }
 
                 CareAction.WAKE -> {
-                    pet.copy(napUntilEpochMillis = null)
+                    // From a nap: up for good. At night: up for a while, so a child can always play.
+                    val now = pet.updatedAtEpochMillis
+                    pet.copy(
+                        napUntilEpochMillis = null,
+                        awakeUntilEpochMillis = (now + upLateMinutes * MILLIS_PER_MINUTE).takeIf { pet.sleep.isAsleep(now) },
+                    )
                 }
             }
         val changes =
@@ -126,15 +138,14 @@ data class CareRules(
     private fun refusalFor(
         pet: PetState,
         action: CareAction,
-    ): Refusal? {
-        val napping = pet.napUntilEpochMillis?.let { it > pet.updatedAtEpochMillis } == true
-        return when {
+    ): Refusal? =
+        when {
             pet.stage == LifeStage.EGG -> Refusal.EGG
-            action == CareAction.WAKE -> Refusal.NOT_NAPPING.takeUnless { napping }
+            action == CareAction.WAKE -> Refusal.NOT_NAPPING.takeUnless { pet.isAsleep() }
             pet.isAsleep() -> Refusal.ASLEEP
+            action == CareAction.NAP && pet.isUpLate() -> null
             else -> needRefusal(pet.needs, action)
         }
-    }
 
     private fun needRefusal(
         needs: Needs,

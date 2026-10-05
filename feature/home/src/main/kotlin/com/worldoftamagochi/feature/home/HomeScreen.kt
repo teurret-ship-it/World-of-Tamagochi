@@ -102,6 +102,7 @@ fun HomeRoute(
                 onPlay = viewModel::onPlay,
                 onLights = viewModel::onLights,
                 onTreat = viewModel::onTreat,
+                onSleepWindow = viewModel::onSleepWindow,
                 onDismissAway = viewModel::onDismissAway,
                 onSound = viewModel::onSoundToggled,
                 onHaptics = viewModel::onHapticsToggled,
@@ -208,7 +209,8 @@ private fun Status(state: HomeUiState) {
         val hint =
             when {
                 state.napping -> stringResource(R.string.napping_hint, state.name)
-                state.asleep -> stringResource(R.string.asleep_hint, state.name)
+                state.asleep -> stringResource(R.string.asleep_hint, state.name, clockTime(state.wakeMinute))
+                state.upLate -> stringResource(R.string.up_late_hint, state.name)
                 state.washing -> stringResource(R.string.washing_hint, state.name)
                 state.urgentNeed == Need.SATIETY -> stringResource(R.string.feed_hint, state.name)
                 state.urgentNeed != null -> stringResource(R.string.need_urgent, stringResource(state.urgentNeed.label()))

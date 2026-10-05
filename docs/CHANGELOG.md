@@ -4,6 +4,22 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 9b: playable at night
+
+- Playtest: opening the game in the evening showed a sleeping pet and
+  nothing to do. Now Wake up works at night too: the pet stays up for an
+  hour (needs drain at the daytime pace), then dozes off; Lights off puts
+  it back to bed at once.
+- The night hint says "Mochi is asleep until 7:00. Tap Wake up to play
+  now!"; up late it says how to send the pet back to bed.
+- Sleep time in settings: bedtime and wake-up in half-hour steps, so the
+  pet sleeps when the player sleeps.
+- Test builds: every green main is published as an installable APK
+  (pre-release "test-build").
+
+Self-review: clarity 5, game feel 4, retention 4, ethics 5, performance 5,
+accessibility 4.
+
 ## Iteration 9: training and race form
 
 - A training card on the races screen: Sprints (speed), Jogging (stamina),

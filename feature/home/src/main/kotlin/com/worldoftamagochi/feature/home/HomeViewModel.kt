@@ -194,7 +194,19 @@ class HomeViewModel(
     }
 
     /** Lights off starts a nap; during a nap, lights on wakes the pet. */
-    fun onLights() = perform(if (isNapping()) CareAction.WAKE else CareAction.NAP)
+    fun onLights() = perform(if (pet.isAsleep()) CareAction.WAKE else CareAction.NAP)
+
+    /** The player's own night (settings): the pet sleeps when they sleep. */
+    fun onSleepWindow(
+        bedtimeMinute: Int,
+        wakeMinute: Int,
+    ) {
+        if (genome == null) return
+        pet = NeedsSimulation.advance(pet, clock())
+        pet = pet.copy(sleep = SleepWindow(bedtimeMinute, wakeMinute, zone))
+        saveAsync()
+        publish()
+    }
 
     private fun perform(action: CareAction) {
         if (genome == null) return
@@ -266,8 +278,6 @@ class HomeViewModel(
         pet = NeedsSimulation.advance(saved.toState().let { it.copy(sleep = it.sleep.copy(zone = zone)) }, clock())
     }
 
-    private fun isNapping(): Boolean = pet.napUntilEpochMillis?.let { it > pet.updatedAtEpochMillis } == true
-
     private fun publish() {
         val genome = genome ?: return
         _state.value = render(genome)
@@ -290,7 +300,10 @@ class HomeViewModel(
             treatsLeft = treats.leftToday(progress, localEpochDay(clock(), zone)),
             treatPrice = treats.price,
             wearing = wearing,
-            napping = isNapping(),
+            napping = pet.isNapping(),
+            upLate = pet.isUpLate(),
+            bedtimeMinute = pet.sleep.startMinuteOfDay,
+            wakeMinute = pet.sleep.endMinuteOfDay,
             washing = washing,
             strokes = strokes,
             away = away,

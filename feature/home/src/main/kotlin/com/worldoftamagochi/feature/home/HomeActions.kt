@@ -92,6 +92,7 @@ class HomeActions(
     val onSound: (Boolean) -> Unit = {},
     val onHaptics: (Boolean) -> Unit = {},
     val onTreat: () -> Unit = {},
+    val onSleepWindow: (bedtimeMinute: Int, wakeMinute: Int) -> Unit = { _, _ -> },
     val onOpenRaces: () -> Unit = {},
     val onOpenShop: () -> Unit = {},
 )

@@ -233,6 +233,35 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `at night the pet can be woken to play, and lights off sends it back to bed`() {
+        val vm = viewModel()
+        now = at(hour = 23)
+        vm.tick()
+        assertTrue(vm.ui.asleep)
+        val woken = vm.effectsOf { onLights() }.single() as HomeEffect.Cared
+        assertEquals(CareAction.WAKE, woken.action)
+        assertFalse(vm.ui.asleep)
+        assertTrue(vm.ui.upLate)
+        assertEquals(CareAction.PLAY, (vm.effectsOf { onPlay() }.single() as HomeEffect.Cared).action)
+        vm.onLights()
+        assertTrue(vm.ui.asleep)
+        assertFalse(vm.ui.upLate)
+    }
+
+    @Test
+    fun `the sleep time follows the player's settings`() {
+        val vm = viewModel()
+        now = at(hour = 23)
+        vm.onSleepWindow(bedtimeMinute = 23 * 60 + 30, wakeMinute = 8 * 60)
+        dispatcher.scheduler.runCurrent()
+        assertFalse(vm.ui.asleep)
+        assertEquals(23 * 60 + 30, vm.ui.bedtimeMinute)
+        assertEquals(23 * 60 + 30, requireNotNull(repository.saved).pet.sleepStartMinute)
+        assertEquals(0, shiftTime(23 * 60 + 30, 30))
+        assertEquals(23 * 60 + 30, shiftTime(0, -30))
+    }
+
+    @Test
     fun `settings toggles are stored`() {
         val vm = viewModel()
         vm.onSoundToggled(false)

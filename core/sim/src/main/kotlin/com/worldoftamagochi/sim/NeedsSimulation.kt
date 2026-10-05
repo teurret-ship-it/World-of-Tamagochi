@@ -23,7 +23,8 @@ object NeedsSimulation {
             now = segmentEnd
         }
         val nap = state.napUntilEpochMillis?.takeIf { it > toEpochMillis }
-        return state.copy(needs = needs, updatedAtEpochMillis = toEpochMillis, napUntilEpochMillis = nap)
+        val upLate = state.awakeUntilEpochMillis?.takeIf { it > toEpochMillis }
+        return state.copy(needs = needs, updatedAtEpochMillis = toEpochMillis, napUntilEpochMillis = nap, awakeUntilEpochMillis = upLate)
     }
 
     /** One stretch of time with constant rates (the pet neither falls asleep nor wakes up). */

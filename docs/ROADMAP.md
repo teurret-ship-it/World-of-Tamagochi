@@ -114,6 +114,10 @@ the core care loop, and every iteration from 3 on pays the player something.
   - Runs, records, queued uploads and ghosts carry the stats they were
     raced with; the server checks them against what training allows.
   - Tall phones zoom the race camera in so the pet is twice as big.
+- [x] **9b. Playable at night** (playtest [!]). Wake up works during the
+  sleep window (up for an hour, needs drain at the daytime pace), Lights
+  off sends the pet back to bed, the hint names the wake-up time, and the
+  sleep time is set in settings (half-hour steps).
 - [ ] **10. Daily quests, streaks and achievements.** Three short daily
   quests (care + race), streak with a weekly freeze, sticker album of
   achievements.

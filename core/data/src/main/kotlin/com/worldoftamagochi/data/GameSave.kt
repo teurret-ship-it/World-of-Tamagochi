@@ -51,6 +51,7 @@ data class PetSave(
     val zoneId: String,
     val updatedAtEpochMillis: Long,
     val napUntilEpochMillis: Long? = null,
+    val awakeUntilEpochMillis: Long? = null,
 )
 
 @Serializable
@@ -130,6 +131,7 @@ fun PetSave.toState(): PetState =
         sleep = SleepWindow(sleepStartMinute, sleepEndMinute, ZoneId.of(zoneId)),
         updatedAtEpochMillis = updatedAtEpochMillis,
         napUntilEpochMillis = napUntilEpochMillis,
+        awakeUntilEpochMillis = awakeUntilEpochMillis,
     )
 
 fun PetState.toSave(
@@ -150,6 +152,7 @@ fun PetState.toSave(
         zoneId = sleep.zone.id,
         updatedAtEpochMillis = updatedAtEpochMillis,
         napUntilEpochMillis = napUntilEpochMillis,
+        awakeUntilEpochMillis = awakeUntilEpochMillis,
     )
 
 fun ProgressSave.toProgress(): PlayerProgress =

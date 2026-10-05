@@ -60,7 +60,7 @@ internal fun CareBar(
             Modifier.weight(1f),
             badge = state.treatsLeft,
         )
-        if (state.napping) {
+        if (state.asleep) {
             CareButton(UiR.drawable.item_light, stringResource(R.string.care_lights_on), callbacks.onLights, Modifier.weight(1f))
         } else {
             CareButton(UiR.drawable.item_moon, stringResource(R.string.care_lights_off), callbacks.onLights, Modifier.weight(1f))

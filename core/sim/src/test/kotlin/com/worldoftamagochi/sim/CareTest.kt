@@ -99,4 +99,37 @@ class CareTest {
         CareAction.entries.filter { it != CareAction.WAKE }.forEach { refused(night, it) shouldBe Refusal.ASLEEP }
         CareAction.entries.forEach { refused(pet(stage = LifeStage.EGG), it) shouldBe Refusal.EGG }
     }
+
+    @Test
+    fun `a pet woken at night stays up for an hour, can play, and lights off puts it back to bed`() {
+        val night = pet(at = utc(2026, 3, 2, 23), happiness = 50)
+        val up = done(night, CareAction.WAKE).pet
+        up.isAsleep() shouldBe false
+        up.isUpLate() shouldBe true
+        done(up, CareAction.PLAY).changes[Need.HAPPINESS] shouldBe 25
+        // Awake at night, needs drain at the daytime pace; after an hour it dozes off again.
+        val soon = NeedsSimulation.advance(up, utc(2026, 3, 2, 23) + 30 * MINUTE)
+        soon.isAsleep() shouldBe false
+        soon.needs.energy shouldBe NeedsSimulation.advance(pet(at = utc(2026, 3, 2, 12)), utc(2026, 3, 2, 12) + 30 * MINUTE).needs.energy
+        val later = NeedsSimulation.advance(up, utc(2026, 3, 3, 1))
+        later.isAsleep() shouldBe true
+        later.awakeUntilEpochMillis shouldBe null
+        // Lights off ends the late night at once, however full of energy the pet is.
+        val bed = done(up, CareAction.NAP).pet
+        bed.isAsleep() shouldBe true
+        bed.napUntilEpochMillis shouldBe null
+        // Simulating in pieces gives the same night as in one go.
+        NeedsSimulation.advance(NeedsSimulation.advance(up, utc(2026, 3, 2, 23) + 20 * MINUTE), utc(2026, 3, 3, 9)) shouldBe
+            NeedsSimulation.advance(up, utc(2026, 3, 3, 9))
+    }
+
+    @Test
+    fun `waking from a nap that runs into the night also keeps the pet up for a while`() {
+        val evening = pet(at = utc(2026, 3, 2, 21) + 45 * MINUTE, energy = 20)
+        val napping = done(evening, CareAction.NAP).pet
+        val inTheNight = NeedsSimulation.advance(napping, utc(2026, 3, 2, 22) + 10 * MINUTE)
+        val woken = done(inTheNight, CareAction.WAKE).pet
+        woken.isAsleep() shouldBe false
+        woken.napUntilEpochMillis shouldBe null
+    }
 }

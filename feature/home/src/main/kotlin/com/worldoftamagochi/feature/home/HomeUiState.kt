@@ -6,6 +6,7 @@ import com.worldoftamagochi.sim.Genome
 import com.worldoftamagochi.sim.Need
 import com.worldoftamagochi.sim.Refusal
 import com.worldoftamagochi.sim.Reward
+import com.worldoftamagochi.sim.SleepWindow
 
 /** Everything the home screen shows. Built from the pet state; no game logic in UI. */
 data class HomeUiState(
@@ -26,6 +27,11 @@ data class HomeUiState(
     val wearing: List<String> = emptyList(),
     /** True while a lights-off nap runs (the player can wake the pet). */
     val napping: Boolean = false,
+    /** Woken during its night: up for a while, lights off sends it back to bed. */
+    val upLate: Boolean = false,
+    /** The sleep window, minutes after local midnight (settings). */
+    val bedtimeMinute: Int = SleepWindow.DEFAULT_BEDTIME,
+    val wakeMinute: Int = SleepWindow.DEFAULT_WAKE_UP,
     /** True while the soap is in hand: rubbing the pet washes it. */
     val washing: Boolean = false,
     /** Increments on every accepted stroke so the UI can play one reaction per stroke. */
