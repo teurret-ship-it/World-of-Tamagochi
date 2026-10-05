@@ -9,3 +9,6 @@ captures/
 *.keystore
 *.jks
 .env
+
+# The public test-build key is committed on purpose (app/build.gradle.kts).
+!app/test-signing.keystore
