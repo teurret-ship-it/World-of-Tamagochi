@@ -82,6 +82,15 @@ class HomeViewModel(
                     publish()
                 }
             }
+            // Races pay coins and XP too: keep the shown progress in step with the save.
+            launch {
+                repository.game.collect { game ->
+                    game?.let {
+                        progress = it.progress.toProgress()
+                        publish()
+                    }
+                }
+            }
             while (isActive) {
                 delay(TICK_MILLIS)
                 tick()

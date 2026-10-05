@@ -89,10 +89,10 @@ internal fun FinishCard(
                         color = MaterialTheme.colorScheme.tertiary,
                     )
                 }
-                Text(
-                    stringResource(R.string.finish_reward, summary.reward.xp, summary.reward.coins),
-                    style = MaterialTheme.typography.titleMedium,
-                )
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text(stringResource(R.string.finish_xp, summary.reward.xp), style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.finish_coins, summary.reward.coins), style = MaterialTheme.typography.titleMedium)
+                }
                 val next = summary.nextMedal
                 Text(
                     text =
