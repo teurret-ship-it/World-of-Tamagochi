@@ -32,7 +32,7 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/setup-gradle@v6
 
       - name: Check (format, detekt, lint, unit tests, coverage)
         run: |
