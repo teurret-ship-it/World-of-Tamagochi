@@ -22,15 +22,16 @@ written in iteration 9).
     ADR-002.
   - Done when: `./gradlew jvmCheck -Pwot.jvmOnly=true` green locally and CI
     green on the pushed commit.
-- [ ] **1. Needs simulation.** Goal: the pet's needs live in real time.
+- [x] **1. Needs simulation.** Goal: the pet's needs live in real time.
   - `:core:sim`: hunger, energy, hygiene, fun, health (Gauge 0..100); decay
     rates per life stage; sleep window with >= 4x slower decay; health drops
     only while another need is empty.
   - Analytic `advance(state, from, to, rules)`: cost independent of elapsed
     time; 3 days offline computed in intervals.
   - Property tests: needs stay in 0..100; needs never rise without an
-    action; `advance(a->c) == advance(b->c) after advance(a->b)`; a
-    3-check-ins-a-day player never lets any need hit zero (ethics rule).
+    action (energy only while asleep); `advance(a->c) == advance(b->c) after
+    advance(a->b)`; a 3-check-ins-a-day player never lets any need hit zero
+    (ethics rule).
 - [ ] **2. Living pet.** Goal: the pet looks alive.
   - Vector rig from a genome (color, pattern, ear shape, proportions);
     breathing, blinking, eyes follow the finger; 6 expressions (happy,

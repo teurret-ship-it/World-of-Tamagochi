@@ -9,6 +9,9 @@ complexity:
   LongParameterList:
     ignoreAnnotated: ['Composable']
 style:
+  MaxLineLength:
+    # Same limit as ktlint_official.
+    maxLineLength: 140
   MagicNumber:
     excludes: ['**/test/**', '**/designsystem/**', '**/*Art.kt']
   UnusedPrivateMember:

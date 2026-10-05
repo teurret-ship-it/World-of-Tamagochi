@@ -46,3 +46,19 @@ with Roborazzi. We take that layout as is. Google Play's
 upper bounds from day one, with stricter internal targets. We deliberately
 do not take Hilt, Room and Navigation in iteration 0: nothing needs them
 yet, and empty wiring would only be noise to review (ADR-001).
+
+## Iteration 1: needs simulation
+
+Tamagotchi measures hunger and happiness in hearts that drain over time;
+when the pet sleeps the meters pause or drain much more slowly, and a meter
+left empty becomes a care mistake that shapes the adult form
+([Tamagotchi Wiki: Care](https://tamagotchi.fandom.com/wiki/Care)). Pou
+keeps four needs (hunger, health, energy, fun) that keep draining while the
+app is closed and refills energy by sleeping. We take five needs (satiety,
+energy, hygiene, happiness, health), the slow-drain sleep, and health that
+falls only as a consequence of neglect rather than on its own. We do not take
+the classic Tamagotchi's fixed, character-defined bedtime: our pet sleeps
+when the player sleeps (default 22:00-07:00 local, set in onboarding), the
+same daily-rhythm idea Pokémon Sleep builds on. Balance is checked by a test
+of the ethics rule: three check-ins a day keep every need above zero at
+every life stage.

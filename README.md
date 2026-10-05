@@ -11,8 +11,11 @@ next iteration.
 
 ## What is in the game today
 
-Iteration 0: the skeleton. The app opens on a themed home screen with a
-rocking egg; the server answers `GET /health`.
+- A themed home screen with a rocking egg; the server answers `GET /health`.
+- Game rules (`core/sim`): five needs (satiety, energy, hygiene, happiness,
+  health) living in real time, a sleep window in the player's time zone, and
+  exact offline catch-up. Not on screen yet: the living pet arrives in
+  iteration 2.
 
 ## Build and run
 
