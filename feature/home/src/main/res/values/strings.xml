@@ -1,0 +1,5 @@
+<resources>
+    <string name="home_title">World of Tamagochi</string>
+    <string name="home_egg_description">A speckled egg, gently rocking. Something is about to hatch.</string>
+    <string name="home_coming_soon">Your pet is on its way.</string>
+</resources>

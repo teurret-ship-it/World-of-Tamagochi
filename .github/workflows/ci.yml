@@ -1,0 +1,64 @@
+name: CI
+
+# One job, the same gates as CLAUDE.md section 4. The GitHub runner ships an
+# Android SDK, so this is the authoritative build even for sessions that can
+# only run the JVM-only subset locally (ADR-002).
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Check (format, detekt, lint, unit tests, coverage)
+        run: ./gradlew check --continue
+
+      - name: Screenshots (verify against references, record when none exist yet)
+        run: |
+          if ls */*/src/test/screenshots/*.png */src/test/screenshots/*.png >/dev/null 2>&1; then
+            ./gradlew verifyRoborazziDebug
+          else
+            echo "::warning::No reference screenshots committed yet - recording them instead of verifying."
+            ./gradlew recordRoborazziDebug
+          fi
+
+      - name: Release build (R8)
+        run: ./gradlew :app:assembleRelease
+
+      - name: APK size budget
+        run: scripts/check-apk-size.sh app/build/outputs/apk/release/app-release-unsigned.apk
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: |
+            **/src/test/screenshots/**
+            **/build/outputs/roborazzi/**
+          if-no-files-found: ignore
+
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: '**/build/reports/**'
+          if-no-files-found: ignore

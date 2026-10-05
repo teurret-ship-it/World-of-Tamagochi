@@ -1,0 +1,15 @@
+# Builds upon detekt's default config; only deviations are listed here.
+naming:
+  FunctionNaming:
+    # Composables are PascalCase by convention.
+    ignoreAnnotated: ['Composable']
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][_A-Za-z0-9]*'
+complexity:
+  LongParameterList:
+    ignoreAnnotated: ['Composable']
+style:
+  MagicNumber:
+    excludes: ['**/test/**', '**/designsystem/**', '**/*Art.kt']
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']
