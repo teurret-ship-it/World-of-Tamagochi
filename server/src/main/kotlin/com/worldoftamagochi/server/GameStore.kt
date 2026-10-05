@@ -1,5 +1,6 @@
 package com.worldoftamagochi.server
 
+import com.worldoftamagochi.sim.race.RaceStats
 import java.sql.Connection
 import java.sql.ResultSet
 import javax.sql.DataSource
@@ -7,6 +8,7 @@ import javax.sql.DataSource
 data class Player(
     val id: String,
     val displayName: String,
+    val createdAtMs: Long = 0,
 )
 
 /** A verified run to store. */
@@ -17,6 +19,7 @@ data class NewRun(
     val log: List<Int>,
     val simVersion: Int,
     val createdAtMs: Long,
+    val stats: RaceStats = RaceStats.ROOKIE,
 )
 
 data class StoredRun(
@@ -24,6 +27,7 @@ data class StoredRun(
     val displayName: String,
     val finishMicros: Long,
     val log: List<Int>,
+    val stats: RaceStats = RaceStats.ROOKIE,
 )
 
 /** All server data access, in plain JDBC: three queries do not need an ORM. */
@@ -39,20 +43,28 @@ class GameStore(
 
     fun playerByTokenHash(tokenHash: String): Player? =
         query(
-            "SELECT id, display_name FROM players WHERE token_hash = ?",
+            "SELECT id, display_name, created_at_ms FROM players WHERE token_hash = ?",
             tokenHash,
-        ) { Player(it.getString("id"), it.getString("display_name")) }
+        ) { Player(it.getString("id"), it.getString("display_name"), it.getLong("created_at_ms")) }
             .firstOrNull()
 
     fun insertRun(run: NewRun) =
         write(
-            "INSERT INTO runs (player_id, track_id, finish_micros, log, sim_version, created_at_ms) VALUES (?, ?, ?, ?, ?, ?)",
+            """
+            INSERT INTO runs (player_id, track_id, finish_micros, log, sim_version, created_at_ms,
+                              stat_speed, stat_stamina, stat_agility, stat_jump)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """.trimIndent(),
             run.playerId,
             run.trackId,
             run.finishMicros,
             run.log.joinToString(","),
             run.simVersion,
             run.createdAtMs,
+            run.stats.speed,
+            run.stats.stamina,
+            run.stats.agility,
+            run.stats.jump,
         )
 
     /** Each player's best run on [trackId] since [sinceMs], fastest first. */
@@ -63,7 +75,7 @@ class GameStore(
     ): List<StoredRun> =
         query(
             """
-            SELECT r.player_id, p.display_name, r.finish_micros, r.log
+            SELECT r.player_id, p.display_name, r.finish_micros, r.log, r.stat_speed, r.stat_stamina, r.stat_agility, r.stat_jump
             FROM runs r JOIN players p ON p.id = r.player_id
             WHERE r.track_id = ? AND r.created_at_ms >= ? AND r.sim_version = ?
               AND r.finish_micros = (
@@ -78,8 +90,18 @@ class GameStore(
             simVersion,
             sinceMs,
             simVersion,
-        ) { StoredRun(it.getString("player_id"), it.getString("display_name"), it.getLong("finish_micros"), it.getString("log").toCodes()) }
-            .distinctBy { it.playerId }
+        ) {
+            StoredRun(
+                it.getString("player_id"),
+                it.getString("display_name"),
+                it.getLong("finish_micros"),
+                it.getString("log").toCodes(),
+                it.stats(),
+            )
+        }.distinctBy { it.playerId }
+
+    private fun ResultSet.stats(): RaceStats =
+        RaceStats(getInt("stat_speed"), getInt("stat_stamina"), getInt("stat_agility"), getInt("stat_jump"))
 
     private fun String.toCodes(): List<Int> = if (isEmpty()) emptyList() else split(',').map(String::toInt)
 

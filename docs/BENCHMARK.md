@@ -196,3 +196,15 @@ the seesaw so the rule is readable without words, and hand-made courses with
 a gentle first one. We do not take disqualification or refusals (a child
 always finishes), and we keep the two buttons from sprint rather than adding
 a control per obstacle.
+
+## Iteration 9: training and race form
+
+Chao Garden is the reference: stats grow by training and feeding, and they
+show in races. Pokémon's effort values show that diminishing returns keep
+early progress exciting and late progress a long goal; Duolingo-style daily
+caps keep sessions short. We take: four exercises mapped to four stats,
+gains that shrink as a stat grows, three sessions a day that cost energy
+and food, and race-day form that makes a hungry or tired pet visibly
+slower, with the reason and the fix spelled out. We do not take paid stat
+boosts or training energy refills: stats are earned only, and their effect
+on a race is capped at 10%.

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.worldoftamagochi.data.GameRepository
 import com.worldoftamagochi.data.GameSave
+import com.worldoftamagochi.data.PetSave
 import com.worldoftamagochi.data.Settings
 import com.worldoftamagochi.data.toProgress
 import com.worldoftamagochi.data.toSave
@@ -23,6 +24,7 @@ import com.worldoftamagochi.sim.PlayerProgress
 import com.worldoftamagochi.sim.ProgressRules
 import com.worldoftamagochi.sim.SleepWindow
 import com.worldoftamagochi.sim.TreatRules
+import com.worldoftamagochi.sim.localEpochDay
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +34,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.time.Instant
 import java.time.ZoneId
 
 /** The game rules the home screen runs on; tests swap them. */
@@ -65,6 +66,9 @@ class HomeViewModel(
     private lateinit var pet: PetState
     private var progress = PlayerProgress()
     private var wearing: List<String> = emptyList()
+
+    /** The pet as this screen last wrote it; anything else in the save was changed elsewhere (training). */
+    private var lastSaved: PetSave? = null
     private var washing = false
     private var strokes = 0
     private var away: AwaySummary? = null
@@ -97,6 +101,7 @@ class HomeViewModel(
                                 .toWardrobe()
                                 .equipped.values
                                 .toList()
+                        adoptIfChangedElsewhere(it.pet)
                         publish()
                     }
                 }
@@ -170,7 +175,7 @@ class HomeViewModel(
     /** A bought treat: paid with coins, a few a day. */
     fun onTreat() {
         if (genome == null) return
-        val refusal = treats.refusal(progress, today())
+        val refusal = treats.refusal(progress, localEpochDay(clock(), zone))
         if (refusal != null) {
             _effects.trySend(HomeEffect.Refused(CareAction.TREAT, refusal))
         } else {
@@ -201,7 +206,7 @@ class HomeViewModel(
 
             is CareResult.Done -> {
                 pet = result.pet
-                val day = today()
+                val day = localEpochDay(clock(), zone)
                 val paid = if (action == CareAction.TREAT) treats.pay(progress, day) else progress
                 val update = progression.reward(paid, result, action, day)
                 progress = update.progress
@@ -233,22 +238,33 @@ class HomeViewModel(
         viewModelScope.launch { save() }
     }
 
-    /** Saves the pet only; progress is written where it changes, so races are never overwritten. */
+    /**
+     * Saves the pet only; progress is written where it changes, so races are
+     * never overwritten. A pet changed elsewhere since our last write (a
+     * training session) is kept, and adopted from the game flow instead.
+     */
     private suspend fun save() {
         val petSave = pet.toSave(seed, name)
         if (repository.loadGame() == null) {
             repository.saveGame(GameSave(pet = petSave, progress = progress.toSave()))
+            lastSaved = petSave
         } else {
-            repository.updateGame { it.copy(pet = petSave) }
+            repository.updateGame { game ->
+                if (lastSaved != null && game.pet != lastSaved) {
+                    game
+                } else {
+                    lastSaved = petSave
+                    game.copy(pet = petSave)
+                }
+            }
         }
     }
 
-    private fun today(): Long =
-        Instant
-            .ofEpochMilli(clock())
-            .atZone(zone)
-            .toLocalDate()
-            .toEpochDay()
+    private fun adoptIfChangedElsewhere(saved: PetSave) {
+        if (lastSaved == null || saved == lastSaved || genome == null) return
+        lastSaved = saved
+        pet = NeedsSimulation.advance(saved.toState().let { it.copy(sleep = it.sleep.copy(zone = zone)) }, clock())
+    }
 
     private fun isNapping(): Boolean = pet.napUntilEpochMillis?.let { it > pet.updatedAtEpochMillis } == true
 
@@ -271,7 +287,7 @@ class HomeViewModel(
             level = level,
             levelProgress = ((progress.xp - start).toFloat() / span).coerceIn(0f, 1f),
             coins = progress.coins,
-            treatsLeft = treats.leftToday(progress, today()),
+            treatsLeft = treats.leftToday(progress, localEpochDay(clock(), zone)),
             treatPrice = treats.price,
             wearing = wearing,
             napping = isNapping(),

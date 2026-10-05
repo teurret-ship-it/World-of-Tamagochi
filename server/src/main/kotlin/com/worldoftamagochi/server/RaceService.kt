@@ -6,6 +6,7 @@ import com.worldoftamagochi.sim.race.InputLog
 import com.worldoftamagochi.sim.race.RaceStats
 import com.worldoftamagochi.sim.race.Replay
 import com.worldoftamagochi.sim.race.Tracks
+import com.worldoftamagochi.sim.training.TrainingRules
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.time.DayOfWeek
@@ -55,6 +56,7 @@ class RaceService(
     private val store: GameStore,
     private val clock: () -> Long = System::currentTimeMillis,
     private val random: SecureRandom = SecureRandom(),
+    private val training: TrainingRules = TrainingRules.DEFAULT,
 ) {
     fun register(petName: String): NewPlayer {
         val name = petName.takeIf(PetNames::isAllowed) ?: PetNames.DEFAULT
@@ -71,6 +73,7 @@ class RaceService(
         trackId: String,
         simVersion: Int,
         codes: List<Int>,
+        stats: RaceStats = RaceStats.ROOKIE,
     ): AcceptedRun {
         reject(simVersion != SimVersion.CURRENT) { "Rules version $simVersion is not ${SimVersion.CURRENT}" }
         val track = Tracks.byId(trackId)
@@ -79,11 +82,14 @@ class RaceService(
         reject(codes.any { it < 0 || it % CODE_BASE >= InputLog.Kind.entries.size }) { "Unknown input" }
         val log = parseLog(codes)
         reject(log.events.any { it.tick < 0 || it.tick > Replay.MAX_TICKS }) { "Events outside the race" }
-        // Stats will come from the server's copy of the pet (iteration 22); until then everyone is a rookie.
-        val finish = Replay.run(requireNotNull(track), RaceStats.ROOKIE, log).finishMicros
+        // Stats live on the device until cloud saves (iteration 23); the server only
+        // checks that daily training could have reached them (ADR-010).
+        val ceiling = training.maxStatAfter((clock() - player.createdAtMs) / MILLIS_PER_DAY + OFFLINE_GRACE_DAYS)
+        reject(listOf(stats.speed, stats.stamina, stats.agility, stats.jump).any { it > ceiling }) { "Stats not reachable by training yet" }
+        val finish = Replay.run(requireNotNull(track), stats, log).finishMicros
         reject(finish == null) { "The run does not finish" }
         requireNotNull(finish)
-        store.insertRun(NewRun(player.id, trackId, finish, codes, simVersion, clock()))
+        store.insertRun(NewRun(player.id, trackId, finish, codes, simVersion, clock(), stats))
         val allTime = store.bestRuns(trackId, 0, SimVersion.CURRENT)
         val daily = store.bestRuns(trackId, periodStart(Period.DAILY), SimVersion.CURRENT)
         return AcceptedRun(
@@ -148,5 +154,9 @@ class RaceService(
         const val MAX_LEADERBOARD = 100
         const val GHOSTS = 3
         const val CODE_BASE = 4
+        const val MILLIS_PER_DAY = 86_400_000L
+
+        /** Days of training a player may have done offline before first going online. */
+        const val OFFLINE_GRACE_DAYS = 7L
     }
 }

@@ -27,11 +27,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.worldoftamagochi.api.LeaderboardEntry
 import com.worldoftamagochi.data.GameRepository
 import com.worldoftamagochi.network.OnlineRacing
@@ -40,6 +43,11 @@ import com.worldoftamagochi.sim.race.Medal
 import com.worldoftamagochi.sim.race.MedalTimes
 import com.worldoftamagochi.sim.race.Track
 import com.worldoftamagochi.sim.race.Tracks
+import com.worldoftamagochi.sim.training.Exercise
+import com.worldoftamagochi.ui.sound.LocalGameSounds
+import com.worldoftamagochi.ui.sound.Sfx
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import com.worldoftamagochi.ui.R as UiR
 
 @Composable
@@ -54,6 +62,7 @@ fun TrackSelectRoute(
     var boards by remember { mutableStateOf<Map<String, List<LeaderboardEntry>>>(emptyMap()) }
     LaunchedEffect(online) {
         online ?: return@LaunchedEffect
+        online.warmUp() // starts the server's training clock early (ADR-010)
         online.flush() // runs raced offline go up first, so the board includes them
         boards =
             Tracks.ALL
@@ -64,7 +73,44 @@ fun TrackSelectRoute(
         Tracks.ALL.map {
             TrackCard(it, medals.getValue(it), game?.records?.get(it.id)?.finishMicros, boards[it.id].orEmpty())
         }
-    TrackSelectScreen(cards, onRace, onBack)
+    val trainingVm: TrainingViewModel = viewModel { TrainingViewModel(repository) }
+    val training by trainingVm.state.collectAsStateWithLifecycle()
+    val message = trainingMessages(trainingVm.effects)
+    TrackSelectScreen(cards, onRace, onBack, training = training?.let { TrainingSlot(it, trainingVm::onTrain, message) })
+}
+
+/** The training card's state and callbacks; null hides the card (screenshots, no pet yet). */
+class TrainingSlot(
+    val state: TrainingUiState,
+    val onTrain: (Exercise) -> Unit,
+    val message: TrainingEffect? = null,
+)
+
+/** Plays each training moment and returns it while its line should show. */
+@Composable
+private fun trainingMessages(effects: Flow<TrainingEffect>): TrainingEffect? {
+    val sounds = LocalGameSounds.current
+    val haptics = LocalHapticFeedback.current
+    var message by remember { mutableStateOf<TrainingEffect?>(null) }
+    LaunchedEffect(effects) {
+        effects.collect { effect ->
+            when (effect) {
+                is TrainingEffect.Trained -> {
+                    sounds.play(Sfx.POSITIVE)
+                    haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                }
+
+                is TrainingEffect.Refused -> {
+                    sounds.play(Sfx.CAUTION)
+                    haptics.performHapticFeedback(HapticFeedbackType.Reject)
+                }
+            }
+            message = effect
+            delay(MESSAGE_MILLIS)
+            message = null
+        }
+    }
+    return message
 }
 
 @Composable
@@ -73,6 +119,7 @@ fun TrackSelectScreen(
     onRace: (String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    training: TrainingSlot? = null,
 ) {
     Surface(modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
@@ -89,6 +136,7 @@ fun TrackSelectScreen(
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(stringResource(R.string.races_subtitle), style = MaterialTheme.typography.titleMedium)
+            training?.let { TrainingCard(it.state, it.onTrain, it.message) }
             cards.groupBy { it.track.discipline }.forEach { (discipline, group) ->
                 SectionHeader(discipline)
                 group.forEach { TrackCardView(it, onRace) }
@@ -179,3 +227,5 @@ private fun TodayBoard(entries: List<LeaderboardEntry>) {
 
 private const val LOCKED_ALPHA = 0.3f
 private const val TOP_SHOWN = 3
+
+private const val MESSAGE_MILLIS = 2_500L

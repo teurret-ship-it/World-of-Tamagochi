@@ -9,6 +9,8 @@ import com.worldoftamagochi.api.RegisterRequest
 import com.worldoftamagochi.api.RegisterResponse
 import com.worldoftamagochi.api.RunRequest
 import com.worldoftamagochi.api.RunResponse
+import com.worldoftamagochi.api.StatsDto
+import com.worldoftamagochi.sim.race.RaceStats
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal
@@ -50,14 +52,14 @@ fun Route.raceRoutes(service: RaceService) {
                 post("/runs") {
                     val player = requireNotNull(call.principal<Player>())
                     val request = call.receive<RunRequest>()
-                    val run = service.submit(player, request.trackId, request.simVersion, request.log)
+                    val run = service.submit(player, request.trackId, request.simVersion, request.log, request.stats.toStats())
                     call.respond(HttpStatusCode.Created, RunResponse(run.finishMicros, run.personalBestMicros, run.dailyRank))
                 }
             }
             get("/ghosts/{trackId}") {
                 val player = requireNotNull(call.principal<Player>())
                 val trackId = call.parameters["trackId"].orEmpty()
-                val ghosts = service.ghosts(player, trackId).map { GhostRun(it.displayName, it.finishMicros, it.log) }
+                val ghosts = service.ghosts(player, trackId).map { GhostRun(it.displayName, it.finishMicros, it.log, it.stats.toDto()) }
                 call.respond(GhostsResponse(trackId, ghosts))
             }
         }
@@ -72,3 +74,13 @@ private fun parsePeriod(value: String?): Period =
     }
 
 private const val DEFAULT_LIMIT = 20
+
+/** Stats outside the allowed range are a bad request, like any malformed run. */
+private fun StatsDto.toStats(): RaceStats =
+    try {
+        RaceStats(speed, stamina, agility, jump)
+    } catch (e: IllegalArgumentException) {
+        throw RejectedRun("Stats out of range", e)
+    }
+
+private fun RaceStats.toDto(): StatsDto = StatsDto(speed, stamina, agility, jump)

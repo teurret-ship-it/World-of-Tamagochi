@@ -103,9 +103,17 @@ the core care loop, and every iteration from 3 on pays the player something.
     "2 faults (+4 s)" on the finish card.
 - [ ] **8b. Weave poles.** The slalom from the original plan: a rhythm
   challenge (alternating taps), needs a third input kind in the log.
-- [ ] **9. Training and race form.** Exercises raise speed, stamina,
-  agility and jump at the cost of energy and hunger, daily cap; a hungry or
-  tired pet races worse, so care matters in competitions.
+- [x] **9. Training and race form.** Goal: care and training matter in
+  competitions (ADR-010).
+  - Four exercises (sprints, jogging, hoops, jump rope) raise speed,
+    stamina, agility and jump; gains shrink as a stat grows; three sessions
+    a day, each costing energy and food (and a little fun gained).
+  - Race-day form: a hungry or tired pet runs below its stats (about 2-3%
+    slower at worst, enough to cost a medal); the races screen says why and
+    what helps.
+  - Runs, records, queued uploads and ghosts carry the stats they were
+    raced with; the server checks them against what training allows.
+  - Tall phones zoom the race camera in so the pet is twice as big.
 - [ ] **10. Daily quests, streaks and achievements.** Three short daily
   quests (care + race), streak with a weekly freeze, sticker album of
   achievements.

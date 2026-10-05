@@ -203,3 +203,23 @@ one registry the app lists and the server verifies against.
 **Rules version.** `SimVersion` stays 1: sprint runs replay bit for bit as
 before (the pinned physics test is unchanged), and agility tracks did not
 exist under any earlier rules, so no stored run changes meaning.
+
+## ADR-010: Trained stats online, before cloud saves
+
+**Context.** Training (iteration 9) grows race stats on the device, and form
+lowers them on race day. The server replays every run, so it must know the
+stats it was raced with; but the pet lives on the device until cloud saves
+(iteration 23), so the server cannot know the true stats.
+
+**Decision.** A run carries the effective stats it was raced with; records,
+queued runs and ghosts keep them, so every replay is exact. The server checks
+them against the shared training rules: no stat may exceed what daily
+training could reach since the player registered, plus a 7-day grace for
+offline training (`TrainingRules.maxStatAfter`). The app registers when the
+races screen first opens online, which starts that clock early. Form never
+needs proof: it only lowers stats.
+
+**Consequences.** A cheater can claim at most what an honest, diligent
+trainer has, and stats move a run by at most 10% by design (CLAUDE.md
+section 2). Runs rejected for stats are dropped like any refused run. Cloud
+saves will replace the ceiling with the server's own copy of the pet.

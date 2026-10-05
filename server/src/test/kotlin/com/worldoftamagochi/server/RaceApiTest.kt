@@ -9,6 +9,7 @@ import com.worldoftamagochi.api.RegisterRequest
 import com.worldoftamagochi.api.RegisterResponse
 import com.worldoftamagochi.api.RunRequest
 import com.worldoftamagochi.api.RunResponse
+import com.worldoftamagochi.api.StatsDto
 import com.worldoftamagochi.sim.SimVersion
 import com.worldoftamagochi.sim.race.AgilityTracks
 import com.worldoftamagochi.sim.race.Autopilot
@@ -61,11 +62,12 @@ class RaceApiTest {
         log: InputLog,
         trackId: String = track.id,
         simVersion: Int = SimVersion.CURRENT,
+        stats: StatsDto = StatsDto(),
     ): HttpResponse =
         post("/v1/runs") {
             token?.let { bearerAuth(it) }
             contentType(ContentType.Application.Json)
-            setBody(RunRequest(trackId, simVersion, log.toCodes()))
+            setBody(RunRequest(trackId, simVersion, log.toCodes(), stats))
         }
 
     @Test
@@ -99,6 +101,29 @@ class RaceApiTest {
             val sloppy = Replay.run(course, RaceStats.ROOKIE, slowLog)
             (sloppy.faults > 0) shouldBe true
             client.submit(token, slowLog, trackId = course.id).body<RunResponse>().finishMicros shouldBe sloppy.finishMicros
+        }
+
+    @Test
+    fun `trained stats are replayed, but only as much as daily training allows`() =
+        api { client ->
+            val token = client.register().token
+            val trained = RaceStats(speed = 40, stamina = 30, agility = 20, jump = 10)
+            val log = Autopilot(track).play(trained).second
+            val run = client.submit(token, log, stats = StatsDto(40, 30, 20, 10)).body<RunResponse>()
+            run.finishMicros shouldBe Replay.run(track, trained, log).finishMicros
+            // A brand-new player cannot have a maxed stat yet; nobody can go past 100.
+            client.submit(token, log, stats = StatsDto(speed = 100)).status shouldBe HttpStatusCode.UnprocessableEntity
+            client.submit(token, log, stats = StatsDto(speed = 101)).status shouldBe HttpStatusCode.UnprocessableEntity
+            // Ghosts carry their stats, so they replay exactly.
+            val other = client.register("Bean").token
+            val ghost =
+                client
+                    .get("/v1/ghosts/${track.id}") { bearerAuth(other) }
+                    .body<GhostsResponse>()
+                    .ghosts
+                    .single()
+            ghost.stats shouldBe StatsDto(40, 30, 20, 10)
+            Replay.run(track, trained, InputLog.fromCodes(ghost.log)).finishMicros shouldBe ghost.finishMicros
         }
 
     @Test

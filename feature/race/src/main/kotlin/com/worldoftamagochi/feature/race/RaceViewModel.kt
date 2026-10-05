@@ -6,10 +6,14 @@ import com.worldoftamagochi.data.GameRepository
 import com.worldoftamagochi.data.RecordSave
 import com.worldoftamagochi.data.toProgress
 import com.worldoftamagochi.data.toSave
+import com.worldoftamagochi.data.toState
+import com.worldoftamagochi.data.toStats
 import com.worldoftamagochi.data.toWardrobe
 import com.worldoftamagochi.network.OnlineRacing
 import com.worldoftamagochi.network.Upload
+import com.worldoftamagochi.network.toStats
 import com.worldoftamagochi.sim.Genome
+import com.worldoftamagochi.sim.NeedsSimulation
 import com.worldoftamagochi.sim.ProgressUpdate
 import com.worldoftamagochi.sim.Reward
 import com.worldoftamagochi.sim.race.Autopilot
@@ -18,6 +22,7 @@ import com.worldoftamagochi.sim.race.InputLog
 import com.worldoftamagochi.sim.race.Medal
 import com.worldoftamagochi.sim.race.MedalTimes
 import com.worldoftamagochi.sim.race.Race
+import com.worldoftamagochi.sim.race.RaceForm
 import com.worldoftamagochi.sim.race.RacePhysics
 import com.worldoftamagochi.sim.race.RaceRewards
 import com.worldoftamagochi.sim.race.RaceStats
@@ -49,10 +54,10 @@ class RaceViewModel(
     private val rewards: RaceRewards = RaceRewards.DEFAULT,
     private val online: OnlineRacing? = null,
 ) : ViewModel() {
-    // Stats come from training (roadmap iteration 9); until then every pet is a rookie.
-    private val stats = RaceStats.ROOKIE
+    /** Trained stats after race-day form; a rookie's until the save is loaded. */
+    private var stats = RaceStats.ROOKIE
     private val medals = MedalTimes.of(track)
-    private val staminaMax = Race(track, stats).runner.stamina
+    private var staminaMax = Race(track, stats).runner.stamina
 
     private var race = Race(track, stats)
     private var recorder = InputLog.Recorder()
@@ -83,6 +88,10 @@ class RaceViewModel(
             game?.let {
                 genome = Genome.fromSeed(it.pet.seed)
                 name = it.pet.name
+                val pet = NeedsSimulation.advance(it.pet.toState(), clock())
+                stats = RaceForm.effective(it.stats.toStats(), RaceForm.perMille(pet.needs))
+                race = Race(track, stats)
+                staminaMax = race.runner.stamina
                 wearing =
                     it.wardrobe
                         .toWardrobe()
@@ -93,14 +102,19 @@ class RaceViewModel(
             bestMicros = record?.finishMicros
             bestMedal = medals.medalFor(record?.finishMicros)
             ghostKind = if (record == null) GhostKind.COACH else GhostKind.PERSONAL_BEST
-            val ghostLog = record?.let { InputLog.fromCodes(it.log) } ?: Autopilot(track).play(stats).second
-            ghostFrames = Replay.frames(track, stats, ghostLog)
+            // Every ghost replays with the stats it was raced with; the coach is a rookie.
+            ghostFrames =
+                if (record != null) {
+                    Replay.frames(track, record.stats.toStats(), InputLog.fromCodes(record.log))
+                } else {
+                    Replay.frames(track, RaceStats.ROOKIE, Autopilot(track).play(RaceStats.ROOKIE).second)
+                }
             publish(countdown = COUNTDOWN_SECONDS)
             // Online: race the player just ahead of you instead, if the server answers in time.
             online?.let { racing ->
                 val rival = withTimeoutOrNull(RIVAL_TIMEOUT_MILLIS) { racing.rivalGhost(track.id) }
                 if (rival != null && phase == RacePhase.COUNTDOWN) {
-                    ghostFrames = Replay.frames(track, stats, InputLog.fromCodes(rival.log))
+                    ghostFrames = Replay.frames(track, rival.stats.toStats(), InputLog.fromCodes(rival.log))
                     ghostKind = GhostKind.RIVAL
                     ghostName = rival.displayName
                     publish(countdown = _state.value?.countdown)
@@ -184,7 +198,7 @@ class RaceViewModel(
                 update = reward
                 val records =
                     if (best == null || finishMicros < best.finishMicros) {
-                        game.records + (track.id to RecordSave(finishMicros, log.toCodes()))
+                        game.records + (track.id to RecordSave(finishMicros, log.toCodes(), stats.toSave()))
                     } else {
                         game.records
                     }
@@ -224,7 +238,7 @@ class RaceViewModel(
         summary = summary?.copy(online = OnlineOutcome.Sending)
         publish(countdown = null)
         val outcome =
-            when (val upload = racing.submit(track.id, log)) {
+            when (val upload = racing.submit(track.id, log, stats)) {
                 is Upload.Verified -> OnlineOutcome.Ranked(upload.response.dailyRank)
                 Upload.Queued -> OnlineOutcome.Queued
                 is Upload.Refused -> null

@@ -4,6 +4,26 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 9: training and race form
+
+- A training card on the races screen: Sprints (speed), Jogging (stamina),
+  Hoops (agility) and Jump rope (jump), with bars and "+8 Speed!"; three
+  sessions a day, each costing energy and food. Rookies learn fast,
+  champions slowly.
+- Race-day form: "Top form! Ready to race." or "Mochi is hungry and will
+  run slower. Feed first for top form!"; a pet in poor form is about 2-3%
+  slower, enough to cost a medal.
+- Trained stats go online with every run; the server replays with them and
+  rejects stats no amount of daily training could reach (ADR-010). Ghosts
+  and records replay with the stats they were raced with.
+- The home screen keeps changes made elsewhere (a training session) instead
+  of overwriting them.
+- Bigger pets in races on tall phones (the camera zooms in), with more of
+  the course ahead of the runner.
+
+Self-review: clarity 4, game feel 4, retention 5, ethics 5, performance 4,
+accessibility 4.
+
 ## Iteration 8: agility
 
 - A second discipline: agility courses with tyres to jump through, tunnels

@@ -41,6 +41,9 @@ Trophy|trophy|medal_author
 Stopwatch|stopwatch|race_timer
 Ring buoy|ring_buoy|race_tyre
 Turtle|turtle|race_slow
+Rabbit|rabbit|train_speed
+Battery|battery|train_stamina
+Kangaroo|kangaroo|train_jump
 Shopping bags|shopping_bags|ui_shop
 Ribbon|ribbon|wear_ribbon
 Cherry blossom|cherry_blossom|wear_blossom

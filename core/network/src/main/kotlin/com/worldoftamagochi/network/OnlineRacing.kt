@@ -4,8 +4,10 @@ import com.worldoftamagochi.api.GhostRun
 import com.worldoftamagochi.api.LeaderboardEntry
 import com.worldoftamagochi.api.RunRequest
 import com.worldoftamagochi.api.RunResponse
+import com.worldoftamagochi.api.StatsDto
 import com.worldoftamagochi.sim.SimVersion
 import com.worldoftamagochi.sim.race.InputLog
+import com.worldoftamagochi.sim.race.RaceStats
 
 /** The anonymous online identity of this install. */
 data class OnlineAccount(
@@ -13,10 +15,11 @@ data class OnlineAccount(
     val displayName: String,
 )
 
-/** A finished run waiting to be uploaded. */
+/** A finished run waiting to be uploaded, with the stats it was raced with. */
 data class PendingRun(
     val trackId: String,
     val log: List<Int>,
+    val stats: RaceStats = RaceStats.ROOKIE,
 )
 
 /** Where the online state is saved on the device (implemented by the save file). */
@@ -59,8 +62,9 @@ class OnlineRacing(
     suspend fun submit(
         trackId: String,
         log: InputLog,
+        stats: RaceStats = RaceStats.ROOKIE,
     ): Upload {
-        store.savePendingRuns(store.pendingRuns() + PendingRun(trackId, log.toCodes()))
+        store.savePendingRuns(store.pendingRuns() + PendingRun(trackId, log.toCodes(), stats))
         return flush().lastOrNull() ?: Upload.Queued
     }
 
@@ -73,7 +77,7 @@ class OnlineRacing(
             val result =
                 try {
                     val account = account()
-                    Upload.Verified(api.submitRun(account.token, RunRequest(run.trackId, SimVersion.CURRENT, run.log)))
+                    Upload.Verified(api.submitRun(account.token, RunRequest(run.trackId, SimVersion.CURRENT, run.log, run.stats.toDto())))
                 } catch (expected: ApiException.Unavailable) {
                     results += Upload.Queued
                     return results
@@ -106,8 +110,22 @@ class OnlineRacing(
             null // offline: the screen simply shows no board / no rival
         }
 
+    /** Creates the anonymous account early, so the server's training clock starts (ADR-010). */
+    suspend fun warmUp() {
+        try {
+            account()
+        } catch (expected: ApiException) {
+            // offline: tried again next time
+        }
+    }
+
     private suspend fun account(): OnlineAccount =
         store.account() ?: api.register(petName()).let { registered ->
             OnlineAccount(registered.token, registered.displayName).also { store.saveAccount(it) }
         }
 }
+
+fun RaceStats.toDto(): StatsDto = StatsDto(speed, stamina, agility, jump)
+
+/** Stats as sent by the server; anything out of range is treated as a rookie's. */
+fun StatsDto.toStats(): RaceStats = runCatching { RaceStats(speed, stamina, agility, jump) }.getOrDefault(RaceStats.ROOKIE)

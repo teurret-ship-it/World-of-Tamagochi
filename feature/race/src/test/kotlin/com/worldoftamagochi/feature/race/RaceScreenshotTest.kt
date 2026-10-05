@@ -16,6 +16,7 @@ import com.worldoftamagochi.sim.race.Race
 import com.worldoftamagochi.sim.race.RaceStats
 import com.worldoftamagochi.sim.race.Replay
 import com.worldoftamagochi.sim.race.SprintTracks
+import com.worldoftamagochi.sim.race.Tracks
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -95,6 +96,14 @@ class RaceScreenshotTest {
                     TrackCard(t, m, bestMicros = listOf(m.silver, m.authorMicros, null)[i], today = if (i == 0) today else emptyList())
                 }
             TrackSelectScreen(cards, onRace = {}, onBack = {})
+        }
+
+    @Test
+    fun trackListWithTraining() =
+        capture("race_tracks_training") {
+            val cards = Tracks.ALL.map { TrackCard(it, MedalTimes.of(it), bestMicros = null) }
+            val training = TrainingUiState("Mochi", RaceStats(speed = 34, stamina = 21, agility = 8, jump = 15), 2, 600, FormHint.HUNGRY)
+            TrackSelectScreen(cards, onRace = {}, onBack = {}, training = TrainingSlot(training, onTrain = {}))
         }
 
     @Test

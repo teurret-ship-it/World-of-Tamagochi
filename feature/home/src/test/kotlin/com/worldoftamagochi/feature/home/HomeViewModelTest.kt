@@ -1,8 +1,10 @@
 package com.worldoftamagochi.feature.home
 
+import com.worldoftamagochi.data.toState
 import com.worldoftamagochi.sim.CareAction
 import com.worldoftamagochi.sim.Expression
 import com.worldoftamagochi.sim.Need
+import com.worldoftamagochi.sim.Needs
 import com.worldoftamagochi.sim.Refusal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -207,6 +209,27 @@ class HomeViewModelTest {
         assertEquals(0, vm.ui.treatsLeft)
         dispatcher.scheduler.runCurrent()
         assertEquals(55L, requireNotNull(repository.saved).progress.coins)
+    }
+
+    @Test
+    fun `a pet changed elsewhere (training) is adopted, not overwritten`() {
+        val vm = viewModel()
+        kotlinx.coroutines.runBlocking {
+            repository.updateGame { it.copy(pet = it.pet.copy(energy = it.pet.energy - Needs.points(30))) }
+        }
+        dispatcher.scheduler.runCurrent()
+        assertEquals(70, vm.ui.needs.getValue(Need.ENERGY))
+        repeat(20) { vm.tick() } // the periodic save keeps the trained pet
+        dispatcher.scheduler.runCurrent()
+        assertEquals(
+            70,
+            requireNotNull(repository.saved)
+                .pet
+                .toState()
+                .needs
+                .gauge(Need.ENERGY)
+                .value,
+        )
     }
 
     @Test

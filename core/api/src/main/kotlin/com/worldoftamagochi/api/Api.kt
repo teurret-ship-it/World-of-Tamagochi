@@ -16,11 +16,21 @@ data class RegisterResponse(
     val displayName: String,
 )
 
+/** The race stats a run was raced with (after race-day form). */
+@Serializable
+data class StatsDto(
+    val speed: Int = 0,
+    val stamina: Int = 0,
+    val agility: Int = 0,
+    val jump: Int = 0,
+)
+
 @Serializable
 data class RunRequest(
     val trackId: String,
     val simVersion: Int,
     val log: List<Int>,
+    val stats: StatsDto = StatsDto(),
 )
 
 @Serializable
@@ -50,6 +60,7 @@ data class GhostRun(
     val displayName: String,
     val finishMicros: Long,
     val log: List<Int>,
+    val stats: StatsDto = StatsDto(),
 )
 
 @Serializable

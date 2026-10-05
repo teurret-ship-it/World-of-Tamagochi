@@ -5,8 +5,10 @@ import com.worldoftamagochi.sim.Needs
 import com.worldoftamagochi.sim.PetState
 import com.worldoftamagochi.sim.PlayerProgress
 import com.worldoftamagochi.sim.SleepWindow
+import com.worldoftamagochi.sim.race.RaceStats
 import com.worldoftamagochi.sim.shop.Catalog
 import com.worldoftamagochi.sim.shop.Wardrobe
+import com.worldoftamagochi.sim.training.TrainingLog
 import kotlinx.serialization.Serializable
 import java.time.ZoneId
 
@@ -25,6 +27,9 @@ data class GameSave(
     val online: OnlineSave = OnlineSave(),
     /** Cosmetics the player owns and the ones the pet wears. */
     val wardrobe: WardrobeSave = WardrobeSave(),
+    /** Race stats grown by training, and today's sessions. */
+    val stats: StatsSave = StatsSave(),
+    val training: TrainingSave = TrainingSave(),
 ) {
     companion object {
         const val CURRENT_VERSION = 1
@@ -65,6 +70,22 @@ data class ProgressSave(
 data class RecordSave(
     val finishMicros: Long,
     val log: List<Int>,
+    /** The stats the record was raced with: the ghost must replay with them. */
+    val stats: StatsSave = StatsSave(),
+)
+
+@Serializable
+data class StatsSave(
+    val speed: Int = 0,
+    val stamina: Int = 0,
+    val agility: Int = 0,
+    val jump: Int = 0,
+)
+
+@Serializable
+data class TrainingSave(
+    val sessionsToday: Int = 0,
+    val day: Long = 0,
 )
 
 @Serializable
@@ -78,6 +99,7 @@ data class OnlineSave(
 data class PendingRunSave(
     val trackId: String,
     val log: List<Int>,
+    val stats: StatsSave = StatsSave(),
 )
 
 /** Item ids; the slot of a worn item comes from the catalog, so a save never disagrees with it. */
@@ -144,3 +166,15 @@ fun WardrobeSave.toWardrobe(): Wardrobe {
 }
 
 fun Wardrobe.toSave(): WardrobeSave = WardrobeSave(owned.sorted(), equipped.values.sorted())
+
+/** A damaged or hand-edited save can hold anything: clamp into the allowed range. */
+fun StatsSave.toStats(): RaceStats {
+    fun of(value: Int) = value.coerceIn(RaceStats.MIN, RaceStats.MAX)
+    return RaceStats(of(speed), of(stamina), of(agility), of(jump))
+}
+
+fun RaceStats.toSave(): StatsSave = StatsSave(speed, stamina, agility, jump)
+
+fun TrainingSave.toLog(): TrainingLog = TrainingLog(sessionsToday, day)
+
+fun TrainingLog.toSave(): TrainingSave = TrainingSave(sessionsToday, day)

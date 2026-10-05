@@ -23,8 +23,18 @@ class SaveOnlineStore(
             ?.online
             ?.pending
             .orEmpty()
-            .map { PendingRun(it.trackId, it.log) }
+            .map { PendingRun(it.trackId, it.log, it.stats.toStats()) }
 
     override suspend fun savePendingRuns(runs: List<PendingRun>) =
-        repository.updateGame { it.copy(online = it.online.copy(pending = runs.map { r -> PendingRunSave(r.trackId, r.log) })) }
+        repository.updateGame {
+            it.copy(
+                online =
+                    it.online.copy(
+                        pending =
+                            runs.map { r ->
+                                PendingRunSave(r.trackId, r.log, r.stats.toSave())
+                            },
+                    ),
+            )
+        }
 }

@@ -35,7 +35,8 @@ internal class CourseCamera(
     val size: Size,
     val cameraMm: Int,
 ) {
-    val pxPerMm: Float = size.width / VIEW_WIDTH_MM
+    // Wide screens show 12 m; tall phones zoom in so the pet stays big and readable.
+    val pxPerMm: Float = maxOf(size.width / VIEW_WIDTH_MM, size.height / VIEW_HEIGHT_MM)
     val groundY: Float = size.height * GROUND_FRACTION
 
     /** Screen x of track position [mm]; the runner stays at [RUNNER_SCREEN_FRACTION] of the width. */
@@ -45,8 +46,9 @@ internal class CourseCamera(
 
     companion object {
         const val VIEW_WIDTH_MM = 12_000f
+        const val VIEW_HEIGHT_MM = 10_000f
         const val GROUND_FRACTION = 0.74f
-        const val RUNNER_SCREEN_FRACTION = 0.3f
+        const val RUNNER_SCREEN_FRACTION = 0.22f
     }
 }
 
