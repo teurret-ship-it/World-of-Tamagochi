@@ -16,6 +16,11 @@
     <string name="race_go_banner">Go!</string>
     <string name="race_ghost_best">Your best</string>
     <string name="race_ghost_coach">Coach</string>
+    <string name="race_ghost_rival">Rival: %1$s</string>
+    <string name="online_sending">Sending your time…</string>
+    <string name="online_queued">Saved. It goes online when you are connected.</string>
+    <string name="online_rank">Today\'s online rank: #%1$d</string>
+    <string name="online_today">Today\'s fastest</string>
     <string name="race_stamina">Stamina</string>
     <string name="race_tired">Tired! Let go of Sprint</string>
 

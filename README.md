@@ -24,6 +24,8 @@ next iteration.
 - Races: three sprint courses, your pet against the coach's or your best
   ghost, hold Sprint and tap Jump, bronze/silver/gold/trophy medals, records
   and coins.
+- Online (with a server): race the ghost of the real player just ahead of
+  you, today's top three per track, your online rank after each race.
 - The server answers `GET /health`.
 - Game rules (`core/sim`): five needs (satiety, energy, hygiene, happiness,
   health) living in real time, a sleep window in the player's time zone, and
@@ -40,6 +42,11 @@ installs it).
 ./gradlew :server:run                  # server on http://localhost:8080/health
 docker compose up --build              # server + PostgreSQL
 ```
+
+Online races need the racing server (ADR-008): run `docker compose up`
+and build the app with `./gradlew :app:installDebug -Pwot.serverUrl=http://10.0.2.2:8080`
+(the emulator's address for your computer). Without `wot.serverUrl` the app
+is fully offline.
 
 Without the Android SDK (e.g. no access to dl.google.com):
 
@@ -59,6 +66,8 @@ Screenshots: `./gradlew recordRoborazziDebug` records reference images into
 | `core/designsystem` | theme, palette, typography |
 | `core/ui` | the pet rig, particles, sounds, shared game UI |
 | `core/data` | the save (DataStore) and settings |
+| `core/api` | wire format shared by app and server |
+| `core/network` | racing server client, offline-first upload queue |
 | `feature/home` | home screen: the pet, care, rewards, settings |
 | `feature/race` | track list and the race screen |
 | `app` | Android application |

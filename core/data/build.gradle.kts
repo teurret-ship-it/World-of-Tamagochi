@@ -9,6 +9,7 @@ android {
 
 dependencies {
     api(projects.core.sim)
+    api(projects.core.network)
     api(libs.androidx.datastore)
     implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.junit4)

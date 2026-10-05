@@ -23,7 +23,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        val repository = (application as WotApplication).repository
+        val app = application as WotApplication
+        val repository = app.repository
+        val online = app.online
         val sounds = SpriteGameSounds(this).also { this.sounds = it }
         setContent {
             val settings by repository.settings.collectAsStateWithLifecycle(initialValue = Settings())
@@ -33,7 +35,7 @@ class MainActivity : ComponentActivity() {
                 LocalHapticFeedback provides if (settings.haptics) LocalHapticFeedback.current else NoHaptics,
             ) {
                 WotTheme {
-                    GameNavigation(repository)
+                    GameNavigation(repository, online)
                 }
             }
         }

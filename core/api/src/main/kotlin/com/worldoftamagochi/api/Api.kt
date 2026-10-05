@@ -1,4 +1,4 @@
-package com.worldoftamagochi.server
+package com.worldoftamagochi.api
 
 import kotlinx.serialization.Serializable
 

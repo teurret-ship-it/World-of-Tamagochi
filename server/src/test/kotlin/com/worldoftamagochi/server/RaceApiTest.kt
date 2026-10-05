@@ -1,5 +1,14 @@
 package com.worldoftamagochi.server
 
+import com.worldoftamagochi.api.ErrorResponse
+import com.worldoftamagochi.api.GhostRun
+import com.worldoftamagochi.api.GhostsResponse
+import com.worldoftamagochi.api.LeaderboardEntry
+import com.worldoftamagochi.api.LeaderboardResponse
+import com.worldoftamagochi.api.RegisterRequest
+import com.worldoftamagochi.api.RegisterResponse
+import com.worldoftamagochi.api.RunRequest
+import com.worldoftamagochi.api.RunResponse
 import com.worldoftamagochi.sim.SimVersion
 import com.worldoftamagochi.sim.race.Autopilot
 import com.worldoftamagochi.sim.race.InputLog

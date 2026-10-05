@@ -1,5 +1,6 @@
 package com.worldoftamagochi.feature.race
 
+import com.worldoftamagochi.api.LeaderboardEntry
 import com.worldoftamagochi.sim.race.Medal
 import com.worldoftamagochi.sim.race.MedalTimes
 import com.worldoftamagochi.sim.race.Track
@@ -9,6 +10,8 @@ data class TrackCard(
     val track: Track,
     val medals: MedalTimes,
     val bestMicros: Long?,
+    /** Today's online top, empty offline. */
+    val today: List<LeaderboardEntry> = emptyList(),
 ) {
     val bestMedal: Medal? get() = medals.medalFor(bestMicros)
 }

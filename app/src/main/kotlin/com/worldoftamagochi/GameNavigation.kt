@@ -10,13 +10,17 @@ import com.worldoftamagochi.data.GameRepository
 import com.worldoftamagochi.feature.home.HomeRoute
 import com.worldoftamagochi.feature.race.RaceRoute
 import com.worldoftamagochi.feature.race.TrackSelectRoute
+import com.worldoftamagochi.network.OnlineRacing
 
 /**
  * Three places: home, the track list, a race. A navigation library arrives
  * with the next screens (shop, friends); for three it is only ceremony.
  */
 @Composable
-internal fun GameNavigation(repository: GameRepository) {
+internal fun GameNavigation(
+    repository: GameRepository,
+    online: OnlineRacing?,
+) {
     var route by rememberSaveable { mutableStateOf(HOME) }
     when {
         route == HOME -> {
@@ -25,12 +29,12 @@ internal fun GameNavigation(repository: GameRepository) {
 
         route == TRACKS -> {
             BackHandler { route = HOME }
-            TrackSelectRoute(repository, onRace = { route = RACE_PREFIX + it }, onBack = { route = HOME })
+            TrackSelectRoute(repository, online, onRace = { route = RACE_PREFIX + it }, onBack = { route = HOME })
         }
 
         route.startsWith(RACE_PREFIX) -> {
             BackHandler { route = TRACKS }
-            RaceRoute(repository, route.removePrefix(RACE_PREFIX), onExit = { route = TRACKS })
+            RaceRoute(repository, online, route.removePrefix(RACE_PREFIX), onExit = { route = TRACKS })
         }
     }
 }

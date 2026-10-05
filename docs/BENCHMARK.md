@@ -148,3 +148,15 @@ boards that reset at 00:00 UTC and weekly boards on Monday, ghosts of the
 players just ahead (the next people to beat, not the unreachable top), and
 anonymous players whose names come from a fixed list. We do not take global
 chat, friend search by name or any free-text field.
+
+## Iteration 6b: online races in the app
+
+Asynchronous multiplayer is how casual mobile games stay competitive with a
+small or scattered player base: Mario Kart Tour and Trackmania show other
+players' ghosts and daily boards, Clash Royale's daily rewards bring players
+back. Offline-first is the norm for children's devices (tablets without
+mobile data, car journeys). We take: the rival ghost is the real player just
+ahead of you this week, today's top three on every track card, "Today's
+online rank: #4" on the finish card, and a queue that keeps runs raced
+offline and uploads them later. We do not take login walls, push to sign
+in, or any online requirement to play.

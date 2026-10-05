@@ -6,6 +6,8 @@ import com.worldoftamagochi.data.GameRepository
 import com.worldoftamagochi.data.RecordSave
 import com.worldoftamagochi.data.toProgress
 import com.worldoftamagochi.data.toSave
+import com.worldoftamagochi.network.OnlineRacing
+import com.worldoftamagochi.network.Upload
 import com.worldoftamagochi.sim.Genome
 import com.worldoftamagochi.sim.ProgressUpdate
 import com.worldoftamagochi.sim.Reward
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import java.time.Instant
 import java.time.ZoneId
 
@@ -42,6 +45,7 @@ class RaceViewModel(
     private val clock: () -> Long = System::currentTimeMillis,
     private val zone: ZoneId = ZoneId.systemDefault(),
     private val rewards: RaceRewards = RaceRewards.DEFAULT,
+    private val online: OnlineRacing? = null,
 ) : ViewModel() {
     // Stats come from training (roadmap iteration 9); until then every pet is a rookie.
     private val stats = RaceStats.ROOKIE
@@ -52,6 +56,7 @@ class RaceViewModel(
     private var recorder = InputLog.Recorder()
     private var ghostFrames: List<Runner> = emptyList()
     private var ghostKind = GhostKind.COACH
+    private var ghostName: String? = null
     private var bestMicros: Long? = null
     private var bestMedal: Medal? = null
     private var genome = Genome.fromSeed(0)
@@ -83,6 +88,16 @@ class RaceViewModel(
             val ghostLog = record?.let { InputLog.fromCodes(it.log) } ?: Autopilot(track).play(stats).second
             ghostFrames = Replay.frames(track, stats, ghostLog)
             publish(countdown = COUNTDOWN_SECONDS)
+            // Online: race the player just ahead of you instead, if the server answers in time.
+            online?.let { racing ->
+                val rival = withTimeoutOrNull(RIVAL_TIMEOUT_MILLIS) { racing.rivalGhost(track.id) }
+                if (rival != null && phase == RacePhase.COUNTDOWN) {
+                    ghostFrames = Replay.frames(track, stats, InputLog.fromCodes(rival.log))
+                    ghostKind = GhostKind.RIVAL
+                    ghostName = rival.displayName
+                    publish(countdown = _state.value?.countdown)
+                }
+            }
         }
     }
 
@@ -109,7 +124,7 @@ class RaceViewModel(
             phase = RacePhase.RUNNING
             _events.trySend(RaceEvent.GO)
         }
-        val dueTicks = (sinceStart / NANOS_PER_TICK).toInt() + 1
+        val dueTicks = (sinceStart / NANOS_PER_TICK).toInt()
         while (race.runner.tick < dueTicks && !race.finished) step()
         if (race.finished) finish() else publish(countdown = if (sinceStart < GO_SHOWN_NANOS) 0 else null)
     }
@@ -187,7 +202,24 @@ class RaceViewModel(
             if (medal != null) _events.trySend(RaceEvent.MEDAL)
             if (paid?.levelUp != null) _events.trySend(RaceEvent.LEVEL_UP)
             publish(countdown = null)
+            online?.let { racing -> uploadRun(racing, log) }
         }
+        publish(countdown = null)
+    }
+
+    private suspend fun uploadRun(
+        racing: OnlineRacing,
+        log: InputLog,
+    ) {
+        summary = summary?.copy(online = OnlineOutcome.Sending)
+        publish(countdown = null)
+        val outcome =
+            when (val upload = racing.submit(track.id, log)) {
+                is Upload.Verified -> OnlineOutcome.Ranked(upload.response.dailyRank)
+                Upload.Queued -> OnlineOutcome.Queued
+                is Upload.Refused -> null
+            }
+        summary = summary?.copy(online = outcome)
         publish(countdown = null)
     }
 
@@ -215,6 +247,7 @@ class RaceViewModel(
                 runner = runner,
                 ghost = ghostFrames.getOrNull(runner.tick) ?: ghostFrames.lastOrNull(),
                 ghostKind = ghostKind,
+                ghostName = ghostName,
                 elapsedMicros = race.finishMicros ?: (runner.tick * Race.MICROS_PER_TICK),
                 bestMicros = bestMicros,
                 medals = medals,
@@ -228,5 +261,6 @@ class RaceViewModel(
         const val NANOS_PER_SECOND = 1_000_000_000L
         const val NANOS_PER_TICK = NANOS_PER_SECOND / RacePhysics.TICKS_PER_SECOND
         const val GO_SHOWN_NANOS = 700_000_000L
+        const val RIVAL_TIMEOUT_MILLIS = 2_500L
     }
 }

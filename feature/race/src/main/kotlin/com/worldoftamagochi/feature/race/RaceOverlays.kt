@@ -93,6 +93,7 @@ internal fun FinishCard(
                     Text(stringResource(R.string.finish_xp, summary.reward.xp), style = MaterialTheme.typography.titleMedium)
                     Text(stringResource(R.string.finish_coins, summary.reward.coins), style = MaterialTheme.typography.titleMedium)
                 }
+                summary.online?.let { OnlineLine(it) }
                 val next = summary.nextMedal
                 Text(
                     text =
@@ -122,3 +123,14 @@ internal fun FinishCard(
 
 private const val POP_FROM = 0.4f
 private val SCRIM = Color(0x99000000)
+
+@Composable
+private fun OnlineLine(outcome: OnlineOutcome) {
+    val text =
+        when (outcome) {
+            OnlineOutcome.Sending -> stringResource(R.string.online_sending)
+            OnlineOutcome.Queued -> stringResource(R.string.online_queued)
+            is OnlineOutcome.Ranked -> stringResource(R.string.online_rank, outcome.dailyRank)
+        }
+    Text(text, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.secondary)
+}

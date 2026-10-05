@@ -65,7 +65,7 @@ the core care loop, and every iteration from 3 on pays the player something.
     running with the rig, big Sprint (hold) and Jump (tap) buttons, stamina
     bar, countdown, own-record ghost, medal reveal, coin and XP rewards
     (daily cap), records and best ghosts saved per track, finish replay.
-- [x] **6a. Racing server.** Goal: online races that cannot be faked.
+- [x] **6a. Racing server.** (7394c93) Goal: online races that cannot be faked.
   - Anonymous players (random token stored as a SHA-256 hash), display
     names from the safe pet-name list plus a number.
   - `POST /v1/runs`: the server replays the input log with `:core:sim` and
@@ -74,7 +74,7 @@ the core care loop, and every iteration from 3 on pays the player something.
   - Daily (UTC), weekly (Monday) and all-time leaderboards with each
     player's best; ghosts of the players just ahead of you.
   - PostgreSQL via JDBC + Flyway; H2 in PostgreSQL mode for tests.
-- [ ] **6b. Online races in the app.** Goal: race other players today.
+- [x] **6b. Online races in the app.** Goal: race other players today.
   - `:core:network` (Ktor client), anonymous registration on first online
     race, run upload after each finish, leaderboards (daily/weekly) on the
     track list, race a real player's ghost; works offline and syncs later.

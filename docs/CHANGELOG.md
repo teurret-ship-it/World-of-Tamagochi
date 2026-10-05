@@ -4,6 +4,27 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 6b: online races in the app
+
+- New `:core:api` (the wire format shared by app and server) and
+  `:core:network` (Ktor client, offline-first `OnlineRacing`).
+- Every finished race is queued and uploaded; the anonymous account is
+  created on the first upload; runs raced offline go up later; refused runs
+  never block the queue.
+- Racing online: the ghost is the real player just ahead of you ("Rival:
+  Comet #4821"); the finish card shows today's online rank; each track card
+  shows today's top three.
+- The server address comes from the build (`-Pwot.serverUrl=...`); without
+  it the app is fully offline and hides online parts (ADR-008).
+- End-to-end tests run the app's client against the real server in memory.
+- Fix: the first frame after "Go!" stepped one physics tick too many.
+- CI prints failing tests, lint and detekt findings at the end of a failed
+  log.
+
+Self-review: clarity 4, game feel 4, retention 5, ethics 5, performance 4,
+accessibility 3.
+- The online parts need a deployed server (ADR-008): a product-owner step.
+
 ## Iteration 6a: the racing server
 
 - Anonymous players with safe display names ("Pip #4821").

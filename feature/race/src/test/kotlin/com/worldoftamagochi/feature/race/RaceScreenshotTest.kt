@@ -3,6 +3,7 @@ package com.worldoftamagochi.feature.race
 import androidx.compose.runtime.Composable
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.captureRoboImage
+import com.worldoftamagochi.api.LeaderboardEntry
 import com.worldoftamagochi.designsystem.WotTheme
 import com.worldoftamagochi.sim.Genome
 import com.worldoftamagochi.sim.Reward
@@ -72,6 +73,7 @@ class RaceScreenshotTest {
                     reward = Reward(xp = 30, coins = 23),
                     levelUp = null,
                     nextMedal = Medal.AUTHOR to medals.authorMicros,
+                    online = OnlineOutcome.Ranked(7),
                 )
             RaceScreen(state(frames.lastIndex, result = summary), RaceControls())
         }
@@ -82,7 +84,13 @@ class RaceScreenshotTest {
             val cards =
                 SprintTracks.ALL.mapIndexed { i, t ->
                     val m = MedalTimes.of(t)
-                    TrackCard(t, m, bestMicros = listOf(m.silver, m.authorMicros, null)[i])
+                    val today =
+                        listOf(
+                            LeaderboardEntry(1, "Comet #4821", m.authorMicros - 400_000, you = false),
+                            LeaderboardEntry(2, "Pip #1234", m.gold, you = true),
+                            LeaderboardEntry(3, "Bean #7310", m.silver, you = false),
+                        )
+                    TrackCard(t, m, bestMicros = listOf(m.silver, m.authorMicros, null)[i], today = if (i == 0) today else emptyList())
                 }
             TrackSelectScreen(cards, onRace = {}, onBack = {})
         }

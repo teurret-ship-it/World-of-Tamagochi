@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Online races only (ADR-008); the game is fully playable without a connection. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".WotApplication"
         android:allowBackup="true"

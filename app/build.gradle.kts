@@ -10,6 +10,13 @@ android {
         applicationId = "com.worldoftamagochi"
         versionCode = 1
         versionName = "0.1.0"
+        // Racing server (ADR-008). Empty = offline build: online features stay hidden.
+        val serverUrl = providers.gradleProperty("wot.serverUrl").orElse("").get()
+        buildConfigField("String", "SERVER_URL", "\"$serverUrl\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -27,6 +34,8 @@ dependencies {
     implementation(projects.feature.race)
     implementation(projects.core.ui)
     implementation(projects.core.data)
+    implementation(projects.core.network)
+    implementation(libs.ktor.client.okhttp)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)

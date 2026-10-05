@@ -40,6 +40,8 @@ val jvmOnly =
 
 include(":core:sim")
 include(":core:model")
+include(":core:api")
+include(":core:network")
 include(":server")
 
 if (!jvmOnly) {

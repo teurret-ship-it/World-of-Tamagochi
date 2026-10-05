@@ -54,6 +54,7 @@ private fun Lint.configureLint() {
     warningsAsErrors = true
     abortOnError = true
     checkDependencies = true
+    textReport = true
     disable +=
         setOf(
             "GradleDependency",

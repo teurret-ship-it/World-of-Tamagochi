@@ -72,6 +72,10 @@ jobs:
       - name: APK size budget
         run: scripts/check-apk-size.sh app/build/outputs/apk/release/app-release-unsigned.apk
 
+      - name: Failure summary
+        if: failure()
+        run: scripts/ci-failure-summary.sh
+
       - name: Upload reports
         if: failure()
         uses: actions/upload-artifact@v4

@@ -19,6 +19,8 @@ data class GameSave(
     val progress: ProgressSave = ProgressSave(),
     /** Personal bests per track id. */
     val records: Map<String, RecordSave> = emptyMap(),
+    /** The anonymous online identity and runs waiting to be uploaded. */
+    val online: OnlineSave = OnlineSave(),
 ) {
     companion object {
         const val CURRENT_VERSION = 1
@@ -56,6 +58,19 @@ data class ProgressSave(
 @Serializable
 data class RecordSave(
     val finishMicros: Long,
+    val log: List<Int>,
+)
+
+@Serializable
+data class OnlineSave(
+    val token: String? = null,
+    val displayName: String? = null,
+    val pending: List<PendingRunSave> = emptyList(),
+)
+
+@Serializable
+data class PendingRunSave(
+    val trackId: String,
     val log: List<Int>,
 )
 

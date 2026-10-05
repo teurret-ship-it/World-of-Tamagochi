@@ -9,8 +9,8 @@ import com.worldoftamagochi.sim.race.Track
 
 enum class RacePhase { COUNTDOWN, RUNNING, FINISHED }
 
-/** Who the ghost is: the player's own best run, or the coach before there is one. */
-enum class GhostKind { PERSONAL_BEST, COACH }
+/** Who the ghost is: a real player just ahead of you online, your own best, or the coach. */
+enum class GhostKind { RIVAL, PERSONAL_BEST, COACH }
 
 data class RaceUiState(
     val track: Track,
@@ -22,6 +22,8 @@ data class RaceUiState(
     val runner: Runner,
     val ghost: Runner?,
     val ghostKind: GhostKind,
+    /** The rival's display name when racing a real player's ghost. */
+    val ghostName: String? = null,
     val elapsedMicros: Long,
     val bestMicros: Long?,
     val medals: MedalTimes,
@@ -38,7 +40,19 @@ data class RaceSummary(
     val levelUp: Int?,
     /** The next medal to chase and its time, or null when the author medal is won. */
     val nextMedal: Pair<Medal, Long>?,
+    /** Online result: today's rank once verified, or queued when offline; null in offline builds. */
+    val online: OnlineOutcome? = null,
 )
+
+sealed interface OnlineOutcome {
+    data object Sending : OnlineOutcome
+
+    data class Ranked(
+        val dailyRank: Int,
+    ) : OnlineOutcome
+
+    data object Queued : OnlineOutcome
+}
 
 /** One-off moments for sound and haptics. */
 enum class RaceEvent { COUNTDOWN, GO, JUMP, HURDLE_HIT, BOOST, FINISH, MEDAL, LEVEL_UP }

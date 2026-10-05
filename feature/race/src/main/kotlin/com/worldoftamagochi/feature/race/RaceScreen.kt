@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.worldoftamagochi.data.GameRepository
+import com.worldoftamagochi.network.OnlineRacing
 import com.worldoftamagochi.sim.Expression
 import com.worldoftamagochi.sim.Genome
 import com.worldoftamagochi.sim.race.Runner
@@ -67,11 +68,12 @@ import com.worldoftamagochi.ui.R as UiR
 @Composable
 fun RaceRoute(
     repository: GameRepository,
+    online: OnlineRacing?,
     trackId: String,
     onExit: () -> Unit,
 ) {
     val track = remember(trackId) { SprintTracks.byId(trackId) ?: SprintTracks.MEADOW }
-    val viewModel: RaceViewModel = viewModel(key = trackId) { RaceViewModel(repository, track) }
+    val viewModel: RaceViewModel = viewModel(key = trackId) { RaceViewModel(repository, track, online = online) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val sounds = LocalGameSounds.current
     val haptics = LocalHapticFeedback.current
@@ -169,7 +171,12 @@ private fun Course(
         val camera = CourseCamera(size, state.runner.xMm)
         Canvas(Modifier.fillMaxSize()) { drawCourse(state.track, camera, colors, images) }
         state.ghost?.let { ghost ->
-            val ghostGenome = if (state.ghostKind == GhostKind.COACH) COACH_GENOME else state.genome
+            val ghostGenome =
+                when (state.ghostKind) {
+                    GhostKind.COACH -> COACH_GENOME
+                    GhostKind.RIVAL -> Genome.fromSeed(state.ghostName.hashCode().toLong())
+                    GhostKind.PERSONAL_BEST -> state.genome
+                }
             RunnerSprite(ghost, ghostGenome, camera, alpha = GHOST_ALPHA)
         }
         RunnerSprite(state.runner, state.genome, camera, alpha = 1f)
@@ -226,7 +233,12 @@ private fun Hud(
                 color = HUD_INK,
             )
             Box(Modifier.weight(1f))
-            val ghostLabel = stringResource(if (state.ghostKind == GhostKind.COACH) R.string.race_ghost_coach else R.string.race_ghost_best)
+            val ghostLabel =
+                when (state.ghostKind) {
+                    GhostKind.RIVAL -> stringResource(R.string.race_ghost_rival, state.ghostName.orEmpty())
+                    GhostKind.PERSONAL_BEST -> stringResource(R.string.race_ghost_best)
+                    GhostKind.COACH -> stringResource(R.string.race_ghost_coach)
+                }
             Text(ghostLabel, style = MaterialTheme.typography.titleMedium, color = HUD_INK)
         }
         RaceProgress(state)

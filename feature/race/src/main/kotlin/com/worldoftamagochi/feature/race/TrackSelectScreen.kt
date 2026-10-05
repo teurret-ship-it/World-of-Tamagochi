@@ -19,16 +19,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.worldoftamagochi.api.LeaderboardEntry
 import com.worldoftamagochi.data.GameRepository
+import com.worldoftamagochi.network.OnlineRacing
 import com.worldoftamagochi.sim.race.Medal
 import com.worldoftamagochi.sim.race.MedalTimes
 import com.worldoftamagochi.sim.race.SprintTracks
@@ -37,12 +43,25 @@ import com.worldoftamagochi.sim.race.Track
 @Composable
 fun TrackSelectRoute(
     repository: GameRepository,
+    online: OnlineRacing?,
     onRace: (String) -> Unit,
     onBack: () -> Unit,
 ) {
     val game by repository.game.collectAsStateWithLifecycle(initialValue = null)
     val medals = remember { SprintTracks.ALL.associateWith { MedalTimes.of(it) } }
-    val cards = SprintTracks.ALL.map { TrackCard(it, medals.getValue(it), game?.records?.get(it.id)?.finishMicros) }
+    var boards by remember { mutableStateOf<Map<String, List<LeaderboardEntry>>>(emptyMap()) }
+    LaunchedEffect(online) {
+        online ?: return@LaunchedEffect
+        online.flush() // runs raced offline go up first, so the board includes them
+        boards =
+            SprintTracks.ALL
+                .mapNotNull { track -> online.leaderboard(track.id, "daily")?.let { track.id to it.take(TOP_SHOWN) } }
+                .toMap()
+    }
+    val cards =
+        SprintTracks.ALL.map {
+            TrackCard(it, medals.getValue(it), game?.records?.get(it.id)?.finishMicros, boards[it.id].orEmpty())
+        }
     TrackSelectScreen(cards, onRace, onBack)
 }
 
@@ -91,6 +110,7 @@ private fun TrackCardView(
                         ?: stringResource(R.string.track_no_best),
                 style = MaterialTheme.typography.titleMedium,
             )
+            if (card.today.isNotEmpty()) TodayBoard(card.today)
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Medal.entries.forEach { medal ->
                     val earned = card.bestMedal?.let { it >= medal } == true
@@ -109,4 +129,28 @@ private fun TrackCardView(
     }
 }
 
+@Composable
+private fun TodayBoard(entries: List<LeaderboardEntry>) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(
+            stringResource(R.string.online_today),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.secondary,
+        )
+        entries.forEach { entry ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("#${entry.rank}", style = MaterialTheme.typography.bodyLarge, fontWeight = if (entry.you) FontWeight.Bold else null)
+                Text(
+                    entry.displayName,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f),
+                    fontWeight = if (entry.you) FontWeight.Bold else null,
+                )
+                Text(stringResource(R.string.seconds, formatSeconds(entry.finishMicros)), style = MaterialTheme.typography.bodyLarge)
+            }
+        }
+    }
+}
+
 private const val LOCKED_ALPHA = 0.3f
+private const val TOP_SHOWN = 3
