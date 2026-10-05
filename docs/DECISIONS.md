@@ -85,7 +85,7 @@ lobby, and cannot lag.
 **Rejected.** Live races first (needs a player base and netcode before
 anyone has a reason to play); paid boosts for races (CLAUDE.md section 2).
 
-## ADR-005: Asset sources
+## ADR-005: Asset sources (superseded by ADR-006)
 
 **Context.** Kids' games live on polish: sound on every tap, medals, a
 readable world. Drawing and composing everything ourselves is slow and
@@ -111,3 +111,35 @@ GitHub repositories are readable.
 **Rejected.** AI-generated art and audio (unclear licensing for a
 children's product); paid asset stores (licence terms vary per asset and
 cannot be checked from here).
+
+## ADR-006: Production-quality assets only
+
+**Context.** The product owner rejected Kenney's packs (ADR-005): a
+children's game competes on polish, so assets must be production quality,
+not the first free pack found. The development environment's network
+policy blocks most asset sites (kenney.nl, opengameart.org, freesound.org,
+archive.org, itch.io, pixabay.com, sonniss.com); GitHub, npm, PyPI and
+Maven Central are reachable.
+
+**Decision.**
+- **Pet:** stays procedural (vector rig + genome): a unique pet per player.
+- **Items, rewards, icons:** Microsoft Fluent Emoji, 3D style (MIT,
+  github.com/microsoft/fluentui-emoji): food, toys, soap, medals, trophies,
+  coins, stars in one consistent, high-end style. Converted to lossless
+  WebP at the sizes the app draws, listed in `docs/ASSETS.md`.
+- **UI and reward sounds:** SND (snd.dev, designed by professional sound
+  designers; free for commercial use, credited in-app). Its terms forbid
+  redistributing the unmodified files as standalone assets, so the sounds
+  are not committed: the build downloads the pinned npm package
+  `snd-lib@1.2.4` (SHA-256 checked) and embeds the sound sprite in the APK,
+  where it is part of the product. The app decodes the sprite once and plays
+  slices.
+- **Typeface:** Fredoka (SIL OFL), rounded and highly legible for children.
+- **Still wanted, waiting on network access:** Google's Material Design
+  sound resources (CC-BY 4.0, archive.org) for richer game sounds (eating,
+  bubbles, coins); professional GDC bundles from Sonniss. Allowing
+  archive.org and sonniss.com in the environment unblocks them.
+
+**Rejected.** Kenney (product owner: not premium enough); AI-generated art
+and audio (unclear licensing for a children's product); itch.io packs
+(per-pack licences, unreachable).
