@@ -8,7 +8,7 @@
     <string name="track_hills">Hoop Hills</string>
     <string name="track_trail">Twisty Trail</string>
     <string name="track_unknown">Mystery Track</string>
-    <string name="training_title">%1$s's training</string>
+    <string name="training_title">%1$s\'s training</string>
     <string name="form_top">Top form! Ready to race.</string>
     <string name="form_hungry">%1$s is hungry and will run slower. Feed first for top form!</string>
     <string name="form_tired">%1$s is tired and will run slower. A nap helps!</string>
