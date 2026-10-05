@@ -86,6 +86,7 @@ import com.worldoftamagochi.ui.R as UiR
 fun HomeRoute(
     repository: GameRepository,
     onOpenRaces: () -> Unit = {},
+    onOpenShop: () -> Unit = {},
 ) {
     val viewModel: HomeViewModel = viewModel { HomeViewModel(repository) }
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -104,6 +105,7 @@ fun HomeRoute(
                 onSound = viewModel::onSoundToggled,
                 onHaptics = viewModel::onHapticsToggled,
                 onOpenRaces = onOpenRaces,
+                onOpenShop = onOpenShop,
             ),
         effects = viewModel.effects,
     )
@@ -154,7 +156,7 @@ fun HomeScreen(
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Box {
-            HomeLayout(state, stage, care, onSettings = { settingsOpen = true }, onOpenRaces = actions.onOpenRaces)
+            HomeLayout(state, stage, care, onSettings = { settingsOpen = true }, actions = actions)
             draggedFood?.let { FoodInHand(it) }
             LevelUpBanner(levelUp, onDone = { levelUp = null })
             state.away?.let { AwayCard(state, it, actions.onDismissAway) }
@@ -169,7 +171,7 @@ private fun HomeLayout(
     stage: @Composable (Modifier) -> Unit,
     care: CareCallbacks,
     onSettings: () -> Unit,
-    onOpenRaces: () -> Unit,
+    actions: HomeActions,
 ) {
     BoxWithConstraints {
         if (maxWidth >= WIDE_SCREEN) {
@@ -183,7 +185,7 @@ private fun HomeLayout(
                     TopBar(state, onSettings)
                     Status(state)
                     CareBar(state, care)
-                    RacesButton(onOpenRaces)
+                    PlayButtons(actions.onOpenRaces, actions.onOpenShop)
                 }
             }
         } else {
@@ -195,7 +197,7 @@ private fun HomeLayout(
                 TopBar(state, onSettings)
                 stage(Modifier.fillMaxWidth())
                 CareBar(state, care)
-                RacesButton(onOpenRaces)
+                PlayButtons(actions.onOpenRaces, actions.onOpenShop)
                 Status(state)
             }
         }

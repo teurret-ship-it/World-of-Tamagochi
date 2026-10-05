@@ -45,7 +45,7 @@ internal fun AwayCard(
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )
-                Pet(state.genome, state.expression, state.name, animate = false, modifier = Modifier.size(140.dp))
+                Pet(state.genome, state.expression, state.name, animate = false, wearing = state.wearing, modifier = Modifier.size(140.dp))
                 val hours = away.minutes / MINUTES_PER_HOUR
                 Text(
                     text =

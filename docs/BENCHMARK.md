@@ -160,3 +160,18 @@ ahead of you this week, today's top three on every track card, "Today's
 online rank: #4" on the finish card, and a queue that keeps runs raced
 offline and uploads them later. We do not take login walls, push to sign
 in, or any online requirement to play.
+
+## Iteration 7: shop and wardrobe
+
+Pou, My Talking Tom and Adopt Me! all turn earned coins into visible
+self-expression: hats and glasses on the pet, tried on before buying. Animal
+Crossing's fitting room and Fall Guys' costumes show that cosmetics are the
+reward children talk about, and that they must never change how well you
+play. We take: a free try-on that shows the item on your own pet, one big
+button that buys, wears or takes off, a celebration on every purchase, and
+the outfit everywhere the pet appears (home, welcome-back card, races, your
+ghost; the coach wears a cap so a child can tell it apart). Prices follow a
+test of the economy: something new on day one, a new goal at least weekly,
+the whole wardrobe in about five weeks. We do not take loot boxes, timed
+"only today" offers or premium-only items: everything is bought with coins
+earned by caring and racing, at a price shown up front.

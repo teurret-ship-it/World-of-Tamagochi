@@ -18,6 +18,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.worldoftamagochi.sim.Expression
 import com.worldoftamagochi.sim.Genome
+import com.worldoftamagochi.sim.shop.Catalog
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -39,6 +40,33 @@ class PetScreenshotTest {
     fun varietyOfGenomes() {
         captureRoboImage("src/test/screenshots/pet_genomes.png") {
             Grid((1L..12L).map { Genome.fromSeed(it) to Expression.HAPPY }) { "hue ${it.first.bodyHue}" }
+        }
+    }
+
+    /** Every shop item on a different pet (body shapes and ears vary), plus a full outfit. */
+    @Test
+    fun everyCosmetic() {
+        val outfits = Catalog.ITEMS.map { listOf(it.id) } + listOf(listOf("crown", "sunglasses", "scarf"), listOf("cap", "goggles", "bell"))
+        captureRoboImage("src/test/screenshots/pet_cosmetics.png") {
+            Column(Modifier.background(Color(0xFFFFF8EE)).padding(8.dp)) {
+                outfits.withIndex().chunked(COLUMNS).forEach { row ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        row.forEach { (i, outfit) ->
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Pet(
+                                    Genome.fromSeed(i + 1L),
+                                    Expression.HAPPY,
+                                    "Mochi",
+                                    animate = false,
+                                    wearing = outfit,
+                                    modifier = Modifier.size(180.dp),
+                                )
+                                Text(outfit.joinToString(), fontSize = 14.sp, color = Color(0xFF2B2420))
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

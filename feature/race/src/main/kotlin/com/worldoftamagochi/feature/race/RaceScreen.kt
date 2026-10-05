@@ -171,15 +171,15 @@ private fun Course(
         val camera = CourseCamera(size, state.runner.xMm)
         Canvas(Modifier.fillMaxSize()) { drawCourse(state.track, camera, colors, images) }
         state.ghost?.let { ghost ->
-            val ghostGenome =
+            val (ghostGenome, ghostWearing) =
                 when (state.ghostKind) {
-                    GhostKind.COACH -> COACH_GENOME
-                    GhostKind.RIVAL -> Genome.fromSeed(state.ghostName.hashCode().toLong())
-                    GhostKind.PERSONAL_BEST -> state.genome
+                    GhostKind.COACH -> COACH_GENOME to COACH_WEARING
+                    GhostKind.RIVAL -> Genome.fromSeed(state.ghostName.hashCode().toLong()) to emptyList()
+                    GhostKind.PERSONAL_BEST -> state.genome to state.wearing
                 }
-            RunnerSprite(ghost, ghostGenome, camera, alpha = GHOST_ALPHA)
+            RunnerSprite(ghost, ghostGenome, ghostWearing, camera, alpha = GHOST_ALPHA)
         }
-        RunnerSprite(state.runner, state.genome, camera, alpha = 1f)
+        RunnerSprite(state.runner, state.genome, state.wearing, camera, alpha = 1f)
     }
 }
 
@@ -187,6 +187,7 @@ private fun Course(
 private fun RunnerSprite(
     runner: Runner,
     genome: Genome,
+    wearing: List<String>,
     camera: CourseCamera,
     alpha: Float,
 ) {
@@ -208,6 +209,7 @@ private fun RunnerSprite(
         name = "",
         animate = false,
         pose = PetPose(look = Offset(1f, 0f), squash = if (runner.grounded) hopMm / HOP_HEIGHT_MM.toFloat() * SQUASH_ON_LANDING else 0f),
+        wearing = wearing,
         modifier =
             Modifier
                 .offset { IntOffset(x.roundToInt(), y.roundToInt()) }
@@ -358,6 +360,9 @@ private fun HoldButton(
 }
 
 private val COACH_GENOME = Genome.fromSeed(2_026)
+
+/** The coach wears a cap, so a child can tell the coach from their own ghost. */
+private val COACH_WEARING = listOf("cap")
 private const val GHOST_ALPHA = 0.45f
 private const val PET_SIZE_MM = 1_100f
 private const val HOP_STRIDE_MM = 700.0

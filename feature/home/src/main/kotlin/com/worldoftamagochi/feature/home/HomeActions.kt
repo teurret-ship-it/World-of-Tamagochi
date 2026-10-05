@@ -92,6 +92,7 @@ class HomeActions(
     val onSound: (Boolean) -> Unit = {},
     val onHaptics: (Boolean) -> Unit = {},
     val onOpenRaces: () -> Unit = {},
+    val onOpenShop: () -> Unit = {},
 )
 
 /** Callbacks for the care bar; the food button can also be dragged onto the pet. */

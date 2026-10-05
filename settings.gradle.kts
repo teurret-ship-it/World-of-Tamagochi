@@ -50,5 +50,6 @@ if (!jvmOnly) {
     include(":core:data")
     include(":feature:home")
     include(":feature:race")
+    include(":feature:shop")
     include(":app")
 }

@@ -16,6 +16,8 @@ data class RaceUiState(
     val track: Track,
     val genome: Genome,
     val name: String,
+    /** Ids of the cosmetics the pet wears. */
+    val wearing: List<String> = emptyList(),
     val phase: RacePhase,
     /** 3, 2, 1, then 0 = "Go!" for a moment; null once racing. */
     val countdown: Int?,

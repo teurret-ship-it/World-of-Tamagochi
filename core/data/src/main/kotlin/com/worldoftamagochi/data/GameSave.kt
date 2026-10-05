@@ -5,6 +5,8 @@ import com.worldoftamagochi.sim.Needs
 import com.worldoftamagochi.sim.PetState
 import com.worldoftamagochi.sim.PlayerProgress
 import com.worldoftamagochi.sim.SleepWindow
+import com.worldoftamagochi.sim.shop.Catalog
+import com.worldoftamagochi.sim.shop.Wardrobe
 import kotlinx.serialization.Serializable
 import java.time.ZoneId
 
@@ -21,6 +23,8 @@ data class GameSave(
     val records: Map<String, RecordSave> = emptyMap(),
     /** The anonymous online identity and runs waiting to be uploaded. */
     val online: OnlineSave = OnlineSave(),
+    /** Cosmetics the player owns and the ones the pet wears. */
+    val wardrobe: WardrobeSave = WardrobeSave(),
 ) {
     companion object {
         const val CURRENT_VERSION = 1
@@ -74,6 +78,13 @@ data class PendingRunSave(
     val log: List<Int>,
 )
 
+/** Item ids; the slot of a worn item comes from the catalog, so a save never disagrees with it. */
+@Serializable
+data class WardrobeSave(
+    val owned: List<String> = emptyList(),
+    val worn: List<String> = emptyList(),
+)
+
 /** Player preferences (CLAUDE.md section 2: every sound and vibration has a toggle). */
 @Serializable
 data class Settings(
@@ -120,3 +131,12 @@ fun PetState.toSave(
 fun ProgressSave.toProgress(): PlayerProgress = PlayerProgress(xp, coins, careCoinsToday, careCoinsDay, raceCoinsToday, raceCoinsDay)
 
 fun PlayerProgress.toSave(): ProgressSave = ProgressSave(xp, coins, careCoinsToday, careCoinsDay, raceCoinsToday, raceCoinsDay)
+
+/** Unknown ids (an item removed from the catalog) are dropped instead of crashing. */
+fun WardrobeSave.toWardrobe(): Wardrobe {
+    val owned = owned.filter { Catalog.byId(it) != null }.toSet()
+    val equipped = worn.filter { it in owned }.mapNotNull { Catalog.byId(it) }.associate { it.slot to it.id }
+    return Wardrobe(owned, equipped)
+}
+
+fun Wardrobe.toSave(): WardrobeSave = WardrobeSave(owned.sorted(), equipped.values.sorted())

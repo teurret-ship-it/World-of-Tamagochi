@@ -4,6 +4,29 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 7: shop and wardrobe
+
+- 14 cosmetics in three slots (head, face, neck), drawn on the rig with
+  Fluent Emoji 3D and anchored to the body so they follow every shape,
+  breath and squash; bells and pendants hang on a drawn collar.
+- New Shop (button next to Races): a fitting room with a free try-on, buy,
+  wear and take off, stars and sparkles with a fanfare on every purchase,
+  "N more coins to go" and a hint where coins come from.
+- The outfit shows at home, on the welcome-back card, in races and on your
+  own ghost; the coach wears a cap.
+- Saved in the game file; items that leave the catalog are dropped safely.
+- Economy test: first item on day one, never more than a week without
+  something new, whole wardrobe in about five weeks.
+- CI: online client uses the platform HTTP engine (OkHttp needed SDK 37);
+  failed runs print what went wrong at the end of the log.
+
+Self-review: clarity 4, game feel 4, retention 5, ethics 5, performance 4,
+accessibility 3.
+- Accessibility 3: tiles announce name and price, but the fitting room has
+  no audio description of the outfit yet (iteration 32).
+- Rival ghosts do not show their owner's outfit yet (needs the outfit on the
+  server; with live races, iteration 18).
+
 ## Iteration 6b: online races in the app
 
 - New `:core:api` (the wire format shared by app and server) and

@@ -54,7 +54,8 @@ jobs:
           ./gradlew recordRoborazziDebug
 
       - name: Publish recorded screenshots for review
-        if: steps.shots.outputs.changed == 'true' || steps.shots.outputs.missing == 'true'
+        # Pushes only: Dependabot and pull requests do not get screenshot branches.
+        if: github.event_name == 'push' && (steps.shots.outputs.changed == 'true' || steps.shots.outputs.missing == 'true')
         run: |
           branch="screenshots/${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
           git config user.name "github-actions[bot]"

@@ -74,18 +74,24 @@ the core care loop, and every iteration from 3 on pays the player something.
   - Daily (UTC), weekly (Monday) and all-time leaderboards with each
     player's best; ghosts of the players just ahead of you.
   - PostgreSQL via JDBC + Flyway; H2 in PostgreSQL mode for tests.
-- [x] **6b. Online races in the app.** Goal: race other players today.
+- [x] **6b. Online races in the app.** (1758013, CI green at 4b8f69a) Goal: race other players today.
   - `:core:network` (Ktor client), anonymous registration on first online
     race, run upload after each finish, leaderboards (daily/weekly) on the
     track list, race a real player's ghost; works offline and syncs later.
   - Needs a deployed server (ADR-008): until then the app hides online
     features.
-- [ ] **7. Agility course.** Slalom, tunnel, seesaw, hurdles, tyre; faults
+- [x] **7. Shop and wardrobe.** Goal: spend what you earn. (Moved ahead of
+  agility: coins had nothing to buy, so rewards felt empty.)
+  - 14 cosmetics (head, face, neck) drawn on the rig from Fluent Emoji 3D,
+    following breath and squash; worn at home, in races and by your ghost.
+  - Shop with a free fitting room, buy/wear/take off, celebrations, a
+    gentle "N more coins to go" with where coins come from.
+  - Economy test: a first item on day one, something new at least weekly,
+    the whole wardrobe in about five weeks.
+- [ ] **7b. Treats.** Coins buy treats (cookie, strawberry) that cheer the
+  pet up: a repeatable sink once the wardrobe is complete; daily cap.
+- [ ] **8. Agility course.** Slalom, tunnel, seesaw, hurdles, tyre; faults
   add time; one-thumb controls; online ghosts and leaderboard reuse 6.
-- [ ] **8. Shop and wardrobe.** Goal: spend what you earn.
-  - Coins buy food and cosmetics (hats, glasses, scarves) drawn on the rig,
-    visible in races; try-on preview. Economy sources/sinks simulated for
-    30 days in a test.
 - [ ] **9. Training and race form.** Exercises raise speed, stamina,
   agility and jump at the cost of energy and hunger, daily cap; a hungry or
   tired pet races worse, so care matters in competitions.

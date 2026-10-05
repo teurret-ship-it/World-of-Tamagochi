@@ -19,6 +19,8 @@ data class HomeUiState(
     /** Progress through the current level, 0..1. */
     val levelProgress: Float = 0f,
     val coins: Long = 0,
+    /** Ids of the cosmetics the pet wears. */
+    val wearing: List<String> = emptyList(),
     /** True while a lights-off nap runs (the player can wake the pet). */
     val napping: Boolean = false,
     /** True while the soap is in hand: rubbing the pet washes it. */

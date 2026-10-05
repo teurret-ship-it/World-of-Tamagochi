@@ -8,6 +8,7 @@ import com.worldoftamagochi.data.Settings
 import com.worldoftamagochi.data.toProgress
 import com.worldoftamagochi.data.toSave
 import com.worldoftamagochi.data.toState
+import com.worldoftamagochi.data.toWardrobe
 import com.worldoftamagochi.sim.CareAction
 import com.worldoftamagochi.sim.CareResult
 import com.worldoftamagochi.sim.CareRules
@@ -60,6 +61,7 @@ class HomeViewModel(
     private var genome: Genome? = null
     private lateinit var pet: PetState
     private var progress = PlayerProgress()
+    private var wearing: List<String> = emptyList()
     private var washing = false
     private var strokes = 0
     private var away: AwaySummary? = null
@@ -87,6 +89,11 @@ class HomeViewModel(
                 repository.game.collect { game ->
                     game?.let {
                         progress = it.progress.toProgress()
+                        wearing =
+                            it.wardrobe
+                                .toWardrobe()
+                                .equipped.values
+                                .toList()
                         publish()
                     }
                 }
@@ -110,6 +117,11 @@ class HomeViewModel(
             // The pet sleeps in the player's current time zone (travel, DST).
             pet = saved.pet.toState().let { it.copy(sleep = it.sleep.copy(zone = zone)) }
             progress = saved.progress.toProgress()
+            wearing =
+                saved.wardrobe
+                    .toWardrobe()
+                    .equipped.values
+                    .toList()
         }
         genome = Genome.fromSeed(seed)
         val before = pet
@@ -242,6 +254,7 @@ class HomeViewModel(
             level = level,
             levelProgress = ((progress.xp - start).toFloat() / span).coerceIn(0f, 1f),
             coins = progress.coins,
+            wearing = wearing,
             napping = isNapping(),
             washing = washing,
             strokes = strokes,

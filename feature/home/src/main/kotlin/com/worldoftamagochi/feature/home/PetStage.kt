@@ -121,6 +121,7 @@ internal fun PetStage(
             animate = animate,
             look = look,
             squash = squash.value,
+            wearing = state.wearing,
             modifier = Modifier.fillMaxSize(),
         )
         if (state.asleep) {

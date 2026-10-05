@@ -25,6 +25,7 @@ internal fun DrawScope.drawPet(
     genome: Genome,
     expression: Expression,
     pose: PetPose,
+    outfit: List<WornItem> = emptyList(),
 ) {
     val colors = genome.colors()
     val unit = minOf(size.width, size.height)
@@ -44,6 +45,7 @@ internal fun DrawScope.drawPet(
         drawEars(genome.ears, body, colors)
         drawBody(body, genome.pattern, colors)
         drawFace(genome, expression, pose, body, colors)
+        drawOutfit(outfit, body)
     }
 }
 
@@ -52,7 +54,7 @@ private fun Rect.inflateTo(
     height: Float,
 ): Rect = Rect(center.x - width / 2f, center.y - height / 2f, center.x + width / 2f, center.y + height / 2f)
 
-private fun bodyPath(body: Rect): Path =
+internal fun bodyPath(body: Rect): Path =
     Path().apply {
         // A soft "gumdrop": rounder at the bottom than at the top.
         addRoundRect(
@@ -371,4 +373,4 @@ private fun DrawScope.drawSnore(body: Rect) {
 }
 
 /** A point inside [this] rect given as fractions of its width and height. */
-private fun Rect.at(fraction: Offset): Offset = Offset(left + width * fraction.x, top + height * fraction.y)
+internal fun Rect.at(fraction: Offset): Offset = Offset(left + width * fraction.x, top + height * fraction.y)

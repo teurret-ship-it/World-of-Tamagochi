@@ -5,6 +5,8 @@ import com.worldoftamagochi.sim.Needs
 import com.worldoftamagochi.sim.PetState
 import com.worldoftamagochi.sim.PlayerProgress
 import com.worldoftamagochi.sim.SleepWindow
+import com.worldoftamagochi.sim.shop.Slot
+import com.worldoftamagochi.sim.shop.Wardrobe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -40,6 +42,14 @@ class GameRepositoryTest {
         assertEquals(pet, pet.toSave(seed = 42, name = "Mochi").toState())
         val progress = PlayerProgress(xp = 1234, coins = 56, careCoinsToday = 7, careCoinsDay = 20_000)
         assertEquals(progress, progress.toSave().toProgress())
+    }
+
+    @Test
+    fun `the wardrobe survives a round trip and forgets items the catalog no longer has`() {
+        val wardrobe = Wardrobe(owned = setOf("cap", "bell"), equipped = mapOf(Slot.HEAD to "cap"))
+        assertEquals(wardrobe, wardrobe.toSave().toWardrobe())
+        val old = WardrobeSave(owned = listOf("cap", "retired_hat"), worn = listOf("retired_hat", "cap", "bell"))
+        assertEquals(Wardrobe(owned = setOf("cap"), equipped = mapOf(Slot.HEAD to "cap")), old.toWardrobe())
     }
 
     @Test

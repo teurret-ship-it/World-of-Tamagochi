@@ -6,6 +6,7 @@ import com.worldoftamagochi.data.GameRepository
 import com.worldoftamagochi.data.RecordSave
 import com.worldoftamagochi.data.toProgress
 import com.worldoftamagochi.data.toSave
+import com.worldoftamagochi.data.toWardrobe
 import com.worldoftamagochi.network.OnlineRacing
 import com.worldoftamagochi.network.Upload
 import com.worldoftamagochi.sim.Genome
@@ -60,6 +61,7 @@ class RaceViewModel(
     private var bestMicros: Long? = null
     private var bestMedal: Medal? = null
     private var genome = Genome.fromSeed(0)
+    private var wearing: List<String> = emptyList()
     private var name = ""
 
     private var sprintHeld = false
@@ -80,6 +82,11 @@ class RaceViewModel(
             game?.let {
                 genome = Genome.fromSeed(it.pet.seed)
                 name = it.pet.name
+                wearing =
+                    it.wardrobe
+                        .toWardrobe()
+                        .equipped.values
+                        .toList()
             }
             val record = game?.records?.get(track.id)
             bestMicros = record?.finishMicros
@@ -242,6 +249,7 @@ class RaceViewModel(
                 track = track,
                 genome = genome,
                 name = name,
+                wearing = wearing,
                 phase = phase,
                 countdown = countdown,
                 runner = runner,

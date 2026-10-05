@@ -11,14 +11,18 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.worldoftamagochi.sim.Expression
 import com.worldoftamagochi.sim.Genome
+import com.worldoftamagochi.sim.shop.Catalog
 import com.worldoftamagochi.ui.R
 import kotlinx.coroutines.delay
 import kotlin.random.Random
@@ -38,11 +42,25 @@ fun Pet(
     look: Offset = Offset.Zero,
     squash: Float = 0f,
     pose: PetPose = PetPose.REST,
+    wearing: Collection<String> = emptyList(),
 ) {
     val description = stringResource(R.string.pet_description, name, stringResource(expression.descriptionRes()))
     val live = if (animate) livePose(expression, look, squash) else pose
+    val outfit = rememberOutfit(wearing)
     Canvas(modifier = modifier.semantics { contentDescription = description }) {
-        drawPet(genome, expression, live)
+        drawPet(genome, expression, live, outfit)
+    }
+}
+
+/** Loads the images of the worn items, in drawing order (neck, face, head). */
+@Composable
+private fun rememberOutfit(wearing: Collection<String>): List<WornItem> {
+    val items =
+        wearing
+            .mapNotNull { id -> Catalog.byId(id)?.let { item -> Wearables.byId(id)?.let { it to item.slot } } }
+            .sortedBy { (_, slot) -> Wearables.layer(slot) }
+    return items.map { (wearable, _) ->
+        key(wearable.id) { WornItem(wearable.placement, ImageBitmap.imageResource(wearable.drawable)) }
     }
 }
 

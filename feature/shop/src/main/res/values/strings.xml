@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shop_title">Shop</string>
+    <string name="back">Back</string>
+    <string name="try_on_hint">Tap anything to try it on!</string>
+    <string name="buy_for">Buy for %1$d</string>
+    <string name="wear">Wear it</string>
+    <string name="take_off">Take it off</string>
+    <string name="wearing">Wearing</string>
+    <string name="yours">Yours</string>
+    <string name="earn_hint">Care for %1$s and race to earn coins!</string>
+    <string name="bought">Yay! %1$s looks great!</string>
+    <plurals name="coins">
+        <item quantity="one">%1$d coin</item>
+        <item quantity="other">%1$d coins</item>
+    </plurals>
+    <plurals name="coins_to_go">
+        <item quantity="one">%1$d more coin to go</item>
+        <item quantity="other">%1$d more coins to go</item>
+    </plurals>
+    <string name="item_ribbon">Red ribbon</string>
+    <string name="item_blossom">Cherry blossom</string>
+    <string name="item_bell">Little bell</string>
+    <string name="item_glasses">Round glasses</string>
+    <string name="item_cap">Blue cap</string>
+    <string name="item_scarf">Cosy scarf</string>
+    <string name="item_butterfly">Butterfly</string>
+    <string name="item_sunglasses">Cool shades</string>
+    <string name="item_grad_cap">Graduation cap</string>
+    <string name="item_goggles">Swim goggles</string>
+    <string name="item_headphones">Headphones</string>
+    <string name="item_gem">Gem pendant</string>
+    <string name="item_top_hat">Top hat</string>
+    <string name="item_crown">Royal crown</string>
+</resources>

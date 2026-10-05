@@ -38,4 +38,19 @@ Chequered flag|chequered_flag|race_finish
 3rd place medal|3rd_place_medal|medal_bronze
 Trophy|trophy|medal_author
 Stopwatch|stopwatch|race_timer
+Shopping bags|shopping_bags|ui_shop
+Ribbon|ribbon|wear_ribbon
+Cherry blossom|cherry_blossom|wear_blossom
+Bell|bell|wear_bell
+Glasses|glasses|wear_glasses
+Billed cap|billed_cap|wear_cap
+Scarf|scarf|wear_scarf
+Butterfly|butterfly|wear_butterfly
+Sunglasses|sunglasses|wear_sunglasses
+Graduation cap|graduation_cap|wear_grad_cap
+Goggles|goggles|wear_goggles
+Headphone|headphone|wear_headphones
+Gem stone|gem_stone|wear_gem
+Top hat|top_hat|wear_top_hat
+Crown|crown|wear_crown
 LIST
