@@ -3,57 +3,74 @@ name: CI
 # One job, the same gates as CLAUDE.md section 4. The GitHub runner ships an
 # Android SDK, so this is the authoritative build even for sessions that can
 # only run the JVM-only subset locally (ADR-002).
+#
+# Screenshots: references live in */src/test/screenshots and change only
+# through a reviewed commit. When they are missing or differ, CI records the
+# new images and pushes them to `screenshots/<branch>` for review (ADR-003).
 
 on:
   push:
-    branches: ['**']
+    branches: ['**', '!screenshots/**']
   pull_request:
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
 
       - name: Check (format, detekt, lint, unit tests, coverage)
         run: ./gradlew check --continue
 
-      - name: Screenshots (verify against references, record when none exist yet)
+      - name: Screenshots
+        id: shots
         run: |
-          if ls */*/src/test/screenshots/*.png */src/test/screenshots/*.png >/dev/null 2>&1; then
-            ./gradlew verifyRoborazziDebug
+          if ls */src/test/screenshots/*.png */*/src/test/screenshots/*.png >/dev/null 2>&1; then
+            if ./gradlew verifyRoborazziDebug; then exit 0; fi
+            echo "::error::Screenshots differ from the committed references."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           else
-            echo "::warning::No reference screenshots committed yet - recording them instead of verifying."
-            ./gradlew recordRoborazziDebug
+            echo "::warning::No reference screenshots yet."
+            echo "missing=true" >> "$GITHUB_OUTPUT"
           fi
+          ./gradlew recordRoborazziDebug
+
+      - name: Publish recorded screenshots for review
+        if: steps.shots.outputs.changed == 'true' || steps.shots.outputs.missing == 'true'
+        run: |
+          branch="screenshots/${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898237+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add -A -- '*src/test/screenshots/*.png'
+          git commit -q -m "Screenshots recorded for ${GITHUB_SHA::7}" || echo "No screenshot changes"
+          git push -f origin "$branch"
+          echo "Recorded screenshots pushed to $branch"
+
+      - name: Fail on screenshot differences
+        if: steps.shots.outputs.changed == 'true'
+        run: exit 1
 
       - name: Release build (R8)
         run: ./gradlew :app:assembleRelease
 
       - name: APK size budget
         run: scripts/check-apk-size.sh app/build/outputs/apk/release/app-release-unsigned.apk
-
-      - name: Upload screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots
-          path: |
-            **/src/test/screenshots/**
-            **/build/outputs/roborazzi/**
-          if-no-files-found: ignore
 
       - name: Upload reports
         if: failure()

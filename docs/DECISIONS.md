@@ -50,3 +50,18 @@ Central without touching the blocked host.
 
 **Consequence.** Game rules belong in `:core:sim` anyway (CLAUDE.md
 section 2), so the most important tests run everywhere.
+
+## ADR-003: Screenshot review through a branch, not artifacts
+
+**Context.** Development sessions cannot download GitHub Actions artifacts
+(blob storage is outside their network policy), yet every screen change has
+to be looked at (CLAUDE.md section 4).
+
+**Decision.** Reference screenshots are committed in
+`*/src/test/screenshots`. CI verifies against them; when they are missing
+or differ, CI records the new images and force-pushes them to
+`screenshots/<branch>`. The reviewer fetches that branch, looks at the PNGs
+and, if they are right, copies them into the working branch in a normal
+commit. Differences fail CI until that commit lands, so references never
+change unreviewed. Robolectric test failures print full stack traces to the
+log for the same reason.

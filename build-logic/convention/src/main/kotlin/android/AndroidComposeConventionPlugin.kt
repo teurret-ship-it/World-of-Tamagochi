@@ -8,6 +8,7 @@ import io.github.takahirom.roborazzi.RoborazziExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
@@ -42,6 +43,13 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
             tasks.withType<Test>().configureEach {
                 systemProperty("robolectric.graphicsMode", "NATIVE")
                 systemProperty("robolectric.pixelCopyRenderMode", "hardware")
+                // Robolectric 4.17 reflects into jdk.internal.access on JDK 17+.
+                jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED", "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED")
+                testLogging {
+                    events("failed")
+                    exceptionFormat = TestExceptionFormat.FULL
+                    showStackTraces = true
+                }
             }
 
             dependencies {

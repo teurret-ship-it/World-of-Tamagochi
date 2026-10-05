@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="true"
@@ -10,7 +11,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:enableOnBackInvokedCallback="true"
-        android:theme="@style/Theme.WorldOfTamagochi">
+        android:theme="@style/Theme.WorldOfTamagochi"
+        tools:targetApi="33">
         <activity
             android:name=".MainActivity"
             android:exported="true">
