@@ -62,3 +62,20 @@ when the player sleeps (default 22:00-07:00 local, set in onboarding), the
 same daily-rhythm idea Pokémon Sleep builds on. Balance is checked by a test
 of the ethics rule: three check-ins a day keep every need above zero at
 every life stage.
+
+## Iteration 2: a living pet
+
+My Talking Tom and Pou set the bar for "alive": constant idle motion,
+blinking, eyes that follow the finger, and an exaggerated squash-and-stretch
+reaction to every touch. Disney's principles of animation (squash and
+stretch, anticipation, follow-through) are why it reads as alive rather than
+as a sprite. Tamagotchi Uni and Pokémon make every individual feel unique.
+We take: irregular blinking (a metronome looks mechanical), slower breathing
+while asleep, pupils that track the finger, a bouncy squash on every stroke
+with a haptic tick, and a procedural genome (colour, markings, ears, tail,
+proportions, eye size) so no two players share a pet. Faces show exactly one
+need at a time, the most urgent, so a child reads the pet at a glance
+instead of scanning five bars. We do not take voice repetition (Talking
+Tom's microphone needs a privacy review for children, not worth it yet) and
+we do not use bitmaps: the rig is vector, so every size and skin works
+without new art.

@@ -6,6 +6,9 @@ naming:
   TopLevelPropertyNaming:
     constantPattern: '[A-Z][_A-Za-z0-9]*'
 complexity:
+  TooManyFunctions:
+    # Art files are many small drawing helpers by design.
+    excludes: ['**/test/**', '**/*Art.kt']
   LongParameterList:
     ignoreAnnotated: ['Composable']
 style:

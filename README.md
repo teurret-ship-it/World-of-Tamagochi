@@ -11,11 +11,13 @@ next iteration.
 
 ## What is in the game today
 
-- A themed home screen with a rocking egg; the server answers `GET /health`.
+- A living pet on the home screen: unique look from a genome, breathing,
+  blinking, eight faces, eyes that follow your finger; rub it to stroke it.
+- Five need bars; the most urgent need is highlighted.
+- The server answers `GET /health`.
 - Game rules (`core/sim`): five needs (satiety, energy, hygiene, happiness,
   health) living in real time, a sleep window in the player's time zone, and
-  exact offline catch-up. Not on screen yet: the living pet arrives in
-  iteration 2.
+  exact offline catch-up.
 
 ## Build and run
 
@@ -45,6 +47,7 @@ Screenshots: `./gradlew recordRoborazziDebug` records reference images into
 | `core/sim` | game rules, pure Kotlin, shared by app and server |
 | `core/model` | shared value types |
 | `core/designsystem` | theme, palette, typography |
+| `core/ui` | the pet rig and shared game UI |
 | `feature/home` | home screen |
 | `app` | Android application |
 | `server` | Ktor game server |

@@ -10,7 +10,7 @@ name: CI
 
 on:
   push:
-    branches: ['**', '!screenshots/**']
+    branches: ['**', '!screenshots/**', '!dependabot/**']
   pull_request:
 
 concurrency:

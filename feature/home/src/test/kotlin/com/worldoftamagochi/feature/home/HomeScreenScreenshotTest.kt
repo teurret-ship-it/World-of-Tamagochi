@@ -1,10 +1,15 @@
 package com.worldoftamagochi.feature.home
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.captureRoboImage
+import com.worldoftamagochi.designsystem.WotTheme
+import com.worldoftamagochi.sim.Expression
+import com.worldoftamagochi.sim.Genome
+import com.worldoftamagochi.sim.Need
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -12,42 +17,59 @@ import org.robolectric.annotation.GraphicsMode
 
 /**
  * Reference screenshots of the home screen in the four variants required by
- * the quality gates: phone light, phone dark, 200% font, tablet.
+ * the quality gates (phone light, phone dark, 200% font, tablet), plus the
+ * "needs you" state.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [36], qualifiers = PHONE)
 class HomeScreenScreenshotTest {
     @Test
-    fun phoneLight() {
-        captureRoboImage("src/test/screenshots/home_phone_light.png") {
-            HomeScreenPreviewContent(darkTheme = false)
-        }
-    }
+    fun phoneLight() = capture("home_phone_light") { Home(happy) }
 
     @Test
-    fun phoneDark() {
-        captureRoboImage("src/test/screenshots/home_phone_dark.png") {
-            HomeScreenPreviewContent(darkTheme = true)
-        }
-    }
+    fun phoneDark() = capture("home_phone_dark") { Home(happy, dark = true) }
 
     @Test
-    fun phoneFontScale200() {
-        captureRoboImage("src/test/screenshots/home_phone_font200.png") {
+    fun phoneFontScale200() =
+        capture("home_phone_font200") {
             val density = LocalDensity.current
-            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale = 2f)) {
-                HomeScreenPreviewContent(darkTheme = false)
-            }
+            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale = 2f)) { Home(happy) }
         }
-    }
 
     @Test
     @Config(qualifiers = TABLET)
-    fun tablet() {
-        captureRoboImage("src/test/screenshots/home_tablet.png") {
-            HomeScreenPreviewContent(darkTheme = false)
-        }
+    fun tablet() = capture("home_tablet") { Home(happy) }
+
+    @Test
+    fun hungry() = capture("home_phone_hungry") { Home(hungry) }
+
+    private fun capture(
+        name: String,
+        content: @Composable () -> Unit,
+    ) = captureRoboImage("src/test/screenshots/$name.png", content = content)
+
+    @Composable
+    private fun Home(
+        state: HomeUiState,
+        dark: Boolean = false,
+    ) = WotTheme(darkTheme = dark) { HomeScreen(state = state, onStroke = {}, animate = false) }
+
+    private companion object {
+        val happy =
+            HomeUiState(
+                name = "Mochi",
+                genome = Genome.fromSeed(7),
+                expression = Expression.HAPPY,
+                needs = Need.entries.associateWith { 90 },
+                urgentNeed = null,
+            )
+        val hungry =
+            happy.copy(
+                expression = Expression.HUNGRY,
+                needs = Need.entries.associateWith { 75 } + (Need.SATIETY to 18),
+                urgentNeed = Need.SATIETY,
+            )
     }
 }
 

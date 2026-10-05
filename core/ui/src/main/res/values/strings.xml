@@ -1,0 +1,11 @@
+<resources>
+    <string name="pet_description">%1$s, your pet. %2$s</string>
+    <string name="expression_happy">Looks happy.</string>
+    <string name="expression_content">Looks content.</string>
+    <string name="expression_hungry">Looks hungry.</string>
+    <string name="expression_sleepy">Looks sleepy.</string>
+    <string name="expression_dirty">Looks dirty.</string>
+    <string name="expression_sad">Looks sad.</string>
+    <string name="expression_sick">Looks sick.</string>
+    <string name="expression_asleep">Is asleep.</string>
+</resources>

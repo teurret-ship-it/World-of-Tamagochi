@@ -11,7 +11,7 @@ protocol (CLAUDE.md 5.2d) appends the next five from a gap analysis.
 Phase gate: "I want to come back tomorrow" (protocol in `docs/PLAYTEST.md`,
 written in iteration 9).
 
-- [ ] **0. Skeleton.** Goal: a project anyone can build, test and ship.
+- [x] **0. Skeleton.** (ddb40a6, CI green at b5469a2) Goal: a project anyone can build, test and ship.
   - Modules `:core:sim`, `:core:model`, `:core:designsystem`, `:feature:home`,
     `:app`, `:server`; build-logic convention plugins; version catalog.
   - Spotless/ktlint, detekt, Android Lint (warnings as errors), Kover >= 90%
@@ -22,7 +22,7 @@ written in iteration 9).
     ADR-002.
   - Done when: `./gradlew jvmCheck -Pwot.jvmOnly=true` green locally and CI
     green on the pushed commit.
-- [x] **1. Needs simulation.** Goal: the pet's needs live in real time.
+- [x] **1. Needs simulation.** (d8eb6a9) Goal: the pet's needs live in real time.
   - `:core:sim`: hunger, energy, hygiene, fun, health (Gauge 0..100); decay
     rates per life stage; sleep window with >= 4x slower decay; health drops
     only while another need is empty.
@@ -32,7 +32,7 @@ written in iteration 9).
     action (energy only while asleep); `advance(a->c) == advance(b->c) after
     advance(a->b)`; a 3-check-ins-a-day player never lets any need hit zero
     (ethics rule).
-- [ ] **2. Living pet.** Goal: the pet looks alive.
+- [x] **2. Living pet.** Goal: the pet looks alive.
   - Vector rig from a genome (color, pattern, ear shape, proportions);
     breathing, blinking, eyes follow the finger; 6 expressions (happy,
     hungry, sleepy, dirty, sick, sad) chosen from needs.

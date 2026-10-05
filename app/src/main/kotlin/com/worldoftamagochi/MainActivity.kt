@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.worldoftamagochi.designsystem.WotTheme
-import com.worldoftamagochi.feature.home.HomeScreen
+import com.worldoftamagochi.feature.home.HomeRoute
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             WotTheme {
-                HomeScreen()
+                HomeRoute()
             }
         }
     }

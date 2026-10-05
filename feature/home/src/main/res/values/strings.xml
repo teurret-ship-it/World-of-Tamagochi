@@ -1,5 +1,12 @@
 <resources>
-    <string name="home_title">World of Tamagochi</string>
-    <string name="home_egg_description">A speckled egg, gently rocking. Something is about to hatch.</string>
-    <string name="home_coming_soon">Your pet is on its way.</string>
+    <string name="need_satiety">Tummy</string>
+    <string name="need_energy">Energy</string>
+    <string name="need_hygiene">Clean</string>
+    <string name="need_happiness">Fun</string>
+    <string name="need_health">Health</string>
+    <string name="need_level">%1$s %2$d percent</string>
+    <string name="need_urgent">%1$s needs you</string>
+    <string name="stroke_action">Stroke %1$s</string>
+    <string name="stroke_hint">Rub %1$s gently to say hello</string>
+    <string name="asleep_hint">%1$s is asleep. Let them rest.</string>
 </resources>

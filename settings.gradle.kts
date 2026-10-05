@@ -44,6 +44,7 @@ include(":server")
 
 if (!jvmOnly) {
     include(":core:designsystem")
+    include(":core:ui")
     include(":feature:home")
     include(":app")
 }
