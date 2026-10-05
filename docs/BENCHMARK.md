@@ -106,3 +106,19 @@ the pet and what changed, per need, in that need's colour. We do not take
 guilt-tripping wording ("your pet missed you so much it got sick"): the
 card states facts and offers "Let's go!". Sound and vibration toggles and
 credits for every asset author live in a settings sheet behind the gear.
+
+## Iteration 5a: competition engine
+
+Trackmania is the reference for fair time trials: deterministic physics,
+runs stored as inputs, servers that re-simulate a run before accepting a
+record, ghosts of other players and author/gold/silver/bronze medals
+([Trackmania](https://en.wikipedia.org/wiki/Trackmania)). Chao Garden ties
+stats grown through care to race performance. Mario Kart time trials show
+that racing a ghost is engaging even with no one online. We take: integer
+physics at 60 Hz (bit-identical on phone and server), an input log of
+changes as the only thing a client sends, sub-tick finish times so ties are
+rare, an autopilot that sets author times and proves every generated track
+clearable, and stats capped so they move a run by at most 10% (measured:
+3-4%; skill alone is worth 22-26%). We do not take floating-point physics
+engines (Box2D and similar give different results across devices and
+versions, which would make server verification impossible).

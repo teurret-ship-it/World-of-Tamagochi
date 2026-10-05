@@ -4,6 +4,24 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 5a: the competition engine
+
+The rules for racing, in `:core:sim`, shared with the future server.
+
+- 60 Hz integer physics: speed, sprint and stamina (running dry means
+  resting to 25% before sprinting again), jumps, hurdles (touching one means
+  a stumble), puddles (slow unless jumped), boost pads.
+- Runs are input logs of changes; replay reproduces them frame by frame;
+  finish times are sub-tick exact.
+- Three launch sprint tracks (Meadow ~32 s, Beach ~38 s, Snow ~43 s),
+  seeded and provably clearable; medals measured against an autopilot's
+  author time (gold +4%, silver +12%, bronze +30%).
+- Stats (speed, stamina, agility, jump) change a run by 3-4%; skill by
+  22-26% (balance table printed by the tests).
+
+Self-review: clarity 4, game feel n/a (no screen yet: 5b), retention 4,
+ethics 5, performance 5, accessibility n/a.
+
 ## Iteration 4: the pet is still there tomorrow
 
 - The game is saved (DataStore JSON, ADR-007) after every care action and
