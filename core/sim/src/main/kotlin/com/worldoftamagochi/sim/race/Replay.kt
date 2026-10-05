@@ -7,6 +7,8 @@ data class RaceResult(
     /** Exact finish time; null when the run did not finish in time. */
     val finishMicros: Long?,
     val hurdlesHit: Int,
+    /** Agility faults; each one is already included in [finishMicros]. */
+    val faults: Int = 0,
 )
 
 object Replay {
@@ -41,6 +43,6 @@ object Replay {
     ): RaceResult {
         val iterator = inputs.iterator()
         while (!race.finished && race.runner.tick < MAX_TICKS) race.step(iterator.next())
-        return RaceResult(race.finished, race.runner.tick, race.finishMicros, race.runner.hurdlesHit)
+        return RaceResult(race.finished, race.runner.tick, race.finishMicros, race.runner.hurdlesHit, race.runner.faults)
     }
 }

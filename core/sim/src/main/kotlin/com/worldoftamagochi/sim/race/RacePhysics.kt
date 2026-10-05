@@ -22,6 +22,11 @@ data class RacePhysics(
     val stumbleTicks: Int = 24,
     val boostSpeed: Int = 45,
     val boostStamina: Int = 250,
+    /** Agility: speed while crawling through a tunnel and the fastest safe speed onto a seesaw. */
+    val tunnelSpeed: Int = 60,
+    val seesawSafeSpeed: Int = 110,
+    /** Agility: every fault adds this much to the time (2 s). */
+    val faultPenaltyTicks: Int = 120,
     /** Per-mille bonus at stat 100 (linear from 0). */
     val speedStatBonus: Int = 35,
     val staminaStatBonus: Int = 120,

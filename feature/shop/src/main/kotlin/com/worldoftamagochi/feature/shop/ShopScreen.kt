@@ -169,7 +169,7 @@ private fun FittingRoom(
                 name = state.name,
                 animate = animate,
                 wearing = state.preview,
-                modifier = Modifier.fillMaxSize().padding(16.dp),
+                modifier = Modifier.fillMaxSize(),
             )
             overlay()
         }

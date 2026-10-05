@@ -7,9 +7,11 @@ import com.worldoftamagochi.api.LeaderboardEntry
 import com.worldoftamagochi.designsystem.WotTheme
 import com.worldoftamagochi.sim.Genome
 import com.worldoftamagochi.sim.Reward
+import com.worldoftamagochi.sim.race.AgilityTracks
 import com.worldoftamagochi.sim.race.Autopilot
 import com.worldoftamagochi.sim.race.Medal
 import com.worldoftamagochi.sim.race.MedalTimes
+import com.worldoftamagochi.sim.race.Obstacle
 import com.worldoftamagochi.sim.race.Race
 import com.worldoftamagochi.sim.race.RaceStats
 import com.worldoftamagochi.sim.race.Replay
@@ -93,5 +95,76 @@ class RaceScreenshotTest {
                     TrackCard(t, m, bestMicros = listOf(m.silver, m.authorMicros, null)[i], today = if (i == 0) today else emptyList())
                 }
             TrackSelectScreen(cards, onRace = {}, onBack = {})
+        }
+
+    @Test
+    fun agilityTrackList() =
+        capture("race_tracks_agility") {
+            val cards =
+                AgilityTracks.ALL.mapIndexed { i, t ->
+                    TrackCard(
+                        t,
+                        MedalTimes.of(t),
+                        bestMicros =
+                            if (i ==
+                                0
+                            ) {
+                                MedalTimes.of(t).gold
+                            } else {
+                                null
+                            },
+                    )
+                }
+            TrackSelectScreen(cards, onRace = {}, onBack = {})
+        }
+
+    private val park = AgilityTracks.PARK
+    private val parkFrames = Replay.frames(park, RaceStats.ROOKIE, Autopilot(park).play(RaceStats.ROOKIE).second)
+
+    private fun agility(
+        tick: Int,
+        result: RaceSummary? = null,
+    ) = state(tick, result = result).copy(
+        track = park,
+        runner = parkFrames[tick],
+        ghost = parkFrames[(tick + 40).coerceAtMost(parkFrames.lastIndex)],
+        medals = MedalTimes.of(park),
+        wearing = listOf("cap"),
+    )
+
+    @Test
+    fun agilityThroughTheTyre() {
+        val tyre = park.obstacles.filterIsInstance<Obstacle.Tyre>().first()
+        capture("race_agility_tyre") { RaceScreen(agility(parkFrames.indexOfFirst { it.xMm >= tyre.centerMm - 600 }), RaceControls()) }
+    }
+
+    @Test
+    fun agilityInTheTunnel() {
+        val tunnel = park.obstacles.filterIsInstance<Obstacle.Tunnel>().first()
+        capture("race_agility_tunnel") { RaceScreen(agility(parkFrames.indexOfFirst { it.xMm >= tunnel.startMm + 2_000 }), RaceControls()) }
+    }
+
+    @Test
+    fun agilityOnTheSeesaw() {
+        val seesaw = park.obstacles.filterIsInstance<Obstacle.Seesaw>().first()
+        capture("race_agility_seesaw") { RaceScreen(agility(parkFrames.indexOfFirst { it.xMm >= seesaw.startMm + 600 }), RaceControls()) }
+    }
+
+    @Test
+    fun agilityFinishWithFaults() =
+        capture("race_agility_finish_faults") {
+            val medals = MedalTimes.of(park)
+            val summary =
+                RaceSummary(
+                    finishMicros = medals.bronze - 300_000,
+                    medal = Medal.BRONZE,
+                    newRecord = false,
+                    previousBestMicros = medals.silver,
+                    reward = Reward(xp = 20, coins = 8),
+                    levelUp = null,
+                    nextMedal = Medal.SILVER to medals.silver,
+                    faults = 2,
+                )
+            RaceScreen(agility(parkFrames.lastIndex, result = summary), RaceControls())
         }
 }

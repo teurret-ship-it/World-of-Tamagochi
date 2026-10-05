@@ -184,3 +184,15 @@ the wardrobe is full. We take a cheap treat that cheers the pet up, refused
 when the pet is full, and a visible daily limit of three. We do not take
 paid energy refills or snacks that unlock anything: a treat is a kindness,
 not a shortcut.
+
+## Iteration 8: agility
+
+Nintendogs and real dog agility judge a clean round as much as a fast one:
+tyre, tunnel, seesaw and hurdles, with faults added to the time. Trackmania
+shows that a penalty shown at the moment it happens teaches without a
+lecture. We take: four classic obstacles, two seconds per fault displayed at
+once on the clock, a "Clean run!" on the finish card, a turtle sign before
+the seesaw so the rule is readable without words, and hand-made courses with
+a gentle first one. We do not take disqualification or refusals (a child
+always finishes), and we keep the two buttons from sprint rather than adding
+a control per obstacle.

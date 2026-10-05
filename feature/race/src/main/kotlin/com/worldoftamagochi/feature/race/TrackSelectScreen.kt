@@ -35,10 +35,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.worldoftamagochi.api.LeaderboardEntry
 import com.worldoftamagochi.data.GameRepository
 import com.worldoftamagochi.network.OnlineRacing
+import com.worldoftamagochi.sim.race.Discipline
 import com.worldoftamagochi.sim.race.Medal
 import com.worldoftamagochi.sim.race.MedalTimes
-import com.worldoftamagochi.sim.race.SprintTracks
 import com.worldoftamagochi.sim.race.Track
+import com.worldoftamagochi.sim.race.Tracks
+import com.worldoftamagochi.ui.R as UiR
 
 @Composable
 fun TrackSelectRoute(
@@ -48,18 +50,18 @@ fun TrackSelectRoute(
     onBack: () -> Unit,
 ) {
     val game by repository.game.collectAsStateWithLifecycle(initialValue = null)
-    val medals = remember { SprintTracks.ALL.associateWith { MedalTimes.of(it) } }
+    val medals = remember { Tracks.ALL.associateWith { MedalTimes.of(it) } }
     var boards by remember { mutableStateOf<Map<String, List<LeaderboardEntry>>>(emptyMap()) }
     LaunchedEffect(online) {
         online ?: return@LaunchedEffect
         online.flush() // runs raced offline go up first, so the board includes them
         boards =
-            SprintTracks.ALL
+            Tracks.ALL
                 .mapNotNull { track -> online.leaderboard(track.id, "daily")?.let { track.id to it.take(TOP_SHOWN) } }
                 .toMap()
     }
     val cards =
-        SprintTracks.ALL.map {
+        Tracks.ALL.map {
             TrackCard(it, medals.getValue(it), game?.records?.get(it.id)?.finishMicros, boards[it.id].orEmpty())
         }
     TrackSelectScreen(cards, onRace, onBack)
@@ -87,7 +89,30 @@ fun TrackSelectScreen(
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(stringResource(R.string.races_subtitle), style = MaterialTheme.typography.titleMedium)
-            cards.forEach { TrackCardView(it, onRace) }
+            cards.groupBy { it.track.discipline }.forEach { (discipline, group) ->
+                SectionHeader(discipline)
+                group.forEach { TrackCardView(it, onRace) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionHeader(discipline: Discipline) {
+    val (title, hint, image) =
+        when (discipline) {
+            Discipline.SPRINT -> Triple(R.string.section_sprint, R.string.section_sprint_hint, UiR.drawable.race_boost)
+            Discipline.AGILITY -> Triple(R.string.section_agility, R.string.section_agility_hint, UiR.drawable.race_tyre)
+        }
+    Row(
+        Modifier.fillMaxWidth().widthIn(max = 560.dp).padding(top = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Image(painterResource(image), contentDescription = null, modifier = Modifier.size(40.dp))
+        Column {
+            Text(stringResource(title), style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
+            Text(stringResource(hint), style = MaterialTheme.typography.bodyLarge)
         }
     }
 }

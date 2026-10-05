@@ -44,6 +44,8 @@ data class RaceSummary(
     val nextMedal: Pair<Medal, Long>?,
     /** Online result: today's rank once verified, or queued when offline; null in offline builds. */
     val online: OnlineOutcome? = null,
+    /** Agility faults (each added 2 s); null in sprint races. */
+    val faults: Int? = null,
 )
 
 sealed interface OnlineOutcome {
@@ -57,4 +59,4 @@ sealed interface OnlineOutcome {
 }
 
 /** One-off moments for sound and haptics. */
-enum class RaceEvent { COUNTDOWN, GO, JUMP, HURDLE_HIT, BOOST, FINISH, MEDAL, LEVEL_UP }
+enum class RaceEvent { COUNTDOWN, GO, JUMP, HURDLE_HIT, FAULT, BOOST, FINISH, MEDAL, LEVEL_UP }

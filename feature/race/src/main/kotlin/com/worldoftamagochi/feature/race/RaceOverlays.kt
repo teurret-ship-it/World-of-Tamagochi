@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -93,6 +94,7 @@ internal fun FinishCard(
                     Text(stringResource(R.string.finish_xp, summary.reward.xp), style = MaterialTheme.typography.titleMedium)
                     Text(stringResource(R.string.finish_coins, summary.reward.coins), style = MaterialTheme.typography.titleMedium)
                 }
+                summary.faults?.let { FaultsLine(it) }
                 summary.online?.let { OnlineLine(it) }
                 val next = summary.nextMedal
                 Text(
@@ -134,3 +136,23 @@ private fun OnlineLine(outcome: OnlineOutcome) {
         }
     Text(text, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.secondary)
 }
+
+/** Agility: "Clean run!" or how many faults, and what they cost. */
+@Composable
+private fun FaultsLine(faults: Int) {
+    if (faults == 0) {
+        Text(
+            stringResource(R.string.finish_clean),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.tertiary,
+        )
+    } else {
+        Text(
+            pluralStringResource(R.plurals.finish_faults, faults, faults, faults * FAULT_SECONDS),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.error,
+        )
+    }
+}
+
+private const val FAULT_SECONDS = 2

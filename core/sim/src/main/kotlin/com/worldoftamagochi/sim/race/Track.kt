@@ -29,18 +29,47 @@ sealed interface Obstacle {
         override val lengthMm: Int get() = BOOST_LENGTH_MM
     }
 
+    /** Agility: jump through the ring. Passing under it or over its top is a fault. */
+    data class Tyre(
+        override val startMm: Int,
+    ) : Obstacle {
+        override val lengthMm: Int get() = TYRE_LENGTH_MM
+        val centerMm: Int get() = startMm + TYRE_LENGTH_MM / 2
+    }
+
+    /** Agility: crawl through, slowly, catching your breath. Arriving in the air bumps the pet's head: a fault. */
+    data class Tunnel(
+        override val startMm: Int,
+        override val lengthMm: Int,
+    ) : Obstacle
+
+    /** Agility: walk over it. Arriving too fast, or jumping onto it, bounces the pet off: a fault. */
+    data class Seesaw(
+        override val startMm: Int,
+    ) : Obstacle {
+        override val lengthMm: Int get() = SEESAW_LENGTH_MM
+    }
+
     companion object {
         const val HURDLE_HEIGHT_MM = 350
         const val HURDLE_LENGTH_MM = 120
         const val BOOST_LENGTH_MM = 1_500
+        const val TYRE_LENGTH_MM = 150
+        const val TYRE_BOTTOM_MM = 180
+        const val TYRE_TOP_MM = 640
+        const val SEESAW_LENGTH_MM = 3_000
     }
 }
+
+/** Sprint: pure speed. Agility: an obstacle course where faults add time. */
+enum class Discipline { SPRINT, AGILITY }
 
 /** A race course: a fixed length and a sorted list of obstacles. */
 data class Track(
     val id: String,
     val lengthMm: Int,
     val obstacles: List<Obstacle>,
+    val discipline: Discipline = Discipline.SPRINT,
 ) {
     init {
         require(obstacles.zipWithNext().all { (a, b) -> a.endMm < b.startMm }) { "Obstacles must be sorted and apart" }
@@ -104,6 +133,89 @@ object SprintTracks {
     val SNOW = Track.generate(id = "sprint-snow", seed = 3_003, lengthMm = 300_000, density = 4)
 
     val ALL = listOf(MEADOW, BEACH, SNOW)
+
+    fun byId(id: String): Track? = ALL.firstOrNull { it.id == id }
+}
+
+/**
+ * The three launch agility courses, laid out by hand like a real ring: a
+ * gentle first course, a hoop course and a long trail with everything.
+ * Distances are in metres for readability.
+ */
+object AgilityTracks {
+    val PARK =
+        course("agility-park", lengthM = 140) {
+            hurdle(14)
+            tyre(26)
+            tunnel(38, lengthM = 6)
+            hurdle(54)
+            seesaw(66)
+            tyre(82)
+            hurdle(94)
+            tunnel(106, lengthM = 5)
+            hurdle(122)
+        }
+
+    val HILLS =
+        course("agility-hills", lengthM = 170) {
+            tyre(14)
+            tyre(25)
+            hurdle(36)
+            seesaw(48)
+            tyre(62)
+            tunnel(74, lengthM = 8)
+            tyre(92)
+            hurdle(103)
+            seesaw(114)
+            tyre(130)
+            hurdle(142)
+            tyre(154)
+        }
+
+    val TRAIL =
+        course("agility-trail", lengthM = 200) {
+            hurdle(12)
+            add(Obstacle.Puddle(22 * MM, 3 * MM))
+            tyre(32)
+            tunnel(44, lengthM = 6)
+            add(Obstacle.Boost(58 * MM))
+            seesaw(72)
+            hurdle(86)
+            tyre(96)
+            tunnel(108, lengthM = 10)
+            hurdle(126)
+            seesaw(138)
+            tyre(154)
+            add(Obstacle.Boost(164 * MM))
+            hurdle(176)
+            tyre(186)
+        }
+
+    val ALL = listOf(PARK, HILLS, TRAIL)
+
+    private const val MM = 1_000
+
+    private fun course(
+        id: String,
+        lengthM: Int,
+        build: MutableList<Obstacle>.() -> Unit,
+    ): Track = Track(id, lengthM * MM, mutableListOf<Obstacle>().apply(build), Discipline.AGILITY)
+
+    private fun MutableList<Obstacle>.hurdle(atM: Int) = add(Obstacle.Hurdle(atM * MM))
+
+    private fun MutableList<Obstacle>.tyre(atM: Int) = add(Obstacle.Tyre(atM * MM))
+
+    private fun MutableList<Obstacle>.seesaw(atM: Int) = add(Obstacle.Seesaw(atM * MM))
+
+    private fun MutableList<Obstacle>.tunnel(
+        atM: Int,
+        lengthM: Int,
+    ) = add(Obstacle.Tunnel(atM * MM, lengthM * MM))
+}
+
+/** Every course the game knows: the app lists these, the server verifies against them. */
+object Tracks {
+    val ALL: List<Track> = SprintTracks.ALL + AgilityTracks.ALL
 
     fun byId(id: String): Track? = ALL.firstOrNull { it.id == id }
 }

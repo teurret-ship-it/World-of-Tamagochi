@@ -16,17 +16,21 @@ class Autopilot(
         val distance = (ahead?.startMm ?: Int.MAX_VALUE) - runner.xMm
         // Hurdles: take off ~13 ticks out, so the pet is at the top of its arc
         // over the bar. Puddles: take off just before the water.
-        val lead =
+        // Tyres: the top of the arc as the pet passes the middle of the ring.
+        val (target, lead) =
             when (ahead) {
-                is Obstacle.Hurdle -> HURDLE_LEAD_TICKS
-                is Obstacle.Puddle -> PUDDLE_LEAD_TICKS
-                else -> -1
+                is Obstacle.Hurdle -> distance to HURDLE_LEAD_TICKS
+                is Obstacle.Puddle -> distance to PUDDLE_LEAD_TICKS
+                is Obstacle.Tyre -> ahead.centerMm - runner.xMm to HURDLE_LEAD_TICKS
+                else -> distance to -1
             }
-        val jump = runner.grounded && distance in 0..runner.vx * lead
+        val jump = runner.grounded && target in 0..runner.vx * lead
         val finishing = track.lengthMm - runner.xMm < FINAL_SPRINT_MM
+        // Seesaws are taken at a trot: stop sprinting in time to slow down.
+        val braking = ahead is Obstacle.Seesaw && distance < SEESAW_BRAKE_MM
         sprinting =
             when {
-                runner.exhausted || runner.stamina <= RESERVE -> false
+                braking || runner.exhausted || runner.stamina <= RESERVE -> false
                 finishing -> true
                 sprinting -> runner.stamina > RESERVE
                 else -> runner.stamina >= RESUME
@@ -49,6 +53,7 @@ class Autopilot(
     private companion object {
         const val HURDLE_LEAD_TICKS = 13
         const val PUDDLE_LEAD_TICKS = 2
+        const val SEESAW_BRAKE_MM = 2_000
         const val RESERVE = 60
         const val RESUME = 500
         const val FINAL_SPRINT_MM = 25_000

@@ -184,3 +184,22 @@ offline.
 token per install, display names only from the curated pet-name list plus a
 number, no free text anywhere in the API. Tokens are stored hashed. Run
 uploads are rate limited.
+
+## ADR-009: Agility in the same race engine
+
+**Context.** Agility (tyres, tunnels, seesaws, faults) is the second online
+discipline. It needs the same guarantees as sprint: deterministic, replayed
+by the server, ghosts, medals and leaderboards.
+
+**Decision.** Agility obstacles are new `Obstacle` types in the existing
+engine, and a `Track` carries its `Discipline`. Each obstacle is judged once,
+as the pet reaches it (a tyre in the middle of the ring); a fault adds 120
+ticks (2 s) to the finish time and costs a moment of speed. The input stays
+Sprint (hold) and Jump (tap): braking for a seesaw is letting go of Sprint,
+and a tunnel cannot be jumped in. Courses are laid out by hand (`AgilityTracks`)
+and the autopilot must clear each one without a fault (test). `Tracks` is the
+one registry the app lists and the server verifies against.
+
+**Rules version.** `SimVersion` stays 1: sprint runs replay bit for bit as
+before (the pinned physics test is unchanged), and agility tracks did not
+exist under any earlier rules, so no stored run changes meaning.

@@ -39,6 +39,8 @@ Chequered flag|chequered_flag|race_finish
 3rd place medal|3rd_place_medal|medal_bronze
 Trophy|trophy|medal_author
 Stopwatch|stopwatch|race_timer
+Ring buoy|ring_buoy|race_tyre
+Turtle|turtle|race_slow
 Shopping bags|shopping_bags|ui_shop
 Ribbon|ribbon|wear_ribbon
 Cherry blossom|cherry_blossom|wear_blossom

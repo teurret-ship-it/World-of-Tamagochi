@@ -91,8 +91,18 @@ the core care loop, and every iteration from 3 on pays the player something.
 - [x] **7b. Treats.** Coins buy treats that cheer the pet up: a repeatable
   sink once the wardrobe is complete. 15 coins, 3 a day, refused when
   full, never paid back in coins; a badge shows how many are left today.
-- [ ] **8. Agility course.** Slalom, tunnel, seesaw, hurdles, tyre; faults
-  add time; one-thumb controls; online ghosts and leaderboard reuse 6.
+- [x] **8. Agility course.** Goal: a second discipline that rewards
+  precision, not just speed (ADR-009).
+  - Tyres (jump through the ring), tunnels (crawl, catch your breath; no
+    jumping in), seesaws (arrive at a trot, a turtle sign says when), and
+    hurdles; every fault adds 2 s, shown at once on the clock.
+  - Three hand-made courses (Puppy Park, Hoop Hills, Twisty Trail), each
+    cleared by the autopilot without a fault; medals, ghosts, records,
+    online upload and leaderboards reuse 5 and 6.
+  - Track list in two sections, Sprint and Agility; "Clean run!" or
+    "2 faults (+4 s)" on the finish card.
+- [ ] **8b. Weave poles.** The slalom from the original plan: a rhythm
+  challenge (alternating taps), needs a third input kind in the log.
 - [ ] **9. Training and race form.** Exercises raise speed, stamina,
   agility and jump at the cost of energy and hunger, daily cap; a hungry or
   tired pet races worse, so care matters in competitions.

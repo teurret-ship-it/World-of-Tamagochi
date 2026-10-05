@@ -4,7 +4,15 @@
     <string name="track_meadow">Meadow Dash</string>
     <string name="track_beach">Beach Run</string>
     <string name="track_snow">Snowy Sprint</string>
+    <string name="track_park">Puppy Park</string>
+    <string name="track_hills">Hoop Hills</string>
+    <string name="track_trail">Twisty Trail</string>
     <string name="track_unknown">Mystery Track</string>
+    <string name="section_sprint">Sprint</string>
+    <string name="section_sprint_hint">Run, jump, go fast!</string>
+    <string name="section_agility">Agility</string>
+    <string name="section_agility_hint">Hoops, tunnels and seesaws. Slow down on the seesaw!</string>
+    <string name="race_penalty">+%1$d s</string>
     <string name="track_best">Best: %1$s</string>
     <string name="track_no_best">No time yet</string>
     <string name="race_go">Race!</string>
@@ -32,6 +40,11 @@
     <string name="finish_xp">XP: +%1$d</string>
     <string name="finish_coins">Coins: +%1$d</string>
     <string name="finish_retry">Again!</string>
+    <string name="finish_clean">Clean run!</string>
+    <plurals name="finish_faults">
+        <item quantity="one">%1$d fault (+%2$d s)</item>
+        <item quantity="other">%1$d faults (+%2$d s)</item>
+    </plurals>
     <string name="finish_done">Done</string>
 
     <string name="medal_bronze">Bronze</string>

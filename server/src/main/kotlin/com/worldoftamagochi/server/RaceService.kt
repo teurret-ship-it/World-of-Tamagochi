@@ -5,7 +5,7 @@ import com.worldoftamagochi.sim.SimVersion
 import com.worldoftamagochi.sim.race.InputLog
 import com.worldoftamagochi.sim.race.RaceStats
 import com.worldoftamagochi.sim.race.Replay
-import com.worldoftamagochi.sim.race.SprintTracks
+import com.worldoftamagochi.sim.race.Tracks
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.time.DayOfWeek
@@ -73,7 +73,7 @@ class RaceService(
         codes: List<Int>,
     ): AcceptedRun {
         reject(simVersion != SimVersion.CURRENT) { "Rules version $simVersion is not ${SimVersion.CURRENT}" }
-        val track = SprintTracks.byId(trackId)
+        val track = Tracks.byId(trackId)
         reject(track == null) { "Unknown track" }
         reject(codes.size > MAX_EVENTS) { "Log too long" }
         reject(codes.any { it < 0 || it % CODE_BASE >= InputLog.Kind.entries.size }) { "Unknown input" }

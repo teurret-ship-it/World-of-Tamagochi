@@ -55,6 +55,7 @@ import com.worldoftamagochi.sim.Expression
 import com.worldoftamagochi.sim.Genome
 import com.worldoftamagochi.sim.race.Runner
 import com.worldoftamagochi.sim.race.SprintTracks
+import com.worldoftamagochi.sim.race.Tracks
 import com.worldoftamagochi.ui.pet.Pet
 import com.worldoftamagochi.ui.pet.PetPose
 import com.worldoftamagochi.ui.sound.LocalGameSounds
@@ -72,7 +73,7 @@ fun RaceRoute(
     trackId: String,
     onExit: () -> Unit,
 ) {
-    val track = remember(trackId) { SprintTracks.byId(trackId) ?: SprintTracks.MEADOW }
+    val track = remember(trackId) { Tracks.byId(trackId) ?: SprintTracks.MEADOW }
     val viewModel: RaceViewModel = viewModel(key = trackId) { RaceViewModel(repository, track, online = online) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val sounds = LocalGameSounds.current
@@ -92,7 +93,7 @@ fun RaceRoute(
                     sounds.play(Sfx.SWIPE)
                 }
 
-                RaceEvent.HURDLE_HIT -> {
+                RaceEvent.HURDLE_HIT, RaceEvent.FAULT -> {
                     sounds.play(Sfx.CAUTION)
                     haptics.performHapticFeedback(HapticFeedbackType.Reject)
                 }
@@ -164,6 +165,7 @@ private fun Course(
             puddle = ImageBitmap.imageResource(UiR.drawable.race_puddle),
             boost = ImageBitmap.imageResource(UiR.drawable.race_boost),
             finish = ImageBitmap.imageResource(UiR.drawable.race_finish),
+            slow = ImageBitmap.imageResource(UiR.drawable.race_slow),
         )
     BoxWithConstraints(modifier) {
         val density = LocalDensity.current
@@ -180,6 +182,7 @@ private fun Course(
             RunnerSprite(ghost, ghostGenome, ghostWearing, camera, alpha = GHOST_ALPHA)
         }
         RunnerSprite(state.runner, state.genome, state.wearing, camera, alpha = 1f)
+        Canvas(Modifier.fillMaxSize()) { drawCourseForeground(state.track, camera) }
     }
 }
 
@@ -234,6 +237,15 @@ private fun Hud(
                 fontWeight = FontWeight.Bold,
                 color = HUD_INK,
             )
+            // Agility faults show at once as seconds added to the clock.
+            if (state.runner.faults > 0) {
+                Text(
+                    stringResource(R.string.race_penalty, state.runner.faults * FAULT_SECONDS),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
             Box(Modifier.weight(1f))
             val ghostLabel =
                 when (state.ghostKind) {
@@ -365,6 +377,7 @@ private val COACH_GENOME = Genome.fromSeed(2_026)
 private val COACH_WEARING = listOf("cap")
 private const val GHOST_ALPHA = 0.45f
 private const val PET_SIZE_MM = 1_100f
+private const val FAULT_SECONDS = 2
 private const val HOP_STRIDE_MM = 700.0
 private const val HOP_HEIGHT_MM = 110
 private const val SQUASH_ON_LANDING = 0.35f

@@ -6,10 +6,12 @@ import com.worldoftamagochi.sim.LifeStage
 import com.worldoftamagochi.sim.Needs
 import com.worldoftamagochi.sim.PetState
 import com.worldoftamagochi.sim.SleepWindow
+import com.worldoftamagochi.sim.race.AgilityTracks
 import com.worldoftamagochi.sim.race.Autopilot
 import com.worldoftamagochi.sim.race.InputLog
 import com.worldoftamagochi.sim.race.Medal
 import com.worldoftamagochi.sim.race.SprintTracks
+import com.worldoftamagochi.sim.race.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -41,16 +43,16 @@ class RaceViewModelTest {
     @After
     fun tearDown() = Dispatchers.resetMain()
 
-    private fun viewModel() =
-        RaceViewModel(repository, track, clock = { 1_790_000_000_000 }, zone = ZoneOffset.UTC).also {
+    private fun viewModel(on: Track = track) =
+        RaceViewModel(repository, on, clock = { 1_790_000_000_000 }, zone = ZoneOffset.UTC).also {
             dispatcher.scheduler.runCurrent()
         }
 
     private val RaceViewModel.ui: RaceUiState get() = requireNotNull(state.value)
 
     /** Plays the race the way the autopilot would, one display frame per tick. */
-    private fun RaceViewModel.playLikeAutopilot() {
-        val pilot = Autopilot(track)
+    private fun RaceViewModel.playLikeAutopilot(on: Track = track) {
+        val pilot = Autopilot(on)
         onFrame(START)
         var tick = 0
         while (ui.phase != RacePhase.FINISHED) {
@@ -86,6 +88,7 @@ class RaceViewModelTest {
         assertTrue(result.newRecord)
         assertEquals(3 + 5 + 10 + 20 + 30, result.reward.coins)
         assertNull(result.nextMedal)
+        assertNull(result.faults) // sprint races have no faults
 
         val saved = requireNotNull(repository.saved)
         assertEquals(68L, saved.progress.coins)
@@ -104,6 +107,22 @@ class RaceViewModelTest {
         val result = requireNotNull(again.ui.result)
         assertEquals(3, result.reward.coins)
         assertEquals(false, result.newRecord)
+    }
+
+    @Test
+    fun `agility runs count faults, and a clean run says so`() {
+        val park = AgilityTracks.PARK
+        val clean = viewModel(park).apply { playLikeAutopilot(park) }
+        assertEquals(0, requireNotNull(clean.ui.result).faults)
+        val idle = viewModel(park)
+        idle.onFrame(START)
+        var tick = 0
+        while (idle.ui.phase != RacePhase.FINISHED) {
+            tick++
+            idle.onFrame(START + COUNTDOWN + tick * TICK)
+        }
+        dispatcher.scheduler.runCurrent()
+        assertTrue(requireNotNull(requireNotNull(idle.ui.result).faults) > 0)
     }
 
     @Test

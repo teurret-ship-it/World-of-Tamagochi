@@ -4,6 +4,25 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 8: agility
+
+- A second discipline: agility courses with tyres to jump through, tunnels
+  to crawl through and seesaws to walk over, plus hurdles. Every fault adds
+  two seconds, shown in red next to the clock as it happens.
+- Three hand-made courses: Puppy Park (gentle), Hoop Hills (tyres galore)
+  and Twisty Trail (everything, with puddles and boost pads).
+- Same Sprint and Jump buttons: let go of Sprint before a seesaw (a turtle
+  sign marks the spot); tunnels refill stamina.
+- The coach clears every course without a fault; medals, ghosts, records,
+  online verification and leaderboards work as for sprint.
+- Pets wear their outfits in every race; the coach wears a cap.
+
+Self-review: clarity 4, game feel 4, retention 4, ethics 5, performance 4,
+accessibility 3.
+- Accessibility 3: obstacles are told apart by shape and colour only; an
+  audio cue before each obstacle is planned with the accessibility audit
+  (iteration 32).
+
 ## Iteration 7b: treats
 
 - A Treat button (cookie) in the care bar: 15 coins for a little food and a

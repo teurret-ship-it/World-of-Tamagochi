@@ -10,6 +10,7 @@ import com.worldoftamagochi.api.RegisterResponse
 import com.worldoftamagochi.api.RunRequest
 import com.worldoftamagochi.api.RunResponse
 import com.worldoftamagochi.sim.SimVersion
+import com.worldoftamagochi.sim.race.AgilityTracks
 import com.worldoftamagochi.sim.race.Autopilot
 import com.worldoftamagochi.sim.race.InputLog
 import com.worldoftamagochi.sim.race.RaceStats
@@ -85,6 +86,19 @@ class RaceApiTest {
             val run = response.body<RunResponse>()
             run.finishMicros shouldBe Replay.run(track, RaceStats.ROOKIE, fastLog).finishMicros
             run.dailyRank shouldBe 1
+        }
+
+    @Test
+    fun `agility runs are verified too, faults included in the time`() =
+        api { client ->
+            val token = client.register().token
+            val course = AgilityTracks.PARK
+            val clean = Autopilot(course).play(RaceStats.ROOKIE).second
+            val cleanRun = client.submit(token, clean, trackId = course.id).body<RunResponse>()
+            cleanRun.finishMicros shouldBe Replay.run(course, RaceStats.ROOKIE, clean).finishMicros
+            val sloppy = Replay.run(course, RaceStats.ROOKIE, slowLog)
+            (sloppy.faults > 0) shouldBe true
+            client.submit(token, slowLog, trackId = course.id).body<RunResponse>().finishMicros shouldBe sloppy.finishMicros
         }
 
     @Test

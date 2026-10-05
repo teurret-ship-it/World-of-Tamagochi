@@ -13,6 +13,7 @@ import com.worldoftamagochi.sim.Genome
 import com.worldoftamagochi.sim.ProgressUpdate
 import com.worldoftamagochi.sim.Reward
 import com.worldoftamagochi.sim.race.Autopilot
+import com.worldoftamagochi.sim.race.Discipline
 import com.worldoftamagochi.sim.race.InputLog
 import com.worldoftamagochi.sim.race.Medal
 import com.worldoftamagochi.sim.race.MedalTimes
@@ -155,6 +156,7 @@ class RaceViewModel(
         val before = race.runner
         val after = race.step(input)
         when {
+            after.faults > before.faults -> _events.trySend(RaceEvent.FAULT)
             after.hurdlesHit > before.hurdlesHit -> _events.trySend(RaceEvent.HURDLE_HIT)
             after.vx - before.vx > RacePhysics.DEFAULT.acceleration -> _events.trySend(RaceEvent.BOOST)
             input.jump && after.yMm > 0 && before.grounded -> _events.trySend(RaceEvent.JUMP)
@@ -198,6 +200,7 @@ class RaceViewModel(
                     reward = paid?.earned ?: Reward.NONE,
                     levelUp = paid?.levelUp,
                     nextMedal = nextMedal(medal),
+                    faults = race.runner.faults.takeIf { track.discipline == Discipline.AGILITY },
                 )
             if (newRecord) {
                 bestMicros = finishMicros

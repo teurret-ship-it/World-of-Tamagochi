@@ -16,6 +16,9 @@ internal fun Track.titleRes(): Int =
         "sprint-meadow" -> R.string.track_meadow
         "sprint-beach" -> R.string.track_beach
         "sprint-snow" -> R.string.track_snow
+        "agility-park" -> R.string.track_park
+        "agility-hills" -> R.string.track_hills
+        "agility-trail" -> R.string.track_trail
         else -> R.string.track_unknown
     }
 
