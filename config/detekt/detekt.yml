@@ -11,11 +11,16 @@ complexity:
     excludes: ['**/test/**', '**/*Art.kt']
   LongParameterList:
     ignoreAnnotated: ['Composable']
+    # Test fixtures take one named parameter per need.
+    excludes: ['**/test/**']
 style:
   MaxLineLength:
     # Same limit as ktlint_official.
     maxLineLength: 140
   MagicNumber:
+    # A named property or an enum table is already a named constant.
+    ignorePropertyDeclaration: true
+    ignoreEnums: true
     excludes: ['**/test/**', '**/designsystem/**', '**/*Art.kt']
   UnusedPrivateMember:
     ignoreAnnotated: ['Preview']

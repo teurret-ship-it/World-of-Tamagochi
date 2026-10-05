@@ -107,7 +107,7 @@ class NeedsSimulationTest {
     fun `energy never rises while awake`(): Unit =
         runBlocking {
             checkAll(states, Arb.long(1L..5 * 24 * HOUR)) { state, span ->
-                val awake = state.copy(sleep = awakeAllDay)
+                val awake = state.copy(sleep = awakeAllDay, napUntilEpochMillis = null)
                 val after = NeedsSimulation.advance(awake, awake.updatedAtEpochMillis + span)
                 after.needs.energy shouldBeLessThanOrEqual awake.needs.energy
             }
@@ -157,7 +157,11 @@ class NeedsSimulationTest {
                     needs = Needs(level.bind(), level.bind(), level.bind(), level.bind(), level.bind()),
                     sleep = SleepWindow(minute.bind(), minute.bind(), Arb.element(zones).bind()),
                     updatedAtEpochMillis = Arb.long(1_700_000_000_000L..1_900_000_000_000L).bind(),
-                )
+                ).let { pet ->
+                    // Half the pets are mid-nap, for up to two hours.
+                    val nap = Arb.long(-2 * HOUR..2 * HOUR).bind()
+                    if (nap > 0) pet.copy(napUntilEpochMillis = pet.updatedAtEpochMillis + nap) else pet
+                }
             }
     }
 }

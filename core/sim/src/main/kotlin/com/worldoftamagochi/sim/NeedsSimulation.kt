@@ -17,12 +17,13 @@ object NeedsSimulation {
         var now = state.updatedAtEpochMillis
         var needs = state.needs
         while (now < toEpochMillis) {
-            val segmentEnd = minOf(toEpochMillis, state.sleep.nextBoundaryAfter(now))
-            val asleep = state.sleep.isAsleep(now)
+            val segmentEnd = minOf(toEpochMillis, state.nextSleepChangeAfter(now))
+            val asleep = state.isAsleepAt(now)
             needs = advanceSegment(needs, segmentEnd - now, rates, asleep, rules.healthLossPerEmptyNeed)
             now = segmentEnd
         }
-        return state.copy(needs = needs, updatedAtEpochMillis = toEpochMillis)
+        val nap = state.napUntilEpochMillis?.takeIf { it > toEpochMillis }
+        return state.copy(needs = needs, updatedAtEpochMillis = toEpochMillis, napUntilEpochMillis = nap)
     }
 
     /** One stretch of time with constant rates (the pet neither falls asleep nor wakes up). */

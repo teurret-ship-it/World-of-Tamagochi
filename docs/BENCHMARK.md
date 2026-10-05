@@ -79,3 +79,19 @@ instead of scanning five bars. We do not take voice repetition (Talking
 Tom's microphone needs a privacy review for children, not worth it yet) and
 we do not use bitmaps: the rig is vector, so every size and skin works
 without new art.
+
+## Iteration 3: care with juice and rewards
+
+Pou's signature is feeding by dragging food into the pet's mouth and
+washing by scrubbing until foam appears; My Talking Tom answers every touch
+with sound, particles and a bouncy body; Tamagotchi refuses a snack when
+full rather than punishing the player. Mobile pet games pay small, frequent
+rewards (coins, XP bars, level-up fanfares) and cap them so caring never
+becomes a grind ([Pou](https://en.wikipedia.org/wiki/Pou_(video_game))).
+We take: drag-to-mouth feeding with a tap alternative, soap mode where
+rubbing scrubs, lights-off naps, play that costs energy and food, polite
+refusals in a speech bubble with a head shake, "+N" labels, particles, a
+haptic tick and a sound on every action, XP with a level ring and a
+level-up banner, and coins only for answering a real need, capped at 60 a
+day. We do not take Pou's toilet and food-poop loop (a chore with no joy
+for younger children) or punishment for overfeeding.

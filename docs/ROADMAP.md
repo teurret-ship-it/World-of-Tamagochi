@@ -39,18 +39,21 @@ the core care loop, and every iteration from 3 on pays the player something.
     hungry, sleepy, dirty, sick, sad) chosen from needs.
   - Stroking gesture with reaction and haptics.
   - Screenshot of every expression, 4 variants for the home screen.
-- [ ] **3. Care with juice and rewards.** Goal: caring feels good and pays.
+- [x] **3. Care with juice and rewards.** Goal: caring feels good and pays.
   - Feed (drag food to the mouth, button alternative), wash (scrub with
     foam), lights off (sleep), play (ball). Rules in `:core:sim`
     (`CareAction` -> state), one test per action.
-  - Every action: animation, sound (Kenney CC0, ADR-005), haptics, "+N"
-    floating over the bar, particles (hearts, bubbles, stars).
+  - Every action: animation, sound (SND, ADR-006), haptics, "+N"
+    floating over the pet, particles (hearts, bubbles, sparkles, stars,
+    coins) drawn with Fluent Emoji 3D.
   - Player XP and level with a level-up celebration and jingle; coins for
     caring for a pet in need (capped per day, so caring is never grinding).
 - [ ] **4. Persistence and "while you were away".** Goal: the pet is still
   there tomorrow and greets you.
   - Room + DataStore; catch-up on launch; a friendly card summarizing what
     happened; clock-rollback protection.
+  - Settings: sound and haptics toggles (CLAUDE.md section 2), credits for
+    SND, Fluent Emoji and Fredoka.
 - [ ] **5. Competition engine + Sprint race.** Goal: the first race.
   - `:core:sim`: fixed 60 Hz step, fixed-point physics, input log, replay
     reproduces the result frame by frame (test), ghost from the log, stats
@@ -80,9 +83,9 @@ the core care loop, and every iteration from 3 on pays the player something.
 
 ## Phase B: Grow, belong, compete more
 
-- [ ] **11. Timed platformer.** 30-90 s levels built from the Kenney
-  platformer kit (CC0), jump and double jump, checkpoints, instant restart,
-  medals, online ghosts.
+- [ ] **11. Timed platformer.** 30-90 s levels, jump and double jump,
+  checkpoints, instant restart, medals, online ghosts; art from a
+  production-quality source per ADR-006.
 - [ ] **12. Life cycle and evolution.** Egg -> baby -> child -> teen ->
   adult; at least 6 adult forms from care quality and favourite discipline;
   transformation animation; album.

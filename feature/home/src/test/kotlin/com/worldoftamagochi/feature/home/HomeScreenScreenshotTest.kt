@@ -18,7 +18,7 @@ import org.robolectric.annotation.GraphicsMode
 /**
  * Reference screenshots of the home screen in the four variants required by
  * the quality gates (phone light, phone dark, 200% font, tablet), plus the
- * "needs you" state.
+ * hungry, washing, night and level-up states.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -44,6 +44,19 @@ class HomeScreenScreenshotTest {
     @Test
     fun hungry() = capture("home_phone_hungry") { Home(hungry) }
 
+    @Test
+    fun washing() =
+        capture("home_phone_washing") { Home(happy.copy(washing = true, expression = Expression.DIRTY, urgentNeed = Need.HYGIENE)) }
+
+    @Test
+    fun nightNap() =
+        capture("home_phone_nap") {
+            Home(happy.copy(expression = Expression.ASLEEP, napping = true, urgentNeed = null), dark = true)
+        }
+
+    @Test
+    fun levelUp() = capture("home_level_up") { WotTheme { LevelUpBanner(level = 3, onDone = {}) } }
+
     private fun capture(
         name: String,
         content: @Composable () -> Unit,
@@ -53,7 +66,7 @@ class HomeScreenScreenshotTest {
     private fun Home(
         state: HomeUiState,
         dark: Boolean = false,
-    ) = WotTheme(darkTheme = dark) { HomeScreen(state = state, onStroke = {}, animate = false) }
+    ) = WotTheme(darkTheme = dark) { HomeScreen(state = state, actions = HomeActions(), animate = false) }
 
     private companion object {
         val happy =
@@ -63,6 +76,9 @@ class HomeScreenScreenshotTest {
                 expression = Expression.HAPPY,
                 needs = Need.entries.associateWith { 90 },
                 urgentNeed = null,
+                level = 4,
+                levelProgress = 0.6f,
+                coins = 125,
             )
         val hungry =
             happy.copy(

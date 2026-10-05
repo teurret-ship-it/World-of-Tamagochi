@@ -9,4 +9,25 @@
     <string name="stroke_action">Stroke %1$s</string>
     <string name="stroke_hint">Rub %1$s gently to say hello</string>
     <string name="asleep_hint">%1$s is asleep. Let them rest.</string>
+    <string name="napping_hint">%1$s is napping. Tap the light to wake them.</string>
+    <string name="washing_hint">Rub %1$s to scrub them clean!</string>
+    <string name="feed_hint">Drag the apple to %1$s\'s mouth</string>
+
+    <string name="care_feed">Feed</string>
+    <string name="care_wash">Wash</string>
+    <string name="care_play">Play</string>
+    <string name="care_lights_off">Lights off</string>
+    <string name="care_lights_on">Wake up</string>
+
+    <string name="refused_full">I\'m full!</string>
+    <string name="refused_clean">I\'m already sparkling!</string>
+    <string name="refused_tired">Too sleepy to play…</string>
+    <string name="refused_not_sleepy">I\'m not sleepy!</string>
+    <string name="refused_asleep">Shhh… sleeping</string>
+    <string name="refused_other">Not now!</string>
+
+    <string name="level_badge">Level %1$d</string>
+    <string name="level_up">Level %1$d!</string>
+    <string name="coins">%1$d coins</string>
+    <string name="plus_points">+%1$d</string>
 </resources>

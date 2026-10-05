@@ -14,6 +14,11 @@ next iteration.
 - A living pet on the home screen: unique look from a genome, breathing,
   blinking, eight faces, eyes that follow your finger; rub it to stroke it.
 - Five need bars; the most urgent need is highlighted.
+- Care: drag the apple to feed, pick up the soap and rub to wash, play,
+  lights off for a nap. Every action has sound, haptics, particles and a
+  "+N" label; a full or sleepy pet says so.
+- Rewards: XP and levels with a level-up fanfare, coins for answering a
+  real need (capped per day).
 - The server answers `GET /health`.
 - Game rules (`core/sim`): five needs (satiety, energy, hygiene, happiness,
   health) living in real time, a sleep window in the player's time zone, and
