@@ -35,7 +35,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
 
       - name: Check (format, detekt, lint, unit tests, coverage)
-        run: ./gradlew check --continue
+        run: |
+          set -o pipefail
+          mkdir -p build
+          ./gradlew check --continue 2>&1 | tee build/check.log
 
       - name: Screenshots
         id: shots

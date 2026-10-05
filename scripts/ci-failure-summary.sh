@@ -3,6 +3,11 @@
 # of a failed CI log, so nobody has to scroll through or download reports.
 set -uo pipefail
 
+echo "=== What went wrong (Gradle) ==="
+if [ -f build/check.log ]; then
+  grep -A 25 -E '^\* What went wrong|^[0-9]+: Task failed' build/check.log | head -n 120
+fi
+
 echo "=== Failing tests ==="
 find . -path '*/build/test-results/*' -name 'TEST-*.xml' -print0 2>/dev/null |
   xargs -0 -r grep -l -E '<(failure|error)' |
