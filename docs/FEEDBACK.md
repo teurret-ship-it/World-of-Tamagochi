@@ -13,6 +13,10 @@ looks nervous" beats "the egg is weird".
 
 ## Handled
 
+- 2026-10-06, PC test: "missing: choosing a pet, a main menu, an intro,
+  hatching animations". → handled in iteration 13 (pulled forward): title
+  screen, egg choice, naming, sleep time, tap-to-hatch.
+
 - [!] 2026-10-06, first PC test (emulator, late evening): "the pet sleeps all
   the time and you can't do anything". The pet slept in its 22:00-07:00
   window and every action said "Shhh... sleeping". → handled in iteration 9b:

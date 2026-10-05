@@ -8,4 +8,6 @@
     <string name="expression_sad">Looks sad.</string>
     <string name="expression_sick">Looks sick.</string>
     <string name="expression_asleep">Is asleep.</string>
+    <string name="time_earlier">%1$s earlier</string>
+    <string name="time_later">%1$s later</string>
 </resources>

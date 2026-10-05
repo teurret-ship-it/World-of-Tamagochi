@@ -24,6 +24,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.worldoftamagochi.ui.time.TimeStepper
+import com.worldoftamagochi.ui.time.clockTime
+import com.worldoftamagochi.ui.time.shiftTime
 
 /** Sound and vibration toggles (CLAUDE.md section 2) and credits for the assets. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,46 +47,14 @@ internal fun SettingsSheet(
                 modifier = Modifier.padding(top = 12.dp),
             )
             Text(stringResource(R.string.settings_sleep_hint, state.name), style = MaterialTheme.typography.bodyLarge)
-            TimeRow(stringResource(R.string.settings_bedtime), state.bedtimeMinute) { actions.onSleepWindow(it, state.wakeMinute) }
-            TimeRow(stringResource(R.string.settings_wake_up), state.wakeMinute) { actions.onSleepWindow(state.bedtimeMinute, it) }
+            TimeStepper(stringResource(R.string.settings_bedtime), state.bedtimeMinute) { actions.onSleepWindow(it, state.wakeMinute) }
+            TimeStepper(stringResource(R.string.settings_wake_up), state.wakeMinute) { actions.onSleepWindow(state.bedtimeMinute, it) }
             Text(
                 stringResource(R.string.settings_credits_title),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(top = 12.dp),
             )
             Text(stringResource(R.string.settings_credits), style = MaterialTheme.typography.bodyLarge)
-        }
-    }
-}
-
-/** A time with big earlier/later buttons, in half-hour steps: no fiddly clock dial. */
-@Composable
-private fun TimeRow(
-    label: String,
-    minuteOfDay: Int,
-    onChange: (Int) -> Unit,
-) {
-    val earlier = stringResource(R.string.settings_earlier, label)
-    val later = stringResource(R.string.settings_later, label)
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(label, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-        FilledTonalIconButton(
-            onClick = { onChange(shiftTime(minuteOfDay, -STEP_MINUTES)) },
-            modifier = Modifier.size(48.dp).semantics { contentDescription = earlier },
-        ) {
-            Text("−", style = MaterialTheme.typography.titleLarge, modifier = Modifier.clearAndSetSemantics {})
-        }
-        Text(
-            clockTime(minuteOfDay),
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.width(112.dp),
-        )
-        FilledTonalIconButton(
-            onClick = { onChange(shiftTime(minuteOfDay, STEP_MINUTES)) },
-            modifier = Modifier.size(48.dp).semantics { contentDescription = later },
-        ) {
-            Text("+", style = MaterialTheme.typography.titleLarge, modifier = Modifier.clearAndSetSemantics {})
         }
     }
 }
@@ -106,5 +77,3 @@ private fun Toggle(
         Switch(checked = checked, onCheckedChange = null)
     }
 }
-
-private const val STEP_MINUTES = 30

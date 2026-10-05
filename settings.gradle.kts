@@ -51,5 +51,6 @@ if (!jvmOnly) {
     include(":feature:home")
     include(":feature:race")
     include(":feature:shop")
+    include(":feature:onboarding")
     include(":app")
 }

@@ -14,8 +14,6 @@
     <string name="settings_sleep_hint">%1$s sleeps when you sleep.</string>
     <string name="settings_bedtime">Bedtime</string>
     <string name="settings_wake_up">Wake-up</string>
-    <string name="settings_earlier">%1$s earlier</string>
-    <string name="settings_later">%1$s later</string>
     <string name="napping_hint">%1$s is napping. Tap the light to wake them.</string>
     <string name="washing_hint">Rub %1$s to scrub them clean!</string>
     <string name="feed_hint">Drag the apple to %1$s\'s mouth</string>

@@ -46,6 +46,7 @@ dependencies {
     implementation(projects.feature.home)
     implementation(projects.feature.race)
     implementation(projects.feature.shop)
+    implementation(projects.feature.onboarding)
     implementation(projects.core.ui)
     implementation(projects.core.data)
     implementation(projects.core.network)

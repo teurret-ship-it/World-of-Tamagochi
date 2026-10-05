@@ -6,6 +6,7 @@ import com.worldoftamagochi.sim.Expression
 import com.worldoftamagochi.sim.Need
 import com.worldoftamagochi.sim.Needs
 import com.worldoftamagochi.sim.Refusal
+import com.worldoftamagochi.ui.time.shiftTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel

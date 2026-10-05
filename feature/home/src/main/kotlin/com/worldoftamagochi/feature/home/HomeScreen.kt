@@ -75,6 +75,7 @@ import com.worldoftamagochi.ui.fx.rememberParticleField
 import com.worldoftamagochi.ui.pet.Pet
 import com.worldoftamagochi.ui.sound.LocalGameSounds
 import com.worldoftamagochi.ui.sound.Sfx
+import com.worldoftamagochi.ui.time.clockTime
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow

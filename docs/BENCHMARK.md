@@ -208,3 +208,18 @@ and food, and race-day form that makes a hungry or tired pet visibly
 slower, with the reason and the fix spelled out. We do not take paid stat
 boosts or training energy refills: stats are earned only, and their effect
 on a race is capped at 10%.
+
+## Iteration 13: title screen and hatching
+
+Tamagotchi starts every life with an egg that hatches after a short wait;
+Tamagotchi Uni and Pokémon let the player choose among eggs or starters and
+name them; Pou and Talking Tom open on a title with the character greeting
+the player. Apple's and Google's onboarding guidance favours one decision
+per screen and learning by doing. We take: a title screen that shows your
+own pet, four eggs whose shells hint at the pet inside (the choice matters
+and stays a surprise), naming from a safe list, the sleep window asked in
+plain words, and hatching as the first interaction (tap, wobble, crack,
+pop), so the very first thing a child does is play. We do not take a timed
+wait for the egg (a first session must end with a pet), free-text names
+(child safety), or a long tutorial before play.
+

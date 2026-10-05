@@ -4,6 +4,24 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 13: title screen and hatching (pulled forward by playtest)
+
+- A title screen opens the game: "World of Tamagochi" with bouncing,
+  many-coloured letters, your pet (in its outfit) saying hello, and Play,
+  Races and Shop. A new player sees three rocking eggs and "Get your pet!".
+- First launch tells a short story in four steps: choose one of four eggs
+  (each shell wears the colours and markings of the pet inside, "Show me
+  other eggs" for more), pick a name from the safe list (no typing), say
+  when you go to sleep, then tap the egg: it wobbles, a crack grows with
+  every tap, and on the fifth the top of the shell flies off and the pet
+  bounces out among stars and hearts with a fanfare.
+- Back from home returns to the title screen.
+
+Self-review: clarity 5, game feel 4, retention 4, ethics 5, performance 4,
+accessibility 4.
+- Game feel 4: the first-session guide (arrows to the first feed, stroke and
+  race) is iteration 13b.
+
 ## Iteration 9b: playable at night
 
 - Playtest: opening the game in the evening showed a sleeping pet and

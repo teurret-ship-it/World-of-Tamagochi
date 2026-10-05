@@ -8,23 +8,45 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.worldoftamagochi.data.GameRepository
 import com.worldoftamagochi.feature.home.HomeRoute
+import com.worldoftamagochi.feature.onboarding.OnboardingRoute
+import com.worldoftamagochi.feature.onboarding.TitleActions
+import com.worldoftamagochi.feature.onboarding.TitleRoute
 import com.worldoftamagochi.feature.race.RaceRoute
 import com.worldoftamagochi.feature.race.TrackSelectRoute
 import com.worldoftamagochi.feature.shop.ShopRoute
 import com.worldoftamagochi.network.OnlineRacing
 
 /**
- * Four places: home, the shop, the track list, a race. A navigation library
- * arrives with the next screens (friends, album); for four it is only ceremony.
+ * The places of the game: the title screen (main menu), the first-launch
+ * story, home, the shop, the track list and a race. A navigation library
+ * arrives with the next screens (friends, album).
  */
 @Composable
 internal fun GameNavigation(
     repository: GameRepository,
     online: OnlineRacing?,
 ) {
-    var route by rememberSaveable { mutableStateOf(HOME) }
+    var route by rememberSaveable { mutableStateOf(TITLE) }
     when {
+        route == TITLE -> {
+            TitleRoute(
+                repository,
+                TitleActions(
+                    onPlay = { route = HOME },
+                    onNewPet = { route = ONBOARDING },
+                    onRaces = { route = TRACKS },
+                    onShop = { route = SHOP },
+                ),
+            )
+        }
+
+        route == ONBOARDING -> {
+            BackHandler { route = TITLE }
+            OnboardingRoute(repository, onDone = { route = HOME })
+        }
+
         route == HOME -> {
+            BackHandler { route = TITLE }
             HomeRoute(repository, onOpenRaces = { route = TRACKS }, onOpenShop = { route = SHOP })
         }
 
@@ -45,6 +67,8 @@ internal fun GameNavigation(
     }
 }
 
+private const val TITLE = "title"
+private const val ONBOARDING = "onboarding"
 private const val HOME = "home"
 private const val TRACKS = "tracks"
 private const val SHOP = "shop"

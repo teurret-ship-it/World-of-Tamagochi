@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title_small">World of</string>
+    <string name="app_title_big">Tamagochi</string>
+    <string name="title_tagline">Raise a pet. Race the world.</string>
+    <string name="title_play">Play</string>
+    <string name="title_start">Get your pet!</string>
+    <string name="title_races">Races</string>
+    <string name="title_shop">Shop</string>
+    <string name="title_greeting">%1$s is waiting for you!</string>
+    <string name="back">Back</string>
+    <string name="step">Step %1$d of %2$d</string>
+    <string name="egg_title">Choose your egg!</string>
+    <string name="egg_hint">Every egg holds a different pet. The colours are a hint!</string>
+    <string name="egg_description">Egg %1$d of %2$d</string>
+    <string name="egg_chosen">Chosen</string>
+    <string name="egg_more">Show me other eggs</string>
+    <string name="egg_next">This one!</string>
+    <string name="name_title">What will you call your pet?</string>
+    <string name="name_more">More names</string>
+    <string name="name_next">That\'s the name!</string>
+    <string name="sleep_title">When do you go to sleep?</string>
+    <string name="sleep_hint">%1$s will sleep when you sleep, so you never miss playtime. You can change it later in settings.</string>
+    <string name="sleep_bedtime">Bedtime</string>
+    <string name="sleep_wake_up">Wake-up</string>
+    <string name="sleep_next">Ready to hatch!</string>
+    <string name="hatch_title">Tap the egg to help it hatch!</string>
+    <string name="hatch_cracking">Crack… keep tapping!</string>
+    <string name="hatch_done">Say hello to %1$s!</string>
+    <string name="hatch_go">Let\'s go!</string>
+    <string name="hatch_egg">The egg. Tap to help it hatch.</string>
+</resources>

@@ -114,7 +114,7 @@ the core care loop, and every iteration from 3 on pays the player something.
   - Runs, records, queued uploads and ghosts carry the stats they were
     raced with; the server checks them against what training allows.
   - Tall phones zoom the race camera in so the pet is twice as big.
-- [x] **9b. Playable at night** (playtest [!]). Wake up works during the
+- [x] **9b. Playable at night** (playtest [!], f2c0a04). Wake up works during the
   sleep window (up for an hour, needs drain at the daytime pace), Lights
   off sends the pet back to bed, the hint names the wake-up time, and the
   sleep time is set in settings (half-hour steps).
@@ -130,8 +130,18 @@ the core care loop, and every iteration from 3 on pays the player something.
 - [ ] **12. Life cycle and evolution.** Egg -> baby -> child -> teen ->
   adult; at least 6 adult forms from care quality and favourite discipline;
   transformation animation; album.
-- [ ] **13. Onboarding (FTUE).** Hatching as the tutorial, naming, sleep
-  window, first race within the first session; < 60 s to the first stroke.
+- [x] **13. Title screen and onboarding (FTUE).** Pulled ahead by playtest
+  feedback ("no pet choice, no main menu, no intro, no hatching").
+  - Title screen as the main menu: bouncing logo, your pet saying hello,
+    Play / Races / Shop; "Get your pet!" for a new player.
+  - Four steps, one decision each: choose one of four eggs (shell in the
+    colours of the pet inside, "show me other eggs"), pick a name from the
+    safe list, set bedtime and wake-up, tap the egg five times to hatch it
+    (wobble, growing crack, shell flies off, the pet bounces out among
+    stars, fanfare).
+- [ ] **13b. First-session guide.** Arrows and speech bubbles for the first
+  feed, stroke and race; < 60 s to the first stroke; first race within the
+  first session.
 - [ ] **14. Sickness without cruelty.** Sickness and medicine, "journey"
   instead of death, rescue quest, vacation mode.
 - [ ] **15. Leagues and weekend cups.** Divisions with weekly promotion and

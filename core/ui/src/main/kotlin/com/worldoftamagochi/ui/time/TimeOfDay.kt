@@ -1,11 +1,11 @@
-package com.worldoftamagochi.feature.home
+package com.worldoftamagochi.ui.time
 
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 /** "7:00 AM" or "07:00", in the player's locale, from minutes after midnight. */
-internal fun clockTime(minuteOfDay: Int): String =
+fun clockTime(minuteOfDay: Int): String =
     LocalTime
         .of(
             minuteOfDay / MINUTES_PER_HOUR,
@@ -13,7 +13,7 @@ internal fun clockTime(minuteOfDay: Int): String =
         ).format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
 
 /** Moves a time of day by [deltaMinutes], wrapping around midnight. */
-internal fun shiftTime(
+fun shiftTime(
     minuteOfDay: Int,
     deltaMinutes: Int,
 ): Int = Math.floorMod(minuteOfDay + deltaMinutes, MINUTES_PER_DAY)
