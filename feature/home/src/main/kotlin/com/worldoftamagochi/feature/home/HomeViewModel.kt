@@ -2,6 +2,12 @@ package com.worldoftamagochi.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.worldoftamagochi.data.GameRepository
+import com.worldoftamagochi.data.GameSave
+import com.worldoftamagochi.data.Settings
+import com.worldoftamagochi.data.toProgress
+import com.worldoftamagochi.data.toSave
+import com.worldoftamagochi.data.toState
 import com.worldoftamagochi.sim.CareAction
 import com.worldoftamagochi.sim.CareResult
 import com.worldoftamagochi.sim.CareRules
@@ -36,39 +42,46 @@ data class HomeRules(
 
 /**
  * Drives the home screen: keeps the pet's needs moving in real time, applies
- * care through the shared rules and pays the player for it. The pet lives in
- * memory until persistence arrives (roadmap iteration 4).
+ * care through the shared rules, pays the player for it and saves the game
+ * after every action and every 15 seconds.
  */
 class HomeViewModel(
+    private val repository: GameRepository,
     private val clock: () -> Long = System::currentTimeMillis,
-    seed: Long = clock(),
     private val zone: ZoneId = ZoneId.systemDefault(),
-    private val name: String = DEFAULT_NAME,
+    private val newPetSeed: () -> Long = clock,
     private val rules: HomeRules = HomeRules(),
 ) : ViewModel() {
     private val care = rules.care
     private val progression = rules.progression
     private val expressions = rules.expressions
-    private val genome = Genome.fromSeed(seed)
-    private var pet =
-        PetState(
-            stage = LifeStage.BABY,
-            needs = Needs(),
-            sleep = SleepWindow(zone = zone),
-            updatedAtEpochMillis = clock(),
-        )
+    private var seed = 0L
+    private var name = DEFAULT_NAME
+    private var genome: Genome? = null
+    private lateinit var pet: PetState
     private var progress = PlayerProgress()
     private var washing = false
     private var strokes = 0
+    private var away: AwaySummary? = null
+    private var settings = Settings()
+    private var ticksSinceSave = 0
 
-    private val _state = MutableStateFlow(render())
-    val state: StateFlow<HomeUiState> = _state.asStateFlow()
+    /** Null until the saved game is loaded (a few milliseconds after start). */
+    private val _state = MutableStateFlow<HomeUiState?>(null)
+    val state: StateFlow<HomeUiState?> = _state.asStateFlow()
 
     private val _effects = Channel<HomeEffect>(Channel.BUFFERED)
     val effects: Flow<HomeEffect> = _effects.receiveAsFlow()
 
     init {
         viewModelScope.launch {
+            load()
+            launch {
+                repository.settings.collect {
+                    settings = it
+                    publish()
+                }
+            }
             while (isActive) {
                 delay(TICK_MILLIS)
                 tick()
@@ -76,12 +89,44 @@ class HomeViewModel(
         }
     }
 
-    /** Moves the pet to the current time. Called by the ticker; public for tests. */
-    fun tick() {
+    /** Loads the saved pet (or hatches a new one) and catches it up to now. */
+    internal suspend fun load() {
+        val saved = repository.loadGame()
+        if (saved == null) {
+            seed = newPetSeed()
+            pet = PetState(LifeStage.BABY, Needs(), SleepWindow(zone = zone), clock())
+        } else {
+            seed = saved.pet.seed
+            name = saved.pet.name
+            // The pet sleeps in the player's current time zone (travel, DST).
+            pet = saved.pet.toState().let { it.copy(sleep = it.sleep.copy(zone = zone)) }
+            progress = saved.progress.toProgress()
+        }
+        genome = Genome.fromSeed(seed)
+        val before = pet
         pet = NeedsSimulation.advance(pet, clock())
-        if (pet.isAsleep()) washing = false
+        away = awaySummary(before, pet)
+        save()
         publish()
     }
+
+    /** Moves the pet to the current time. Called by the ticker; public for tests. */
+    fun tick() {
+        if (genome == null) return
+        pet = NeedsSimulation.advance(pet, clock())
+        if (pet.isAsleep()) washing = false
+        if (++ticksSinceSave >= SAVE_EVERY_TICKS) saveAsync()
+        publish()
+    }
+
+    fun onDismissAway() {
+        away = null
+        publish()
+    }
+
+    fun onSoundToggled(enabled: Boolean) = viewModelScope.launch { repository.updateSettings { it.copy(sound = enabled) } }
+
+    fun onHapticsToggled(enabled: Boolean) = viewModelScope.launch { repository.updateSettings { it.copy(haptics = enabled) } }
 
     /** The player rubbed the pet: a stroke, or a scrub while holding the soap. */
     fun onStroke() {
@@ -112,6 +157,7 @@ class HomeViewModel(
     fun onLights() = perform(if (isNapping()) CareAction.WAKE else CareAction.NAP)
 
     private fun perform(action: CareAction) {
+        if (genome == null) return
         pet = NeedsSimulation.advance(pet, clock())
         when (val result = care.apply(pet, action)) {
             is CareResult.Refused -> {
@@ -131,18 +177,42 @@ class HomeViewModel(
                 if (action == CareAction.STROKE) strokes++
                 if (action == CareAction.NAP) washing = false
                 _effects.trySend(HomeEffect.Cared(action, result.changes, update.earned, update.levelUp))
+                saveAsync()
             }
         }
         publish()
     }
 
+    private fun awaySummary(
+        before: PetState,
+        after: PetState,
+    ): AwaySummary? {
+        val minutes = (after.updatedAtEpochMillis - before.updatedAtEpochMillis) / MILLIS_PER_MINUTE
+        if (minutes < AWAY_MINUTES) return null
+        val changes =
+            Need.entries
+                .associateWith { after.needs.gauge(it).value - before.needs.gauge(it).value }
+                .filterValues { it != 0 }
+        return AwaySummary(minutes, changes)
+    }
+
+    private fun saveAsync() {
+        ticksSinceSave = 0
+        viewModelScope.launch { save() }
+    }
+
+    private suspend fun save() {
+        repository.saveGame(GameSave(pet = pet.toSave(seed, name), progress = progress.toSave()))
+    }
+
     private fun isNapping(): Boolean = pet.napUntilEpochMillis?.let { it > pet.updatedAtEpochMillis } == true
 
     private fun publish() {
-        _state.value = render()
+        val genome = genome ?: return
+        _state.value = render(genome)
     }
 
-    private fun render(): HomeUiState {
+    private fun render(genome: Genome): HomeUiState {
         val asleep = pet.isAsleep()
         val level = progress.level
         val start = progression.xpAtLevel(level)
@@ -159,11 +229,17 @@ class HomeViewModel(
             napping = isNapping(),
             washing = washing,
             strokes = strokes,
+            away = away,
+            sound = settings.sound,
+            haptics = settings.haptics,
         )
     }
 
     private companion object {
         const val TICK_MILLIS = 1_000L
+        const val SAVE_EVERY_TICKS = 15
+        const val AWAY_MINUTES = 30L
+        const val MILLIS_PER_MINUTE = 60_000L
         const val DEFAULT_NAME = "Mochi"
     }
 }

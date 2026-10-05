@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -27,6 +29,7 @@ import com.worldoftamagochi.ui.R as UiR
 @Composable
 internal fun TopBar(
     state: HomeUiState,
+    onSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -56,7 +59,7 @@ internal fun TopBar(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
         )
-        val coinsLabel = stringResource(R.string.coins, state.coins.toInt())
+        val coinsLabel = pluralStringResource(R.plurals.coins, state.coins.toInt(), state.coins.toInt())
         Surface(
             shape = RoundedCornerShape(24.dp),
             color = MaterialTheme.colorScheme.surfaceVariant,
@@ -70,6 +73,13 @@ internal fun TopBar(
                 Image(painterResource(UiR.drawable.reward_coin), contentDescription = null, modifier = Modifier.size(32.dp))
                 Text(state.coins.toString(), style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
             }
+        }
+        IconButton(onClick = onSettings, modifier = Modifier.size(48.dp)) {
+            Image(
+                painterResource(UiR.drawable.ui_gear),
+                contentDescription = stringResource(R.string.settings),
+                modifier = Modifier.size(36.dp),
+            )
         }
     }
 }

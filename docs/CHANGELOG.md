@@ -4,6 +4,23 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 4: the pet is still there tomorrow
+
+- The game is saved (DataStore JSON, ADR-007) after every care action and
+  every 15 seconds, and loaded on start; a corrupt save starts fresh instead
+  of crashing.
+- Coming back after 30+ minutes shows a "Welcome back!" card with the pet
+  and what changed per need.
+- Settings (gear in the top bar): sound and vibration toggles that apply to
+  the whole game, and credits for SND, Fluent Emoji and Fredoka.
+- The pet always sleeps in the player's current time zone; a date wound
+  back no longer resets the daily coin cap.
+- Fixes from CI on iteration 3: "coins" is a plural resource; a test helper
+  no longer counts buffered effects from earlier actions.
+
+Self-review: clarity 4, game feel 4, retention 4, ethics 5, performance 4,
+accessibility 4.
+
 ## Iteration 3: care with juice and rewards
 
 Caring for the pet now feels good and pays.

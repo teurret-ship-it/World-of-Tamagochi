@@ -9,6 +9,7 @@ androidx-core = "1.17.0"
 androidx-activity = "1.11.0"
 androidx-lifecycle = "2.9.4"
 compose-bom = "2025.10.00"
+androidx-datastore = "1.1.7"
 
 ktor = "3.6.0"
 logback = "1.6.5"
@@ -41,6 +42,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 # androidx / compose
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "androidx-datastore" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }

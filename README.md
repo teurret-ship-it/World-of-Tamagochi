@@ -19,6 +19,8 @@ next iteration.
   "+N" label; a full or sleepy pet says so.
 - Rewards: XP and levels with a level-up fanfare, coins for answering a
   real need (capped per day).
+- The game is saved on the device; coming back shows a "Welcome back!"
+  card. Settings: sound and vibration toggles, credits.
 - The server answers `GET /health`.
 - Game rules (`core/sim`): five needs (satiety, energy, hygiene, happiness,
   health) living in real time, a sleep window in the player's time zone, and
@@ -52,7 +54,8 @@ Screenshots: `./gradlew recordRoborazziDebug` records reference images into
 | `core/sim` | game rules, pure Kotlin, shared by app and server |
 | `core/model` | shared value types |
 | `core/designsystem` | theme, palette, typography |
-| `core/ui` | the pet rig and shared game UI |
+| `core/ui` | the pet rig, particles, sounds, shared game UI |
+| `core/data` | the save (DataStore) and settings |
 | `feature/home` | home screen |
 | `app` | Android application |
 | `server` | Ktor game server |

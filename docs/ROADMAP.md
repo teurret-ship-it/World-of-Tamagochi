@@ -48,10 +48,10 @@ the core care loop, and every iteration from 3 on pays the player something.
     coins) drawn with Fluent Emoji 3D.
   - Player XP and level with a level-up celebration and jingle; coins for
     caring for a pet in need (capped per day, so caring is never grinding).
-- [ ] **4. Persistence and "while you were away".** Goal: the pet is still
+- [x] **4. Persistence and "while you were away".** Goal: the pet is still
   there tomorrow and greets you.
-  - Room + DataStore; catch-up on launch; a friendly card summarizing what
-    happened; clock-rollback protection.
+  - DataStore save (ADR-007); catch-up on launch; a friendly card
+    summarizing what happened; clock-rollback protection.
   - Settings: sound and haptics toggles (CLAUDE.md section 2), credits for
     SND, Fluent Emoji and Fredoka.
 - [ ] **5. Competition engine + Sprint race.** Goal: the first race.

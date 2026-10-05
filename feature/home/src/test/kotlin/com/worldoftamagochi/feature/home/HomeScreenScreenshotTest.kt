@@ -55,6 +55,24 @@ class HomeScreenScreenshotTest {
         }
 
     @Test
+    fun welcomeBack() =
+        capture("home_welcome_back") {
+            Home(
+                hungry.copy(
+                    away =
+                        AwaySummary(
+                            312,
+                            mapOf(
+                                Need.SATIETY to -57,
+                                Need.HAPPINESS to -40,
+                                Need.ENERGY to 12,
+                            ),
+                        ),
+                ),
+            )
+        }
+
+    @Test
     fun levelUp() = capture("home_level_up") { WotTheme { LevelUpBanner(level = 3, onDone = {}) } }
 
     private fun capture(

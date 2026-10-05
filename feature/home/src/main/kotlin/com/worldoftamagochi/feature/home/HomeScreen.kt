@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.worldoftamagochi.data.GameRepository
 import com.worldoftamagochi.sim.CareAction
 import com.worldoftamagochi.sim.Need
 import com.worldoftamagochi.sim.Refusal
@@ -82,10 +83,13 @@ import kotlin.math.roundToInt
 import com.worldoftamagochi.ui.R as UiR
 
 @Composable
-fun HomeRoute(viewModel: HomeViewModel = viewModel { HomeViewModel() }) {
+fun HomeRoute(repository: GameRepository) {
+    val viewModel: HomeViewModel = viewModel { HomeViewModel(repository) }
     val state by viewModel.state.collectAsStateWithLifecycle()
+    // Nothing to draw until the saved pet is loaded (milliseconds after start).
+    val loaded = state ?: return
     HomeScreen(
-        state = state,
+        state = loaded,
         actions =
             HomeActions(
                 onStroke = viewModel::onStroke,
@@ -93,6 +97,9 @@ fun HomeRoute(viewModel: HomeViewModel = viewModel { HomeViewModel() }) {
                 onWash = viewModel::onToggleSoap,
                 onPlay = viewModel::onPlay,
                 onLights = viewModel::onLights,
+                onDismissAway = viewModel::onDismissAway,
+                onSound = viewModel::onSoundToggled,
+                onHaptics = viewModel::onHapticsToggled,
             ),
         effects = viewModel.effects,
     )
@@ -116,6 +123,7 @@ fun HomeScreen(
     val shake = remember { Animatable(0f) }
     var petBounds by remember { mutableStateOf(Rect.Zero) }
     var draggedFood by remember { mutableStateOf<Offset?>(null) }
+    var settingsOpen by remember { mutableStateOf(false) }
 
     EffectsPlayer(effects, fx, onBubble = { bubble = it }, onLevelUp = { levelUp = it }, shake = shake)
 
@@ -142,9 +150,11 @@ fun HomeScreen(
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Box {
-            HomeLayout(state, stage, care)
+            HomeLayout(state, stage, care, onSettings = { settingsOpen = true })
             draggedFood?.let { FoodInHand(it) }
             LevelUpBanner(levelUp, onDone = { levelUp = null })
+            state.away?.let { AwayCard(state, it, actions.onDismissAway) }
+            if (settingsOpen) SettingsSheet(state, actions, onClose = { settingsOpen = false })
         }
     }
 }
@@ -154,6 +164,7 @@ private fun HomeLayout(
     state: HomeUiState,
     stage: @Composable (Modifier) -> Unit,
     care: CareCallbacks,
+    onSettings: () -> Unit,
 ) {
     BoxWithConstraints {
         if (maxWidth >= WIDE_SCREEN) {
@@ -164,7 +175,7 @@ private fun HomeLayout(
             ) {
                 stage(Modifier.weight(1f))
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    TopBar(state)
+                    TopBar(state, onSettings)
                     Status(state)
                     CareBar(state, care)
                 }
@@ -175,7 +186,7 @@ private fun HomeLayout(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                TopBar(state)
+                TopBar(state, onSettings)
                 stage(Modifier.fillMaxWidth())
                 CareBar(state, care)
                 Status(state)

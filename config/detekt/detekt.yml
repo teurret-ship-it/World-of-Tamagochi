@@ -7,10 +7,14 @@ naming:
     constantPattern: '[A-Z][_A-Za-z0-9]*'
 complexity:
   TooManyFunctions:
+    # A screen's ViewModel exposes one handler per player action.
+    thresholdInClasses: 20
     # Art files are many small drawing helpers by design.
     excludes: ['**/test/**', '**/*Art.kt']
   LongParameterList:
     ignoreAnnotated: ['Composable']
+    # Holders of optional callbacks/settings with defaults are not long calls.
+    ignoreDefaultParameters: true
     # Test fixtures take one named parameter per need.
     excludes: ['**/test/**']
 style:

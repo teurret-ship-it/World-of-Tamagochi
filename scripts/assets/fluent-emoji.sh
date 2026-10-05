@@ -28,4 +28,5 @@ Glowing star|glowing_star|reward_star
 Red heart|red_heart|fx_heart
 Sparkles|sparkles|fx_sparkles
 Zzz|zzz|fx_zzz
+Gear|gear|ui_gear
 LIST

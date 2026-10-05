@@ -41,6 +41,16 @@ class ProgressTest {
     }
 
     @Test
+    fun `winding the date back does not reset the daily coin cap`() {
+        var progress = PlayerProgress()
+        repeat(12) { progress = rules.reward(progress, result(true), CareAction.FEED, 10).progress }
+        progress.careCoinsToday shouldBe 60
+        val cheat = rules.reward(progress, result(true), CareAction.FEED, 9)
+        cheat.earned.coins shouldBe 0
+        cheat.progress.careCoinsDay shouldBe 10
+    }
+
+    @Test
     fun `a level-up is reported once, on the action that crossed it`() {
         val almost = PlayerProgress(xp = 45)
         val update = rules.reward(almost, result(answered = false), CareAction.PLAY, 1)

@@ -95,3 +95,14 @@ haptic tick and a sound on every action, XP with a level ring and a
 level-up banner, and coins only for answering a real need, capped at 60 a
 day. We do not take Pou's toilet and food-poop loop (a chore with no joy
 for younger children) or punishment for overfeeding.
+
+## Iteration 4: persistence and "while you were away"
+
+Tamagotchi Uni and Pou keep living while the app is closed; Finch greets the
+player with what happened and never scolds; Pokémon Sleep opens with a
+morning summary. We take: the save survives restarts, the pet is caught up
+on launch, and after 30 minutes away a friendly "Welcome back!" card shows
+the pet and what changed, per need, in that need's colour. We do not take
+guilt-tripping wording ("your pet missed you so much it got sick"): the
+card states facts and offers "Let's go!". Sound and vibration toggles and
+credits for every asset author live in a settings sheet behind the gear.

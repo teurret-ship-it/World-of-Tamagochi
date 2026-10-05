@@ -34,7 +34,14 @@ class HomeViewModelTest {
     @After
     fun tearDown() = Dispatchers.resetMain()
 
-    private fun viewModel() = HomeViewModel(clock = { now }, seed = 7, zone = ZoneOffset.UTC)
+    private val repository = FakeGameRepository()
+
+    private fun viewModel(): HomeViewModel =
+        HomeViewModel(repository, clock = { now }, zone = ZoneOffset.UTC, newPetSeed = { 7 }).also {
+            dispatcher.scheduler.runCurrent() // loads the save
+        }
+
+    private val HomeViewModel.ui: HomeUiState get() = requireNotNull(state.value)
 
     /** Collects the effects a block of interactions produced. */
     private fun HomeViewModel.effectsOf(block: HomeViewModel.() -> Unit): List<HomeEffect> {
@@ -42,6 +49,8 @@ class HomeViewModelTest {
         val scope = TestScope(dispatcher)
         val job = scope.launch { effects.collect { seen.trySend(it) } }
         scope.runCurrent()
+        // Effects of earlier interactions are still buffered in the channel: skip them.
+        generateSequence { seen.tryReceive().getOrNull() }.toList()
         block()
         scope.runCurrent()
         job.cancel()
@@ -50,7 +59,7 @@ class HomeViewModelTest {
 
     @Test
     fun `a new pet starts full and happy, at level 1 with no coins`() {
-        val state = viewModel().state.value
+        val state = viewModel().ui
         assertEquals(Expression.HAPPY, state.expression)
         assertTrue(state.needs.values.all { it == 100 })
         assertNull(state.urgentNeed)
@@ -80,11 +89,11 @@ class HomeViewModelTest {
         assertEquals(5, cared.reward.coins)
         assertEquals(
             51,
-            vm.state.value.needs
+            vm.ui.needs
                 .getValue(Need.SATIETY),
         )
-        assertEquals(5L, vm.state.value.coins)
-        assertTrue(vm.state.value.levelProgress > 0f)
+        assertEquals(5L, vm.ui.coins)
+        assertTrue(vm.ui.levelProgress > 0f)
     }
 
     @Test
@@ -100,15 +109,15 @@ class HomeViewModelTest {
         now = at(hour = 18) // hygiene 100 - 8 h * 8 = 36
         vm.tick()
         vm.onToggleSoap()
-        assertTrue(vm.state.value.washing)
+        assertTrue(vm.ui.washing)
         val effects = vm.effectsOf { repeat(4) { onStroke() } }
         assertTrue(effects.all { it is HomeEffect.Cared && it.action == CareAction.WASH })
         assertEquals(
             100,
-            vm.state.value.needs
+            vm.ui.needs
                 .getValue(Need.HYGIENE),
         )
-        assertFalse("soap is put down once clean", vm.state.value.washing)
+        assertFalse("soap is put down once clean", vm.ui.washing)
     }
 
     @Test
@@ -117,10 +126,10 @@ class HomeViewModelTest {
         now = at(hour = 20) // baby energy 100 - 10 h * 6 = 40
         vm.tick()
         vm.onLights()
-        assertTrue(vm.state.value.napping)
-        assertTrue(vm.state.value.asleep)
+        assertTrue(vm.ui.napping)
+        assertTrue(vm.ui.asleep)
         vm.onLights()
-        assertFalse(vm.state.value.napping)
+        assertFalse(vm.ui.napping)
     }
 
     @Test
@@ -128,15 +137,53 @@ class HomeViewModelTest {
         val vm = viewModel()
         vm.onStroke()
         vm.onStroke()
-        assertEquals(2, vm.state.value.strokes)
+        assertEquals(2, vm.ui.strokes)
 
         now = at(hour = 23)
         vm.tick()
-        assertTrue(vm.state.value.asleep)
+        assertTrue(vm.ui.asleep)
         val effects = vm.effectsOf { onStroke() }
-        assertEquals(2, vm.state.value.strokes)
+        assertEquals(2, vm.ui.strokes)
         assertEquals(HomeEffect.Refused(CareAction.STROKE, Refusal.ASLEEP), effects.single())
-        assertNull(vm.state.value.urgentNeed)
+        assertNull(vm.ui.urgentNeed)
+    }
+
+    @Test
+    fun `the game is saved after care and reloaded with the same pet, coins and time`() {
+        val vm = viewModel()
+        now = at(hour = 16)
+        vm.onFeed()
+        dispatcher.scheduler.runCurrent()
+        val saved = requireNotNull(repository.game)
+        assertEquals(5L, saved.progress.coins)
+        assertEquals(7L, saved.pet.seed)
+
+        now = at(hour = 16) + 10 * 60_000
+        val again = viewModel()
+        assertEquals(5L, again.ui.coins)
+        assertEquals(vm.ui.genome, again.ui.genome)
+        assertNull("10 minutes is not 'away'", again.ui.away)
+    }
+
+    @Test
+    fun `coming back after hours shows what changed, once`() {
+        viewModel()
+        now = at(hour = 15)
+        val back = viewModel()
+        val away = requireNotNull(back.ui.away)
+        assertEquals(300L, away.minutes)
+        assertEquals(-70, away.changes[Need.SATIETY])
+        back.onDismissAway()
+        assertNull(back.ui.away)
+    }
+
+    @Test
+    fun `settings toggles are stored`() {
+        val vm = viewModel()
+        vm.onSoundToggled(false)
+        dispatcher.scheduler.runCurrent()
+        assertFalse(vm.ui.sound)
+        assertTrue(vm.ui.haptics)
     }
 
     private fun at(hour: Int): Long = LocalDateTime.of(2026, 3, 2, hour, 0).toInstant(ZoneOffset.UTC).toEpochMilli()

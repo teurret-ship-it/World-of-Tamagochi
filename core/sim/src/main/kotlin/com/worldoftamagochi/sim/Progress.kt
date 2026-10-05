@@ -54,7 +54,9 @@ data class ProgressRules(
     ): ProgressUpdate {
         val xp = if (action == CareAction.STROKE || action == CareAction.WAKE) 1 else xpPerCare
         val bonusXp = if (result.answeredNeed) xpBonusForAnsweredNeed else 0
-        val todayCount = if (progress.careCoinsDay == localEpochDay) progress.careCoinsToday else 0
+        // A clock wound back to an earlier day must not reset the daily cap.
+        val day = maxOf(localEpochDay, progress.careCoinsDay)
+        val todayCount = if (progress.careCoinsDay == day) progress.careCoinsToday else 0
         val wanted = if (result.answeredNeed) coinsForAnsweredNeed else 0
         val coins = wanted.coerceAtMost(careCoinCapPerDay - todayCount).coerceAtLeast(0)
         val earned = Reward(xp + bonusXp, coins)
@@ -63,7 +65,7 @@ data class ProgressRules(
                 xp = progress.xp + earned.xp,
                 coins = progress.coins + earned.coins,
                 careCoinsToday = todayCount + coins,
-                careCoinsDay = localEpochDay,
+                careCoinsDay = day,
             )
         val levelUp = levelFor(next.xp).takeIf { it > levelFor(progress.xp) }
         return ProgressUpdate(next, earned, levelUp)

@@ -25,9 +25,20 @@ data class HomeUiState(
     val washing: Boolean = false,
     /** Increments on every accepted stroke so the UI can play one reaction per stroke. */
     val strokes: Int = 0,
+    /** What changed while the player was away; shown once as a welcome-back card. */
+    val away: AwaySummary? = null,
+    val sound: Boolean = true,
+    val haptics: Boolean = true,
 ) {
     val asleep: Boolean get() = expression == Expression.ASLEEP
 }
+
+/** The welcome-back card: how long the player was gone and what changed. */
+data class AwaySummary(
+    val minutes: Long,
+    /** Gauge points per need (negative = dropped), only needs that changed. */
+    val changes: Map<Need, Int>,
+)
 
 /** One-off things the screen should celebrate or explain. */
 sealed interface HomeEffect {

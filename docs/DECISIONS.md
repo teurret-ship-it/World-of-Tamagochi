@@ -143,3 +143,23 @@ Maven Central are reachable.
 **Rejected.** Kenney (product owner: not premium enough); AI-generated art
 and audio (unclear licensing for a children's product); itch.io packs
 (per-pack licences, unreachable).
+
+## ADR-007: One DataStore document for the save, Room later
+
+**Context.** Iteration 4 needs the pet, progress and settings to survive
+restarts. The save is one small document today (a pet, a progress record,
+two toggles).
+
+**Decision.** `:core:data` stores a versioned JSON document
+(`SaveFile`, kotlinx.serialization) in a typed DataStore: atomic writes, no
+schema, trivial migrations by `version`. A corrupt file starts a fresh game
+instead of crashing. The ViewModel saves after every care action and every
+15 seconds. Room arrives when the data becomes collections that need
+queries (inventory, album, race history); the repository interface stays.
+No DI framework yet: `WotApplication` owns the repository and passes it to
+the screen; Hilt arrives with the second screen that needs shared objects.
+
+**Clock.** Time never runs backwards for the pet (iteration 1), and the
+daily coin cap ignores a date wound back (it keeps the latest day seen). A
+date wound forward cannot be detected offline; it only makes the pet
+hungrier, and server time takes over in iteration 6.
