@@ -65,3 +65,49 @@ and, if they are right, copies them into the working branch in a normal
 commit. Differences fail CI until that commit lands, so references never
 change unreviewed. Robolectric test failures print full stack traces to the
 log for the same reason.
+
+## ADR-004: Competitions and rewards first
+
+**Context.** The product owner's direction (2026-10-05): the game must be
+pleasant for children, engaging, rewarding and competitive online. The
+original roadmap put online competitions at iteration 28, after months of
+offline care features, and paid the player nothing until iteration 10.
+
+**Decision.** Re-order the roadmap: the care loop (iterations 1-4), then the
+competition engine and the first race (5), then online ghost races with
+server-verified times and leaderboards (6), then more disciplines, a shop to
+spend rewards, training that links care to race form, and daily quests.
+Every iteration from 3 on gives the player something: coins, XP, medals,
+stickers or cosmetics. Asynchronous ghost races come before live races
+because they work with any number of players, never make a child wait in a
+lobby, and cannot lag.
+
+**Rejected.** Live races first (needs a player base and netcode before
+anyone has a reason to play); paid boosts for races (CLAUDE.md section 2).
+
+## ADR-005: Asset sources
+
+**Context.** Kids' games live on polish: sound on every tap, medals, a
+readable world. Drawing and composing everything ourselves is slow and
+worse than what exists under CC0. The development environment's network
+policy blocks kenney.nl, opengameart.org and freesound.org, but public
+GitHub repositories are readable.
+
+**Decision.**
+- The pet stays procedural (vector rig + genome, iteration 2): uniqueness
+  per player is a feature no sprite pack gives.
+- Sound, medals, UI pieces and platformer tiles come from Kenney's CC0
+  packs: "Kenney Asset Pack 1" mirrored at github.com/iwenzhou/kenney (UI,
+  Casino, RPG, Digital and Jingle sounds; Platformer assets; Onscreen
+  controls; UI pack; Medals) and "Interface Sounds" at
+  github.com/Calinou/kenney-interface-sounds. Both carry Kenney's CC0
+  licence file; every imported file is listed in `docs/ASSETS.md` with its
+  source path.
+- Only the files a feature uses are copied into the app, re-encoded where
+  that shrinks them, to stay inside the APK budget.
+- If kenney.nl is allowed in the environment later, newer Kenney packs
+  (e.g. Animal Pack, Food Kit) may be added the same way.
+
+**Rejected.** AI-generated art and audio (unclear licensing for a
+children's product); paid asset stores (licence terms vary per asset and
+cannot be checked from here).

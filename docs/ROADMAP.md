@@ -6,10 +6,11 @@ Tick an item with `[x]` and the commit hash once it is pushed. Split items
 that are too big (N -> Na, Nb). When the list runs out, the iteration
 protocol (CLAUDE.md 5.2d) appends the next five from a gap analysis.
 
-## Phase 0: Foundation and offline core
+Order follows ADR-004: the game must be fun for kids, engaging, rewarding
+and competitive online, so the first online competition comes right after
+the core care loop, and every iteration from 3 on pays the player something.
 
-Phase gate: "I want to come back tomorrow" (protocol in `docs/PLAYTEST.md`,
-written in iteration 9).
+## Phase A: Core loop and first online competition
 
 - [x] **0. Skeleton.** (ddb40a6, CI green at b5469a2) Goal: a project anyone can build, test and ship.
   - Modules `:core:sim`, `:core:model`, `:core:designsystem`, `:feature:home`,
@@ -38,115 +39,98 @@ written in iteration 9).
     hungry, sleepy, dirty, sick, sad) chosen from needs.
   - Stroking gesture with reaction and haptics.
   - Screenshot of every expression, 4 variants for the home screen.
-- [ ] **3. Care actions.** Goal: caring feels good.
-  - Feed by dragging food to the mouth (button alternative), wash by
-    scrubbing with foam, sleep by switching the light off, play with a ball.
-  - Every action: animation, sound, haptics, a "+N" over the need bar.
-  - Rules in `:core:sim` (`CareAction` -> state), tests per action.
-- [ ] **4. Persistence and time.** Goal: the pet is still there tomorrow.
-  - Room + DataStore; catch-up on return with a "while you were away" card.
-  - Clock rollback protection (monotonic time + last known server time).
-- [ ] **5. Life cycle and evolution.** Goal: the pet grows up into someone.
-  - Egg -> baby -> child -> teen -> adult; at least 6 adult forms decided by
-    care mistakes and dominant activity; transformation animation; album.
-- [ ] **6. Sickness without cruelty.** Goal: neglect has consequences, never
-  cruelty.
-  - Sickness and medicine; "journey" instead of death; rescue quest;
-    vacation mode (up to 14 days).
-- [ ] **7. Respectful notifications.** Goal: reminders that help.
-  - WorkManager, channels, POST_NOTIFICATIONS asked in context (after the
-    first hunger, not at launch), limits from CLAUDE.md section 2.
-- [ ] **8. Onboarding (FTUE).** Goal: love at first tap.
-  - Hatching as the tutorial, naming, sleep window. < 60 s to the first
-    stroke, no walls of text. Screenshot test of the whole path.
-- [ ] **9. Home-screen widget (Glance).** Goal: the pet on the home screen.
-  - Pet and its most urgent need. Phase gate: `docs/PLAYTEST.md` (5
-    people, do they come back on day 2 unprompted).
-
-## Phase 1: Content, economy and offline competitions
-
-- [ ] **10. Soft currency and economy model** in `:core:sim` (sources/sinks,
-  30-day simulation in a test, inflation under a set threshold).
-- [ ] **11. Competition engine** in `:core:sim`: fixed 60 Hz step,
-  fixed-point physics, input log, replay reproduces the result frame by
-  frame (test), ghost from the log. Pet stats with capped influence (test
-  for the 10% cap).
-- [ ] **12. Sprint race.** Stamina management and lane changes, 3 tracks of
-  45-60 s, ghost of your own record, start countdown, finish replay.
-- [ ] **13. Agility course.** Slalom, tunnel, seesaw, hurdle, tyre; time
-  penalties for faults; one-hand controls.
-- [ ] **14. Timed platformer.** 30-90 s levels, jump and double jump,
-  checkpoints, instant restart, bronze/silver/gold/author medals.
-- [ ] **15. Training and form.** Exercises raise stats at the cost of energy
-  and hunger, with a daily cap. A hungry, tired or sick pet races worse, so
-  care matters in competitions.
-- [ ] **16. Shop and pantry.** Food with different effects; the pet's
-  favourite flavours (personality).
-- [ ] **17. Wardrobe.** Cosmetics on the rig (hats, glasses, scarves), also
-  visible in competitions; preview before buying.
-- [ ] **18. Room.** Grid decorating, furniture affects mood, wallpapers, a
-  trophy shelf, several rooms (kitchen, bathroom, bedroom, playroom).
-- [ ] **19. Daily and weekly quests**, login streak with freeze,
+- [ ] **3. Care with juice and rewards.** Goal: caring feels good and pays.
+  - Feed (drag food to the mouth, button alternative), wash (scrub with
+    foam), lights off (sleep), play (ball). Rules in `:core:sim`
+    (`CareAction` -> state), one test per action.
+  - Every action: animation, sound (Kenney CC0, ADR-005), haptics, "+N"
+    floating over the bar, particles (hearts, bubbles, stars).
+  - Player XP and level with a level-up celebration and jingle; coins for
+    caring for a pet in need (capped per day, so caring is never grinding).
+- [ ] **4. Persistence and "while you were away".** Goal: the pet is still
+  there tomorrow and greets you.
+  - Room + DataStore; catch-up on launch; a friendly card summarizing what
+    happened; clock-rollback protection.
+- [ ] **5. Competition engine + Sprint race.** Goal: the first race.
+  - `:core:sim`: fixed 60 Hz step, fixed-point physics, input log, replay
+    reproduces the result frame by frame (test), ghost from the log, stats
+    with capped influence (10% test).
+  - Sprint: tap rhythm and lane swipes, stamina, 3 tracks of 30-45 s,
+    countdown, own-record ghost, bronze/silver/gold/author medals, coin and
+    XP rewards, finish replay.
+- [ ] **6. Online: anonymous account + ghost races.** Goal: race other
+  players today.
+  - Server: anonymous account (device-bound token), PostgreSQL, run upload;
+    the server replays the input log with `:core:sim` and stores the
+    verified time; mismatching logs are rejected (test).
+  - Race the ghosts of real players near your time (rating), daily and
+    weekly leaderboards per track, "you beat 7 players today" rewards.
+- [ ] **7. Agility course.** Slalom, tunnel, seesaw, hurdles, tyre; faults
+  add time; one-thumb controls; online ghosts and leaderboard reuse 6.
+- [ ] **8. Shop and wardrobe.** Goal: spend what you earn.
+  - Coins buy food and cosmetics (hats, glasses, scarves) drawn on the rig,
+    visible in races; try-on preview. Economy sources/sinks simulated for
+    30 days in a test.
+- [ ] **9. Training and race form.** Exercises raise speed, stamina,
+  agility and jump at the cost of energy and hunger, daily cap; a hungry or
+  tired pet races worse, so care matters in competitions.
+- [ ] **10. Daily quests, streaks and achievements.** Three short daily
+  quests (care + race), streak with a weekly freeze, sticker album of
   achievements.
-- [ ] **20. Personality.** Traits from care history that shape reactions,
-  dialogue (picture speech bubbles) and running style.
 
-## Phase 2: Online and networked competitions
+## Phase B: Grow, belong, compete more
 
-- [ ] **21. Anonymous server account**, tokens, migration of local state.
-- [ ] **22. Offline-first sync.** Authoritative server, action queue with
-  idempotency keys, conflict resolution. Test "two devices, one pet".
-- [ ] **23. Server economy.** Transaction validation, time anti-cheat (test
-  with the client clock wound back).
-- [ ] **24. Google account linking** (Credential Manager), account deletion.
-- [ ] **25. Friends.** Codes/QR, invitations, list, block and report.
-- [ ] **26. Visits.** A friend's room, joint stroking/feeding with a bonus
-  for both, guest book with stickers.
-- [ ] **27. Gifts and preset phrases** (safe communication).
-- [ ] **28. Asynchronous competitions.** Race other players' ghosts matched
-  by rating (e.g. Glicko-2) and stat division. The server replays the input
-  log and confirms the time; mismatching logs are rejected (test). Weekly
-  leaderboards per track: friends, country, world.
-- [ ] **29. Leagues and cups.** Divisions with weekly promotion/relegation,
-  weekend cups, cosmetic-only rewards + a trophy for the room.
-- [ ] **30. Live races.** Lobbies of 4-8 pets (friends or matchmaking; after
-  10 s ghosts fill the gaps). WebSocket, authoritative server, client
-  prediction and reconciliation, smooth at 150 ms latency and 2% packet loss
-  (test with simulated network). Emote reactions instead of chat.
-- [ ] **31. Replays and spectating.** Watch the record holder's and friends'
-  runs, learn from ghosts, share a run clip.
-- [ ] **32. Push via FCM** (behind an interface, WorkManager fallback),
-  including "a friend beat your record", within the limits of section 2.
+- [ ] **11. Timed platformer.** 30-90 s levels built from the Kenney
+  platformer kit (CC0), jump and double jump, checkpoints, instant restart,
+  medals, online ghosts.
+- [ ] **12. Life cycle and evolution.** Egg -> baby -> child -> teen ->
+  adult; at least 6 adult forms from care quality and favourite discipline;
+  transformation animation; album.
+- [ ] **13. Onboarding (FTUE).** Hatching as the tutorial, naming, sleep
+  window, first race within the first session; < 60 s to the first stroke.
+- [ ] **14. Sickness without cruelty.** Sickness and medicine, "journey"
+  instead of death, rescue quest, vacation mode.
+- [ ] **15. Leagues and weekend cups.** Divisions with weekly promotion and
+  relegation, matchmaking by rating and stat division, cosmetic trophies.
+- [ ] **16. Friends.** Friend codes/QR, friend leaderboards, "a friend beat
+  your record" (in-app), block and report.
+- [ ] **17. Visits and gifts.** A friend's room, joint stroking/feeding
+  bonus, gifts, preset phrases and stickers only (no free text).
+- [ ] **18. Live races.** Lobbies of 4-8 (friends or matchmaking, ghosts
+  fill gaps after 10 s), WebSocket, authoritative server, prediction and
+  reconciliation, smooth at 150 ms / 2% loss (simulated-network test),
+  emote reactions.
+- [ ] **19. Respectful notifications.** WorkManager, channels, permission
+  asked in context, max 3 a day, never in the sleep window.
+- [ ] **20. Home-screen widget (Glance).** The pet and its most urgent need.
+- [ ] **21. Room decorating.** Grid placement, furniture affects mood,
+  trophy shelf, several rooms.
+- [ ] **22. Personality.** Traits from care history shaping reactions,
+  picture speech bubbles and running style.
 
-## Phase 3: LiveOps and monetization
+## Phase C: LiveOps, monetization, release
 
-- [ ] **33. Remote config and feature flags** from the server (with in-app
-  defaults).
-- [ ] **34. Seasonal event calendar** (server side). First event: a seasonal
-  Grand Prix with a temporary track, themed cosmetics and mini-quests.
-- [ ] **35. Season pass** (free track + paid track, cosmetics only).
-- [ ] **36. Google Play Billing** (latest library), server-side receipt
-  validation, purchase restore, parental purchase controls.
-- [ ] **37. Rewarded ads** with UMP, child mode, daily cap.
-- [ ] **38. Privacy-respecting analytics.** FTUE funnel, retention, economy,
-  competition participation. KPI board in `docs/KPI.md`, A/B tests via
-  flags.
-- [ ] **39. Generations.** An adult pet can become a parent; the offspring
-  inherits genes and some competition aptitude; family tree.
-
-## Phase 4: Premium quality and release
-
-- [ ] **40. Baseline Profiles + Macrobenchmark**, budgets from section 4 in
-  CI (competitions: steady 60 fps on a mid-range device).
-- [ ] **41. Accessibility.** TalkBack audit, color-blind mode, reduced
-  motion, large buttons, assisted mode in competitions.
-- [ ] **42. Tablets and foldables.** Two-pane layouts.
-- [ ] **43. Localization.** First additional languages (DE, ES, PT-BR, PL)
-  and date/number formats; the game itself is authored in English.
-- [ ] **44. Crash reporting**, privacy policy, Data Safety, Families Policy
-  compliance (checklist in docs).
-- [ ] **45. Release pipeline.** Signed AAB, Gradle Play Publisher to the
-  internal track, versioning, release notes from CHANGELOG.
+- [ ] **23. Google account linking** (Credential Manager), cloud save across
+  devices ("two devices, one pet" test), account deletion.
+- [ ] **24. Remote config and feature flags.**
+- [ ] **25. Seasonal events.** Seasonal Grand Prix with a temporary track
+  and themed cosmetics.
+- [ ] **26. Season pass** (free + paid track, cosmetics only).
+- [ ] **27. Google Play Billing** with server-side validation, restore,
+  parental purchase controls.
+- [ ] **28. Rewarded ads** (UMP, child mode, daily cap).
+- [ ] **29. Privacy-respecting analytics** (FTUE funnel, retention, race
+  participation; KPI board; A/B via flags).
+- [ ] **30. Generations.** Offspring inherit genes and some race aptitude;
+  family tree.
+- [ ] **31. Performance.** Baseline Profiles, Macrobenchmark, 60 fps races
+  on a mid-range device.
+- [ ] **32. Accessibility audit.** TalkBack, colour-blind mode, reduced
+  motion, assisted race mode (not ranked).
+- [ ] **33. Localization** (the game is authored in English; DE, ES, PT-BR,
+  PL first).
+- [ ] **34. Release readiness.** Crash reporting, privacy policy, Data
+  Safety, Families Policy checklist, signed AAB, Play internal track.
 
 Next: the gap analysis against BENCHMARK.md picks the following iterations
 (protocol 5.2d), e.g. a track editor with moderation, team relays and clubs,
