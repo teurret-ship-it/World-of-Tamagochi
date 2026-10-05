@@ -22,6 +22,9 @@ services:
       dockerfile: server/Dockerfile
     environment:
       PORT: "8080"
+      DATABASE_URL: jdbc:postgresql://db:5432/wot
+      DATABASE_USER: wot
+      DATABASE_PASSWORD: wot-local-only
     ports:
       - "8080:8080"
     depends_on:

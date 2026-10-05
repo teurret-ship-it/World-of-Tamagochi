@@ -4,6 +4,19 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 6a: the racing server
+
+- Anonymous players with safe display names ("Pip #4821").
+- Runs are verified by replaying the input log with the shared physics;
+  bad logs, unknown tracks, other rules versions and unfinished runs are
+  rejected; uploads are rate limited.
+- Daily, weekly and all-time leaderboards (each player's best) and ghosts of
+  the players just ahead of you.
+- PostgreSQL with Flyway migrations; docker compose runs server + database.
+
+Self-review: clarity 4, game feel n/a (server), retention 5, ethics 5,
+performance 4, accessibility n/a.
+
 ## Iteration 5b: the first race
 
 - Races button on the home screen, a track list with medal times and

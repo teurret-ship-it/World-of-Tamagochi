@@ -163,3 +163,24 @@ the screen; Hilt arrives with the second screen that needs shared objects.
 daily coin cap ignores a date wound back (it keeps the latest day seen). A
 date wound forward cannot be detected offline; it only makes the pet
 hungrier, and server time takes over in iteration 6.
+
+## ADR-008: The racing server and where it runs
+
+**Context.** Online races need an authoritative server (CLAUDE.md
+section 2). Hosting needs an account and a payment method, which only the
+product owner can provide.
+
+**Decision.** `:server` is a stateless Ktor app with PostgreSQL (plain JDBC,
+HikariCP, Flyway migrations), configured only through environment variables
+(`DATABASE_URL`, `DATABASE_USER`, `DATABASE_PASSWORD`, `PORT`), packaged by
+`server/Dockerfile`, runnable locally with `docker compose up`. Any container
+host works; the cheapest fit for a launch is a managed container service
+(e.g. Google Cloud Run or Fly.io) with a managed PostgreSQL. The app reads
+the server address from the Gradle property `wot.serverUrl` and hides online
+features when it is not set, so builds without a server stay fully playable
+offline.
+
+**Safety by design.** No accounts with personal data: an anonymous random
+token per install, display names only from the curated pet-name list plus a
+number, no free text anywhere in the API. Tokens are stored hashed. Run
+uploads are rate limited.

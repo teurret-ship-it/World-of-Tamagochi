@@ -136,3 +136,15 @@ jelly-hop run cycle and a surprised face on a stumble, and a finish card
 with the medal, "New record!", rewards and the next medal's time. We do not
 take tilt or swipe controls (harder for small hands and for accessibility)
 or lives and game-over screens: every run finishes.
+
+## Iteration 6a: the racing server
+
+Trackmania's leaderboards only accept runs the server can replay; Mario
+Kart Tour and Clash Royale show daily and weekly boards keep competition
+fresh for players who are not top 100; Adopt Me! and Roblox games for
+children avoid free-text identity. We take: replay verification (the
+client sends inputs, never a time), each player's best per period, daily
+boards that reset at 00:00 UTC and weekly boards on Monday, ghosts of the
+players just ahead (the next people to beat, not the unreachable top), and
+anonymous players whose names come from a fixed list. We do not take global
+chat, friend search by name or any free-text field.
