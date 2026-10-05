@@ -54,13 +54,13 @@ the core care loop, and every iteration from 3 on pays the player something.
     summarizing what happened; clock-rollback protection.
   - Settings: sound and haptics toggles (CLAUDE.md section 2), credits for
     SND, Fluent Emoji and Fredoka.
-- [x] **5a. Competition engine.** Goal: races that are fair and provable.
+- [x] **5a. Competition engine.** (f6c4b8a) Goal: races that are fair and provable.
   - `:core:sim`: 60 Hz integer physics (millimetres, ticks, per-mille),
     input log of changes, replay that reproduces a run frame by frame,
     sub-tick finish times, seeded tracks, autopilot, medals vs. author time.
   - Tests: determinism, replay = live run, every track clearable, stats
     within 10%, tampered logs cannot claim a time, physics pinned.
-- [ ] **5b. Sprint race screen.** Goal: the first race.
+- [x] **5b. Sprint race screen.** Goal: the first race.
   - Side-scrolling course (hurdles, puddles, boost pads), the player's pet
     running with the rig, big Sprint (hold) and Jump (tap) buttons, stamina
     bar, countdown, own-record ghost, medal reveal, coin and XP rewards

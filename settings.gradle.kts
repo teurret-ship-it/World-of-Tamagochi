@@ -47,5 +47,6 @@ if (!jvmOnly) {
     include(":core:ui")
     include(":core:data")
     include(":feature:home")
+    include(":feature:race")
     include(":app")
 }

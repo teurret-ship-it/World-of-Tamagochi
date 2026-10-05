@@ -17,6 +17,8 @@ data class GameSave(
     val version: Int = CURRENT_VERSION,
     val pet: PetSave,
     val progress: ProgressSave = ProgressSave(),
+    /** Personal bests per track id. */
+    val records: Map<String, RecordSave> = emptyMap(),
 ) {
     companion object {
         const val CURRENT_VERSION = 1
@@ -46,6 +48,15 @@ data class ProgressSave(
     val coins: Long = 0,
     val careCoinsToday: Int = 0,
     val careCoinsDay: Long = 0,
+    val raceCoinsToday: Int = 0,
+    val raceCoinsDay: Long = 0,
+)
+
+/** The best run on one track: its exact time and the inputs that made it (the ghost). */
+@Serializable
+data class RecordSave(
+    val finishMicros: Long,
+    val log: List<Int>,
 )
 
 /** Player preferences (CLAUDE.md section 2: every sound and vibration has a toggle). */
@@ -91,6 +102,6 @@ fun PetState.toSave(
         napUntilEpochMillis = napUntilEpochMillis,
     )
 
-fun ProgressSave.toProgress(): PlayerProgress = PlayerProgress(xp, coins, careCoinsToday, careCoinsDay)
+fun ProgressSave.toProgress(): PlayerProgress = PlayerProgress(xp, coins, careCoinsToday, careCoinsDay, raceCoinsToday, raceCoinsDay)
 
-fun PlayerProgress.toSave(): ProgressSave = ProgressSave(xp, coins, careCoinsToday, careCoinsDay)
+fun PlayerProgress.toSave(): ProgressSave = ProgressSave(xp, coins, careCoinsToday, careCoinsDay, raceCoinsToday, raceCoinsDay)

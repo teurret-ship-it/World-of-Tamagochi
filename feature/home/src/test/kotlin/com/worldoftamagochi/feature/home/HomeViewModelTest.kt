@@ -72,7 +72,7 @@ class HomeViewModelTest {
         val vm = viewModel()
         now = at(hour = 16) // a baby awake for 6 hours: tummy 100 -> 16
         vm.tick()
-        val state = vm.state.value
+        val state = vm.ui
         assertEquals(16, state.needs.getValue(Need.SATIETY))
         assertEquals(Expression.HUNGRY, state.expression)
         assertEquals(Need.SATIETY, state.urgentNeed)
@@ -154,7 +154,7 @@ class HomeViewModelTest {
         now = at(hour = 16)
         vm.onFeed()
         dispatcher.scheduler.runCurrent()
-        val saved = requireNotNull(repository.game)
+        val saved = requireNotNull(repository.saved)
         assertEquals(5L, saved.progress.coins)
         assertEquals(7L, saved.pet.seed)
 
@@ -175,6 +175,17 @@ class HomeViewModelTest {
         assertEquals(-70, away.changes[Need.SATIETY])
         back.onDismissAway()
         assertNull(back.ui.away)
+    }
+
+    @Test
+    fun `coins paid elsewhere (a race) show up and are not overwritten by saving the pet`() {
+        val vm = viewModel()
+        kotlinx.coroutines.runBlocking { repository.updateGame { it.copy(progress = it.progress.copy(coins = 40)) } }
+        dispatcher.scheduler.runCurrent()
+        assertEquals(40L, vm.ui.coins)
+        repeat(20) { vm.tick() } // triggers the periodic pet save
+        dispatcher.scheduler.runCurrent()
+        assertEquals(40L, requireNotNull(repository.saved).progress.coins)
     }
 
     @Test

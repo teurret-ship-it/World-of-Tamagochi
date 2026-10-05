@@ -20,6 +20,9 @@ data class InputLog(
         require(events.zipWithNext().all { (a, b) -> a.tick <= b.tick }) { "Events must be in tick order" }
     }
 
+    /** Compact form for saves and the network: one int per event, tick * 4 + kind. */
+    fun toCodes(): List<Int> = events.map { it.tick * CODE_BASE + it.kind.ordinal }
+
     /** Expands the log into one input per tick, starting at tick 0. */
     fun inputs(): Sequence<TickInput> =
         sequence {
@@ -40,6 +43,12 @@ data class InputLog(
                 tick++
             }
         }
+
+    companion object {
+        private const val CODE_BASE = 4
+
+        fun fromCodes(codes: List<Int>): InputLog = InputLog(codes.map { Event(it / CODE_BASE, Kind.entries[it % CODE_BASE]) })
+    }
 
     /** Records per-tick inputs as change events. */
     class Recorder {

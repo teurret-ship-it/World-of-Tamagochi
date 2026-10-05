@@ -76,7 +76,7 @@ private fun DrawScope.drawBody(
     clipPath(path) {
         when (pattern) {
             Pattern.PLAIN -> {
-                Unit
+                // No markings: the plain body colour.
             }
 
             Pattern.SPOTS -> {

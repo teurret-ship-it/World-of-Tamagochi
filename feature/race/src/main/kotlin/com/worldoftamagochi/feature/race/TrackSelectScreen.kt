@@ -1,0 +1,112 @@
+package com.worldoftamagochi.feature.race
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.worldoftamagochi.data.GameRepository
+import com.worldoftamagochi.sim.race.Medal
+import com.worldoftamagochi.sim.race.MedalTimes
+import com.worldoftamagochi.sim.race.SprintTracks
+import com.worldoftamagochi.sim.race.Track
+
+@Composable
+fun TrackSelectRoute(
+    repository: GameRepository,
+    onRace: (String) -> Unit,
+    onBack: () -> Unit,
+) {
+    val game by repository.game.collectAsStateWithLifecycle(initialValue = null)
+    val medals = remember { SprintTracks.ALL.associateWith { MedalTimes.of(it) } }
+    val cards = SprintTracks.ALL.map { TrackCard(it, medals.getValue(it), game?.records?.get(it.id)?.finishMicros) }
+    TrackSelectScreen(cards, onRace, onBack)
+}
+
+@Composable
+fun TrackSelectScreen(
+    cards: List<TrackCard>,
+    onRace: (String) -> Unit,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Column(
+            Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                TextButton(onClick = onBack) { Text(stringResource(R.string.back), style = MaterialTheme.typography.titleMedium) }
+            }
+            Text(
+                stringResource(R.string.races_title),
+                style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Text(stringResource(R.string.races_subtitle), style = MaterialTheme.typography.titleMedium)
+            cards.forEach { TrackCardView(it, onRace) }
+        }
+    }
+}
+
+@Composable
+private fun TrackCardView(
+    card: TrackCard,
+    onRace: (String) -> Unit,
+) {
+    Surface(
+        shape = RoundedCornerShape(28.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        modifier = Modifier.fillMaxWidth().widthIn(max = 560.dp),
+    ) {
+        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(stringResource(card.track.titleRes()), style = MaterialTheme.typography.headlineMedium)
+            Text(
+                text =
+                    card.bestMicros?.let { stringResource(R.string.track_best, stringResource(R.string.seconds, formatSeconds(it))) }
+                        ?: stringResource(R.string.track_no_best),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                Medal.entries.forEach { medal ->
+                    val earned = card.bestMedal?.let { it >= medal } == true
+                    Image(
+                        painter = painterResource(medal.imageRes()),
+                        contentDescription = stringResource(medal.titleRes()),
+                        modifier = Modifier.size(44.dp).graphicsLayer { alpha = if (earned) 1f else LOCKED_ALPHA },
+                    )
+                }
+                Column(Modifier.weight(1f)) {}
+                Button(
+                    onClick = { onRace(card.track.id) },
+                ) { Text(stringResource(R.string.race_go), style = MaterialTheme.typography.titleLarge) }
+            }
+        }
+    }
+}
+
+private const val LOCKED_ALPHA = 0.3f

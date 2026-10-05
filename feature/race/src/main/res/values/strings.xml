@@ -1,0 +1,36 @@
+<resources>
+    <string name="races_title">Races</string>
+    <string name="races_subtitle">Beat the coach, then beat yourself!</string>
+    <string name="track_meadow">Meadow Dash</string>
+    <string name="track_beach">Beach Run</string>
+    <string name="track_snow">Snowy Sprint</string>
+    <string name="track_unknown">Mystery Track</string>
+    <string name="track_best">Best: %1$s</string>
+    <string name="track_no_best">No time yet</string>
+    <string name="race_go">Race!</string>
+    <string name="back">Back</string>
+
+    <string name="seconds">%1$s s</string>
+    <string name="race_sprint">Sprint</string>
+    <string name="race_jump">Jump</string>
+    <string name="race_go_banner">Go!</string>
+    <string name="race_ghost_best">Your best</string>
+    <string name="race_ghost_coach">Coach</string>
+    <string name="race_stamina">Stamina</string>
+    <string name="race_tired">Tired! Let go of Sprint</string>
+
+    <string name="finish_title">Finish!</string>
+    <string name="finish_new_record">New record!</string>
+    <string name="finish_no_medal">No medal this time</string>
+    <string name="finish_next">%1$s at %2$s</string>
+    <string name="finish_all_medals">You beat the coach!</string>
+    <string name="finish_xp">XP: +%1$d</string>
+    <string name="finish_coins">Coins: +%1$d</string>
+    <string name="finish_retry">Again!</string>
+    <string name="finish_done">Done</string>
+
+    <string name="medal_bronze">Bronze</string>
+    <string name="medal_silver">Silver</string>
+    <string name="medal_gold">Gold</string>
+    <string name="medal_author">Coach\'s trophy</string>
+</resources>

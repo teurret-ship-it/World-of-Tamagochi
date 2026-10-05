@@ -29,4 +29,13 @@ Red heart|red_heart|fx_heart
 Sparkles|sparkles|fx_sparkles
 Zzz|zzz|fx_zzz
 Gear|gear|ui_gear
+Construction|construction|race_hurdle
+Droplet|droplet|race_puddle
+High voltage|high_voltage|race_boost
+Chequered flag|chequered_flag|race_finish
+1st place medal|1st_place_medal|medal_gold
+2nd place medal|2nd_place_medal|medal_silver
+3rd place medal|3rd_place_medal|medal_bronze
+Trophy|trophy|medal_author
+Stopwatch|stopwatch|race_timer
 LIST

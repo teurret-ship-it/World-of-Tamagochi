@@ -122,3 +122,17 @@ clearable, and stats capped so they move a run by at most 10% (measured:
 3-4%; skill alone is worth 22-26%). We do not take floating-point physics
 engines (Box2D and similar give different results across devices and
 versions, which would make server verification impossible).
+
+## Iteration 5b: the sprint race screen
+
+Mobile runners for children (Subway Surfers, Talking Tom Gold Run) use big
+readable obstacles, one-thumb controls and constant feedback; Trackmania
+and Mario Kart make the ghost and the medal targets the reason to replay;
+Fall Guys shows that failing should look funny, not punishing. We take: a
+3-2-1-Go countdown, big press-to-act Sprint (hold) and Jump buttons, a
+stamina bar that says "Tired!" in words, a progress bar with the ghost's
+position, the coach ghost on a first run and your own best afterwards, a
+jelly-hop run cycle and a surprised face on a stumble, and a finish card
+with the medal, "New record!", rewards and the next medal's time. We do not
+take tilt or swipe controls (harder for small hands and for accessibility)
+or lives and game-over screens: every run finishes.

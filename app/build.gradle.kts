@@ -24,6 +24,7 @@ android {
 dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.feature.home)
+    implementation(projects.feature.race)
     implementation(projects.core.ui)
     implementation(projects.core.data)
     implementation(libs.androidx.core.ktx)

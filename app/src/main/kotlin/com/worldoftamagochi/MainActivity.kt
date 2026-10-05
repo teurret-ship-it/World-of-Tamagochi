@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
                 LocalHapticFeedback provides if (settings.haptics) LocalHapticFeedback.current else NoHaptics,
             ) {
                 WotTheme {
-                    HomeRoute(repository)
+                    GameNavigation(repository)
                 }
             }
         }

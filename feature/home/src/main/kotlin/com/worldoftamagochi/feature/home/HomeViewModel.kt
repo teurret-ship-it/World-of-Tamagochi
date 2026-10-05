@@ -174,6 +174,7 @@ class HomeViewModel(
                         .toEpochDay()
                 val update = progression.reward(progress, result, action, day)
                 progress = update.progress
+                viewModelScope.launch { repository.updateGame { it.copy(progress = update.progress.toSave()) } }
                 if (action == CareAction.STROKE) strokes++
                 if (action == CareAction.NAP) washing = false
                 _effects.trySend(HomeEffect.Cared(action, result.changes, update.earned, update.levelUp))
@@ -201,8 +202,14 @@ class HomeViewModel(
         viewModelScope.launch { save() }
     }
 
+    /** Saves the pet only; progress is written where it changes, so races are never overwritten. */
     private suspend fun save() {
-        repository.saveGame(GameSave(pet = pet.toSave(seed, name), progress = progress.toSave()))
+        val petSave = pet.toSave(seed, name)
+        if (repository.loadGame() == null) {
+            repository.saveGame(GameSave(pet = petSave, progress = progress.toSave()))
+        } else {
+            repository.updateGame { it.copy(pet = petSave) }
+        }
     }
 
     private fun isNapping(): Boolean = pet.napUntilEpochMillis?.let { it > pet.updatedAtEpochMillis } == true

@@ -21,6 +21,9 @@ next iteration.
   real need (capped per day).
 - The game is saved on the device; coming back shows a "Welcome back!"
   card. Settings: sound and vibration toggles, credits.
+- Races: three sprint courses, your pet against the coach's or your best
+  ghost, hold Sprint and tap Jump, bronze/silver/gold/trophy medals, records
+  and coins.
 - The server answers `GET /health`.
 - Game rules (`core/sim`): five needs (satiety, energy, hygiene, happiness,
   health) living in real time, a sleep window in the player's time zone, and
@@ -56,7 +59,8 @@ Screenshots: `./gradlew recordRoborazziDebug` records reference images into
 | `core/designsystem` | theme, palette, typography |
 | `core/ui` | the pet rig, particles, sounds, shared game UI |
 | `core/data` | the save (DataStore) and settings |
-| `feature/home` | home screen |
+| `feature/home` | home screen: the pet, care, rewards, settings |
+| `feature/race` | track list and the race screen |
 | `app` | Android application |
 | `server` | Ktor game server |
 | `build-logic` | Gradle convention plugins |

@@ -5,6 +5,10 @@ import com.worldoftamagochi.sim.Needs
 import com.worldoftamagochi.sim.PetState
 import com.worldoftamagochi.sim.PlayerProgress
 import com.worldoftamagochi.sim.SleepWindow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -17,6 +21,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.time.ZoneId
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class GameRepositoryTest {
     @get:Rule
     val folder = TemporaryFolder()
@@ -42,14 +47,39 @@ class GameRepositoryTest {
         runTest(UnconfinedTestDispatcher()) {
             val file = folder.newFile("game.json").also { it.delete() }
             val game = GameSave(pet = pet.toSave(42, "Mochi"), progress = PlayerProgress(xp = 99).toSave())
-            val first = DataStoreGameRepository(DataStoreGameRepository.dataStore(file, TestScope(testScheduler)))
+            // DataStore allows one active store per file: close the first like an app restart would.
+            val firstJob = Job()
+            val first =
+                DataStoreGameRepository(
+                    DataStoreGameRepository.dataStore(
+                        file,
+                        CoroutineScope(firstJob + UnconfinedTestDispatcher(testScheduler)),
+                    ),
+                )
             assertNull(first.loadGame())
             first.saveGame(game)
             first.updateSettings { it.copy(sound = false) }
+            firstJob.cancelAndJoin()
 
             val reopened = DataStoreGameRepository(DataStoreGameRepository.dataStore(file, TestScope(testScheduler)))
             assertEquals(game, reopened.loadGame())
             assertFalse(reopened.settings.first().sound)
+        }
+
+    @Test
+    fun `updates change one part of the game and leave the rest`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val file = folder.newFile("update.json").also { it.delete() }
+            val repository = DataStoreGameRepository(DataStoreGameRepository.dataStore(file, TestScope(testScheduler)))
+            repository.updateGame { error("no game yet, nothing to update") }
+            assertNull(repository.game.first())
+            repository.saveGame(GameSave(pet = pet.toSave(42, "Mochi")))
+            repository.updateGame { it.copy(records = mapOf("t" to RecordSave(1_000, listOf(4, 8)))) }
+            repository.updateGame { it.copy(progress = it.progress.copy(coins = 7)) }
+            val game = requireNotNull(repository.game.first())
+            assertEquals(7L, game.progress.coins)
+            assertEquals(RecordSave(1_000, listOf(4, 8)), game.records["t"])
+            assertEquals(pet, game.pet.toState())
         }
 
     @Test

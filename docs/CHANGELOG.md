@@ -4,6 +4,29 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 5b: the first race
+
+- Races button on the home screen, a track list with medal times and
+  personal bests, and three sprint courses with their own skies, parallax
+  hills, hurdles, puddles, boost pads and a chequered finish.
+- The player's own pet runs (a jelly hop; surprised when it stumbles,
+  sleepy when exhausted) next to a ghost: the coach on a first run, then the
+  player's best.
+- Sprint (hold) and Jump (tap) buttons act on press; countdown with sounds;
+  finish card with time, medal, "New record!", XP and coins and the next
+  medal to chase.
+- Rewards (`RaceRewards` in `:core:sim`): 3 coins per finish (30 a day),
+  one-time coins for each new medal tier on a track (5/10/20/30), XP.
+- Records and best ghosts are saved per track; the save is updated
+  atomically so the home screen never overwrites race rewards.
+- CI fixes: DataStore reopen test, nullable state in a home test; Android
+  test failures now print in full in the CI log.
+
+Self-review: clarity 4, game feel 4, retention 5, ethics 5, performance 4,
+accessibility 3.
+- Accessibility 3: races need timing; an assisted mode (auto-jump, not
+  ranked) is planned in iteration 32 and moves earlier if playtests ask.
+
 ## Iteration 5a: the competition engine
 
 The rules for racing, in `:core:sim`, shared with the future server.

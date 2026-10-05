@@ -11,6 +11,9 @@ data class PlayerProgress(
     val careCoinsToday: Int = 0,
     /** Local epoch day the [careCoinsToday] counter belongs to. */
     val careCoinsDay: Long = 0,
+    /** Coins paid today for simply finishing races (capped; medals are separate). */
+    val raceCoinsToday: Int = 0,
+    val raceCoinsDay: Long = 0,
 ) {
     val level: Int get() = ProgressRules.DEFAULT.levelFor(xp)
 }

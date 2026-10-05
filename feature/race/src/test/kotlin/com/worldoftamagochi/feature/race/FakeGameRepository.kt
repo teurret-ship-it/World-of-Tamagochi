@@ -1,4 +1,4 @@
-package com.worldoftamagochi.feature.home
+package com.worldoftamagochi.feature.race
 
 import com.worldoftamagochi.data.GameRepository
 import com.worldoftamagochi.data.GameSave
