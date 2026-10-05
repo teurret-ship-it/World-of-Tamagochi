@@ -11,7 +11,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             pluginManager.apply("com.android.application")
             pluginManager.apply("wot.quality")
             extensions.configure<ApplicationExtension> {
-                configureCommon(target)
+                configureCommon()
                 defaultConfig.targetSdk = Sdk.TARGET
             }
             configureKotlinAndroid()

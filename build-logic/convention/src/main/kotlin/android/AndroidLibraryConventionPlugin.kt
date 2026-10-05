@@ -11,7 +11,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             pluginManager.apply("com.android.library")
             pluginManager.apply("wot.quality")
             extensions.configure<LibraryExtension> {
-                configureCommon(target)
+                configureCommon()
             }
             configureKotlinAndroid()
         }

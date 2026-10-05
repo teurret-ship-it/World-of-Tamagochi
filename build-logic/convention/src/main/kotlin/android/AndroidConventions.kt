@@ -16,31 +16,31 @@ internal fun Project.configureKotlinAndroid() {
     }
 }
 
-internal fun ApplicationExtension.configureCommon(project: Project) {
+internal fun ApplicationExtension.configureCommon() {
     compileSdk = Sdk.COMPILE
     defaultConfig.minSdk = Sdk.MIN
     compileOptions {
         sourceCompatibility = JavaVersion.toVersion(JVM_TARGET)
         targetCompatibility = JavaVersion.toVersion(JVM_TARGET)
     }
-    lint.configureLint(project)
+    lint.configureLint()
 }
 
-internal fun LibraryExtension.configureCommon(project: Project) {
+internal fun LibraryExtension.configureCommon() {
     compileSdk = Sdk.COMPILE
     defaultConfig.minSdk = Sdk.MIN
     compileOptions {
         sourceCompatibility = JavaVersion.toVersion(JVM_TARGET)
         targetCompatibility = JavaVersion.toVersion(JVM_TARGET)
     }
-    lint.configureLint(project)
+    lint.configureLint()
 }
 
 /**
  * Lint is a hard gate: any warning fails the build. Dependency freshness checks
  * are disabled here because Dependabot owns version bumps (ADR-001).
  */
-private fun Lint.configureLint(project: Project) {
+private fun Lint.configureLint() {
     warningsAsErrors = true
     abortOnError = true
     checkDependencies = true
@@ -51,10 +51,4 @@ private fun Lint.configureLint(project: Project) {
             "AndroidGradlePluginVersion",
             "OldTargetApi",
         )
-    htmlReport = true
-    htmlOutput =
-        project.layout.buildDirectory
-            .file("reports/lint/lint.html")
-            .get()
-            .asFile
 }

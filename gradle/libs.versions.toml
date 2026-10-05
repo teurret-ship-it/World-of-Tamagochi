@@ -88,3 +88,4 @@ wot-android-compose = { id = "wot.android.compose" }
 wot-quality = { id = "wot.quality" }
 wot-coverage = { id = "wot.coverage" }
 wot-server = { id = "wot.server" }
+wot-serialization = { id = "wot.serialization" }

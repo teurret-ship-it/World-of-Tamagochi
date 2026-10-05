@@ -57,6 +57,10 @@ gradlePlugin {
             id = "wot.coverage"
             implementationClass = "CoverageConventionPlugin"
         }
+        register("serialization") {
+            id = "wot.serialization"
+            implementationClass = "SerializationConventionPlugin"
+        }
         register("server") {
             id = "wot.server"
             implementationClass = "ServerConventionPlugin"

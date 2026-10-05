@@ -6,7 +6,7 @@ class ServerConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) =
         with(target) {
             pluginManager.apply("wot.jvm.library")
-            pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
+            pluginManager.apply("wot.serialization")
             pluginManager.apply("application")
         }
 }
