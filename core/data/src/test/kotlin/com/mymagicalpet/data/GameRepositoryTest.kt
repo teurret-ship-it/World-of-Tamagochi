@@ -40,6 +40,9 @@ class GameRepositoryTest {
             napUntilEpochMillis = 1_790_000_100_000,
             awakeUntilEpochMillis = 1_790_000_200_000,
             growth = Growth(points = 95, today = 12, day = 20_000),
+            onJourney = true,
+            rescueSteps = 2,
+            vacationUntilEpochMillis = 1_790_000_300_000,
         )
 
     @Test

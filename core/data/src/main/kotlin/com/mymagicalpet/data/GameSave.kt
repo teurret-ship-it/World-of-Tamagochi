@@ -58,6 +58,9 @@ data class PetSave(
     val growthPoints: Int = 0,
     val growthToday: Int = 0,
     val growthDay: Long = 0,
+    val onJourney: Boolean = false,
+    val rescueSteps: Int = 0,
+    val vacationUntilEpochMillis: Long? = null,
 )
 
 @Serializable
@@ -139,6 +142,9 @@ fun PetSave.toState(): PetState =
         napUntilEpochMillis = napUntilEpochMillis,
         awakeUntilEpochMillis = awakeUntilEpochMillis,
         growth = Growth(growthPoints, growthToday, growthDay),
+        onJourney = onJourney,
+        rescueSteps = rescueSteps,
+        vacationUntilEpochMillis = vacationUntilEpochMillis,
     )
 
 fun PetState.toSave(
@@ -163,6 +169,9 @@ fun PetState.toSave(
         growthPoints = growth.points,
         growthToday = growth.today,
         growthDay = growth.day,
+        onJourney = onJourney,
+        rescueSteps = rescueSteps,
+        vacationUntilEpochMillis = vacationUntilEpochMillis,
     )
 
 fun ProgressSave.toProgress(): PlayerProgress =

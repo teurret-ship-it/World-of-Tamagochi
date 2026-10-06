@@ -236,3 +236,13 @@ sticker album. We do not take paid streak repairs, quest rerolls for money
 or loss-aversion messages ("your streak will die!"): losing a streak costs
 nothing but the number.
 
+## Iteration 14: sickness without cruelty
+
+Classic Tamagotchi pets die within a day of neglect, which hurts children
+and drives them away; Tamagotchi Uni and Finch replaced death with gentler
+consequences, and Nintendogs dogs run away and come back. We take: visible
+sickness with a free cure, a "journey" instead of death with a short,
+kind rescue that restores everything, and a vacation mode for planned
+absences (CLAUDE.md section 2). We do not take paid revival, lost progress,
+or any guilt-tripping text.
+

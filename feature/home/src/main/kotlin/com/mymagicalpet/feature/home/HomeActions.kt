@@ -92,6 +92,8 @@ class HomeActions(
     val onSound: (Boolean) -> Unit = {},
     val onHaptics: (Boolean) -> Unit = {},
     val onTreat: () -> Unit = {},
+    val onMedicine: () -> Unit = {},
+    val onAway: (AwayAction) -> Unit = {},
     val onSleepWindow: (bedtimeMinute: Int, wakeMinute: Int) -> Unit = { _, _ -> },
     val onOpenRaces: () -> Unit = {},
     val onOpenShop: () -> Unit = {},
@@ -108,4 +110,19 @@ internal class CareCallbacks(
     val onPlay: () -> Unit = actions.onPlay
     val onLights: () -> Unit = actions.onLights
     val onTreat: () -> Unit = actions.onTreat
+    val onMedicine: () -> Unit = actions.onMedicine
+}
+
+/** Away from home: rescue steps for a pet on a journey, and vacation mode. */
+sealed interface AwayAction {
+    data object Rescue : AwayAction
+
+    data class Vacation(
+        val days: Int,
+    ) : AwayAction
+
+    data object EndVacation : AwayAction
+
+    /** Closes the "while you were away" card. */
+    data object DismissWelcome : AwayAction
 }

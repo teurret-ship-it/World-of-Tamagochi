@@ -12,7 +12,22 @@ data class PetState(
     val awakeUntilEpochMillis: Long? = null,
     /** How far it has grown towards the next life stage (GrowthRules). */
     val growth: Growth = Growth(),
+    /**
+     * Neglected until its health ran out, the pet went on a journey: it never
+     * dies (CLAUDE.md section 2), and a short rescue brings it home
+     * ([JourneyRules]).
+     */
+    val onJourney: Boolean = false,
+    /** Rescue steps done so far on the current journey. */
+    val rescueSteps: Int = 0,
+    /** "Staying at grandma's": needs stand still until this moment (vacation mode). */
+    val vacationUntilEpochMillis: Long? = null,
 ) {
+    fun isOnVacation(): Boolean = vacationUntilEpochMillis?.let { it > updatedAtEpochMillis } == true
+
+    /** True while needs stand still: on a journey, or on vacation. */
+    internal fun isPausedAt(epochMillis: Long): Boolean = vacationUntilEpochMillis?.let { epochMillis < it } == true
+
     fun isAsleep(): Boolean = isAsleepAt(updatedAtEpochMillis)
 
     /** True during a lights-off nap. */
@@ -32,6 +47,7 @@ data class PetState(
     internal fun nextSleepChangeAfter(epochMillis: Long): Long {
         val nap = napUntilEpochMillis?.takeIf { it > epochMillis } ?: Long.MAX_VALUE
         val upLate = awakeUntilEpochMillis?.takeIf { it > epochMillis } ?: Long.MAX_VALUE
-        return minOf(sleep.nextBoundaryAfter(epochMillis), nap, upLate)
+        val vacation = vacationUntilEpochMillis?.takeIf { it > epochMillis } ?: Long.MAX_VALUE
+        return minOf(sleep.nextBoundaryAfter(epochMillis), nap, upLate, vacation)
     }
 }

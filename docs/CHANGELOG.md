@@ -4,6 +4,21 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 14: sickness without cruelty
+
+- A pet whose health drops below 50 is sick: it stops growing, and a free
+  Medicine button takes the treat's place (+35 health).
+- Neglected for about two days, the pet goes on a journey instead of dying.
+  Three friendly steps ("Leave a snack at the door", "Light a lantern",
+  "Call its name") bring it home, fine and with nothing lost.
+- Vacation mode in settings ("staying at grandma's" for 3, 7 or 14 days):
+  needs stand still, and "Come home now" ends it early.
+- Gentler balance: one forgotten day makes a pet hungry and sad, never gone.
+
+Self-review: clarity 4, game feel 3, retention 4, ethics 5, performance 5,
+accessibility 4.
+- Game feel 3: the journey is a card with buttons (placeholder, ADR-012).
+
 ## Iteration 10: daily quests, streaks and stickers
 
 - Three daily quests on the home screen ("Feed your pet (2/3)"), new each

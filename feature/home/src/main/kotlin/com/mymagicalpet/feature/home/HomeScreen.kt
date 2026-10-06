@@ -108,10 +108,12 @@ fun HomeRoute(
                 onPlay = viewModel::onPlay,
                 onLights = viewModel::onLights,
                 onTreat = viewModel::onTreat,
+                onMedicine = viewModel::onMedicine,
+                onAway = viewModel::onAway,
                 onSleepWindow = viewModel::onSleepWindow,
-                onDismissAway = viewModel::onDismissAway,
-                onSound = viewModel::onSoundToggled,
-                onHaptics = viewModel::onHapticsToggled,
+                onDismissAway = { viewModel.onAway(AwayAction.DismissWelcome) },
+                onSound = { on -> viewModel.onSettings { it.copy(sound = on) } },
+                onHaptics = { on -> viewModel.onSettings { it.copy(haptics = on) } },
                 onOpenRaces = onOpenRaces,
                 onOpenShop = onOpenShop,
             ),
@@ -166,7 +168,11 @@ fun HomeScreen(
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Box {
-            HomeLayout(state, stage, care, onSettings = { settingsOpen = true }, actions = actions)
+            if (state.onJourney || state.vacationUntilEpochMillis != null) {
+                AwayScreen(state, actions.onAway, onSettings = { settingsOpen = true })
+            } else {
+                HomeLayout(state, stage, care, onSettings = { settingsOpen = true }, actions = actions)
+            }
             draggedFood?.let { FoodInHand(it) }
             LevelUpBanner(levelUp, onDone = { levelUp = null })
             state.away?.let { AwayCard(state, it, actions.onDismissAway) }

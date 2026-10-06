@@ -11,7 +11,7 @@ internal fun CareAction.growthSource(answeredNeed: Boolean): GrowthSource? =
             null
         }
 
-        CareAction.FEED, CareAction.WASH, CareAction.PLAY, CareAction.TREAT -> {
+        CareAction.FEED, CareAction.WASH, CareAction.PLAY, CareAction.TREAT, CareAction.MEDICINE -> {
             if (answeredNeed) GrowthSource.ANSWERED_NEED else GrowthSource.CARE
         }
     }
@@ -25,7 +25,7 @@ internal fun CareAction.deeds(answeredNeed: Boolean): List<Deed> {
             CareAction.PLAY -> Deed.PLAY
             CareAction.STROKE -> Deed.STROKE
             CareAction.TREAT -> Deed.TREAT
-            CareAction.NAP, CareAction.WAKE -> null
+            CareAction.NAP, CareAction.WAKE, CareAction.MEDICINE -> null
         }
     return listOfNotNull(deed, Deed.ANSWERED_NEED.takeIf { answeredNeed })
 }

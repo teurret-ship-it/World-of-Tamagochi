@@ -11,6 +11,9 @@ enum class CareAction {
 
     /** A bought snack: a little food and a lot of joy. Paid for with [TreatRules]. */
     TREAT,
+
+    /** Free medicine for a sick pet: wellbeing is never sold (CLAUDE.md section 2). */
+    MEDICINE,
 }
 
 /** Why the pet said no. The UI turns each into a friendly reaction, never a scolding. */
@@ -24,6 +27,12 @@ enum class Refusal {
     EGG,
     NO_COINS,
     NO_TREATS_LEFT,
+
+    /** Medicine for a pet that is not sick. */
+    NOT_SICK,
+
+    /** The pet is away: on a journey or on vacation. */
+    AWAY,
 }
 
 /** What one care action earned the player. */
@@ -70,6 +79,7 @@ data class CareRules(
     val strokeHappiness: Int = 2,
     val treatSatiety: Int = 10,
     val treatHappiness: Int = 20,
+    val medicineHealth: Int = 35,
     val napMinutes: Int = 45,
     /** Woken at night, the pet stays up this long before dozing off again. */
     val upLateMinutes: Int = 60,
@@ -110,6 +120,10 @@ data class CareRules(
                     pet.change(Need.SATIETY to treatSatiety, Need.HAPPINESS to treatHappiness)
                 }
 
+                CareAction.MEDICINE -> {
+                    pet.change(Need.HEALTH to medicineHealth)
+                }
+
                 CareAction.NAP -> {
                     // Up late: lights off simply sends the pet back to bed.
                     if (pet.isUpLate()) {
@@ -140,6 +154,7 @@ data class CareRules(
         action: CareAction,
     ): Refusal? =
         when {
+            pet.onJourney || pet.isOnVacation() -> Refusal.AWAY
             pet.stage == LifeStage.EGG -> Refusal.EGG
             action == CareAction.WAKE -> Refusal.NOT_NAPPING.takeUnless { pet.isAsleep() }
             pet.isAsleep() -> Refusal.ASLEEP
@@ -157,6 +172,7 @@ data class CareRules(
             CareAction.WASH -> Refusal.ALREADY_CLEAN.takeIf { level(Need.HYGIENE) >= HYGIENE_FULL }
             CareAction.PLAY -> Refusal.TOO_TIRED.takeIf { level(Need.ENERGY) < minEnergyToPlay }
             CareAction.NAP -> Refusal.NOT_SLEEPY.takeIf { level(Need.ENERGY) >= napBelowEnergy }
+            CareAction.MEDICINE -> Refusal.NOT_SICK.takeIf { level(Need.HEALTH) >= expressions.sickBelowHealth }
             CareAction.STROKE, CareAction.WAKE -> null
         }
     }
@@ -172,6 +188,7 @@ data class CareRules(
             CareAction.FEED -> setOf(Need.SATIETY)
             CareAction.WASH -> setOf(Need.HYGIENE)
             CareAction.PLAY, CareAction.STROKE -> setOf(Need.HAPPINESS)
+            CareAction.MEDICINE -> setOf(Need.HEALTH)
             CareAction.TREAT -> setOf(Need.HAPPINESS, Need.SATIETY)
             CareAction.NAP -> setOf(Need.ENERGY)
             CareAction.WAKE -> emptySet()

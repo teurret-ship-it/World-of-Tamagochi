@@ -64,14 +64,14 @@ class NeedsSimulationTest {
     @Test
     fun `health falls only while satiety or hygiene is empty, faster when both are`() {
         val hungry = pet(needs = Needs(satiety = 0), sleep = awakeAllDay)
-        NeedsSimulation.advance(hungry, start + 2 * HOUR).needs.gauge(Need.HEALTH) shouldBe Gauge.of(92)
+        NeedsSimulation.advance(hungry, start + 2 * HOUR).needs.gauge(Need.HEALTH) shouldBe Gauge.of(97)
 
         val both = pet(needs = Needs(satiety = 0, hygiene = 0), sleep = awakeAllDay)
-        NeedsSimulation.advance(both, start + 2 * HOUR).needs.gauge(Need.HEALTH) shouldBe Gauge.of(84)
+        NeedsSimulation.advance(both, start + 2 * HOUR).needs.gauge(Need.HEALTH) shouldBe Gauge.of(94)
 
         // Satiety 12 points runs out after exactly one hour, then health starts to fall.
         val almost = pet(needs = Needs(satiety = Needs.points(12)), sleep = awakeAllDay)
-        NeedsSimulation.advance(almost, start + 3 * HOUR).needs.gauge(Need.HEALTH) shouldBe Gauge.of(92)
+        NeedsSimulation.advance(almost, start + 3 * HOUR).needs.gauge(Need.HEALTH) shouldBe Gauge.of(97)
 
         val neglected = pet(sleep = awakeAllDay)
         NeedsSimulation.advance(neglected, start + 30 * 24 * HOUR).needs shouldBe

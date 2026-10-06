@@ -19,6 +19,7 @@ import com.mymagicalpet.sim.CareRules
 import com.mymagicalpet.sim.ExpressionRules
 import com.mymagicalpet.sim.Genome
 import com.mymagicalpet.sim.GrowthRules
+import com.mymagicalpet.sim.JourneyRules
 import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Need
 import com.mymagicalpet.sim.Needs
@@ -51,6 +52,7 @@ data class HomeRules(
     val expressions: ExpressionRules = ExpressionRules.DEFAULT,
     val treats: TreatRules = TreatRules.DEFAULT,
     val growth: GrowthRules = GrowthRules.DEFAULT,
+    val journey: JourneyRules = JourneyRules.DEFAULT,
 )
 
 /**
@@ -159,14 +161,8 @@ class HomeViewModel(
         publish()
     }
 
-    fun onDismissAway() {
-        away = null
-        publish()
-    }
-
-    fun onSoundToggled(enabled: Boolean) = viewModelScope.launch { repository.updateSettings { it.copy(sound = enabled) } }
-
-    fun onHapticsToggled(enabled: Boolean) = viewModelScope.launch { repository.updateSettings { it.copy(haptics = enabled) } }
+    /** Sound and vibration toggles (CLAUDE.md section 2). */
+    fun onSettings(change: (Settings) -> Settings) = viewModelScope.launch { repository.updateSettings(change) }
 
     /** The player rubbed the pet: a stroke, or a scrub while holding the soap. */
     fun onStroke() {
@@ -206,6 +202,31 @@ class HomeViewModel(
 
     /** Lights off starts a nap; during a nap, lights on wakes the pet. */
     fun onLights() = perform(if (pet.isAsleep()) CareAction.WAKE else CareAction.NAP)
+
+    /** Free medicine for a sick pet. */
+    fun onMedicine() = perform(CareAction.MEDICINE)
+
+    /** A rescue step for a pet on a journey, or the start or end of a vacation. */
+    fun onAway(action: AwayAction) {
+        if (genome == null) return
+        pet = NeedsSimulation.advance(pet, clock())
+        val before = pet
+        if (action == AwayAction.DismissWelcome) {
+            away = null
+            publish()
+            return
+        }
+        pet =
+            when (action) {
+                AwayAction.Rescue -> rules.journey.rescue(pet).first
+                AwayAction.DismissWelcome -> pet
+                is AwayAction.Vacation -> rules.journey.startVacation(pet, action.days).first
+                AwayAction.EndVacation -> rules.journey.endVacation(pet)
+            }
+        if (before.onJourney && !pet.onJourney) _effects.trySend(HomeEffect.Homecoming)
+        saveAsync()
+        publish()
+    }
 
     /** The player's own night (settings): the pet sleeps when they sleep. */
     fun onSleepWindow(
@@ -331,6 +352,10 @@ class HomeViewModel(
             stage = pet.stage,
             growthProgress = rules.growth.progress(pet),
             journal = JournalRules.DEFAULT.today(journal, seed, localEpochDay(clock(), zone)),
+            sick = pet.needs.gauge(Need.HEALTH).value < expressions.sickBelowHealth,
+            onJourney = pet.onJourney,
+            rescueSteps = pet.rescueSteps,
+            vacationUntilEpochMillis = pet.vacationUntilEpochMillis,
             napping = pet.isNapping(),
             upLate = pet.isUpLate(),
             bedtimeMinute = pet.sleep.startMinuteOfDay,

@@ -35,6 +35,13 @@ data class HomeUiState(
     val growthProgress: Float = 0f,
     /** Today's quests, the streak and the sticker album. */
     val journal: Journal = Journal(),
+    /** Health is low: medicine (free) helps. */
+    val sick: Boolean = false,
+    /** Gone on a journey after its health ran out; [rescueSteps] of the rescue are done. */
+    val onJourney: Boolean = false,
+    val rescueSteps: Int = 0,
+    /** On vacation ("staying at grandma's") until this moment, or null. */
+    val vacationUntilEpochMillis: Long? = null,
     /** True while a lights-off nap runs (the player can wake the pet). */
     val napping: Boolean = false,
     /** Woken during its night: up for a while, lights off sends it back to bed. */
@@ -79,6 +86,9 @@ sealed interface HomeEffect {
     data class QuestNews(
         val news: JournalNews,
     ) : HomeEffect
+
+    /** Back home from a journey. */
+    data object Homecoming : HomeEffect
 
     /** The creature grew into its next life stage. */
     data class Evolved(

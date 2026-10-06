@@ -95,6 +95,7 @@ internal fun EffectsPlayer(
     evolvedLines: Map<LifeStage, String>,
 ) {
     val resources = LocalResources.current
+    val homecomingLine = stringResource(R.string.homecoming)
     val sounds = LocalGameSounds.current
     val haptics = LocalHapticFeedback.current
     val refusals = Refusal.entries.associateWith { stringResource(it.messageRes()) }
@@ -115,6 +116,13 @@ internal fun EffectsPlayer(
                     haptics.performHapticFeedback(HapticFeedbackType.Confirm)
                     fx.burst(FxKind.COIN, TOP, count = effect.news.coins.coerceIn(1, MAX_COINS_SHOWN))
                     onBubble(newsLine(resources, effect.news))
+                }
+
+                HomeEffect.Homecoming -> {
+                    sounds.play(Sfx.CELEBRATION)
+                    haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                    fx.burst(FxKind.HEART, CENTER, count = LEVEL_UP_STARS)
+                    onBubble(homecomingLine)
                 }
 
                 is HomeEffect.Evolved -> {
@@ -160,6 +168,7 @@ private fun celebrate(
         CareAction.NAP -> fx.burst(FxKind.ZZZ, TOP, count = BURST_MEDIUM)
         CareAction.WAKE -> fx.burst(FxKind.SPARKLE, TOP, count = BURST_MEDIUM)
         CareAction.TREAT -> fx.burst(FxKind.HEART, MOUTH, count = BURST_LARGE)
+        CareAction.MEDICINE -> fx.burst(FxKind.SPARKLE, CENTER, count = BURST_MEDIUM)
     }
     effect.changes.entries
         .filter { it.value > 0 && effect.action != CareAction.STROKE }
@@ -177,6 +186,7 @@ private fun CareAction.sound(): Sfx =
         CareAction.NAP -> Sfx.TOGGLE_OFF
         CareAction.WAKE -> Sfx.TOGGLE_ON
         CareAction.TREAT -> Sfx.POSITIVE
+        CareAction.MEDICINE -> Sfx.POSITIVE
     }
 
 private fun Refusal.messageRes(): Int =
@@ -188,6 +198,8 @@ private fun Refusal.messageRes(): Int =
         Refusal.ASLEEP -> R.string.refused_asleep
         Refusal.NO_COINS -> R.string.refused_no_coins
         Refusal.NO_TREATS_LEFT -> R.string.refused_no_treats
+        Refusal.NOT_SICK -> R.string.refused_not_sick
+        Refusal.AWAY -> R.string.refused_other
         Refusal.NOT_NAPPING, Refusal.EGG -> R.string.refused_other
     }
 

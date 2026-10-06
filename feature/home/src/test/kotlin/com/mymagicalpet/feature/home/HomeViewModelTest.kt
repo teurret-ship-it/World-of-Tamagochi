@@ -178,7 +178,7 @@ class HomeViewModelTest {
         val away = requireNotNull(back.ui.away)
         assertEquals(300L, away.minutes)
         assertEquals(-70, away.changes[Need.SATIETY])
-        back.onDismissAway()
+        back.onAway(AwayAction.DismissWelcome)
         assertNull(back.ui.away)
     }
 
@@ -289,9 +289,50 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `a sick pet gets free medicine, and a pet on a journey comes home after three rescue steps`() {
+        val vm = viewModel()
+        kotlinx.coroutines.runBlocking { repository.updateGame { it.copy(pet = it.pet.copy(health = Needs.points(30))) } }
+        dispatcher.scheduler.runCurrent()
+        assertTrue(vm.ui.sick)
+        assertEquals(
+            CareAction.MEDICINE,
+            vm
+                .effectsOf { onMedicine() }
+                .filterIsInstance<HomeEffect.Cared>()
+                .single()
+                .action,
+        )
+        assertFalse(vm.ui.sick)
+
+        kotlinx.coroutines.runBlocking { repository.updateGame { it.copy(pet = it.pet.copy(onJourney = true, health = 0)) } }
+        dispatcher.scheduler.runCurrent()
+        assertTrue(vm.ui.onJourney)
+        assertEquals(Refusal.AWAY, (vm.effectsOf { onFeed() }.single() as HomeEffect.Refused).reason)
+        vm.onAway(AwayAction.Rescue)
+        vm.onAway(AwayAction.Rescue)
+        assertEquals(2, vm.ui.rescueSteps)
+        assertEquals(listOf<HomeEffect>(HomeEffect.Homecoming), vm.effectsOf { onAway(AwayAction.Rescue) })
+        assertFalse(vm.ui.onJourney)
+        assertEquals(60, vm.ui.needs.getValue(Need.HEALTH))
+    }
+
+    @Test
+    fun `on vacation the needs stand still, and coming home early works`() {
+        val vm = viewModel()
+        val before = vm.ui.needs
+        vm.onAway(AwayAction.Vacation(7))
+        assertTrue(vm.ui.vacationUntilEpochMillis != null)
+        now += 3 * 24 * 3_600_000L
+        vm.tick()
+        assertEquals(before, vm.ui.needs)
+        vm.onAway(AwayAction.EndVacation)
+        assertEquals(null, vm.ui.vacationUntilEpochMillis)
+    }
+
+    @Test
     fun `settings toggles are stored`() {
         val vm = viewModel()
-        vm.onSoundToggled(false)
+        vm.onSettings { it.copy(sound = false) }
         dispatcher.scheduler.runCurrent()
         assertFalse(vm.ui.sound)
         assertTrue(vm.ui.haptics)

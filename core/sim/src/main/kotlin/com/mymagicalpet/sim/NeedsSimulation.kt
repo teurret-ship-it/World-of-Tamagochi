@@ -18,13 +18,25 @@ object NeedsSimulation {
         var needs = state.needs
         while (now < toEpochMillis) {
             val segmentEnd = minOf(toEpochMillis, state.nextSleepChangeAfter(now))
-            val asleep = state.isAsleepAt(now)
-            needs = advanceSegment(needs, segmentEnd - now, rates, asleep, rules.healthLossPerEmptyNeed)
+            // On vacation needs stand still (CLAUDE.md section 2).
+            if (!state.isPausedAt(now)) {
+                val asleep = state.isAsleepAt(now)
+                needs = advanceSegment(needs, segmentEnd - now, rates, asleep, rules.healthLossPerEmptyNeed)
+            }
             now = segmentEnd
         }
         val nap = state.napUntilEpochMillis?.takeIf { it > toEpochMillis }
         val upLate = state.awakeUntilEpochMillis?.takeIf { it > toEpochMillis }
-        return state.copy(needs = needs, updatedAtEpochMillis = toEpochMillis, napUntilEpochMillis = nap, awakeUntilEpochMillis = upLate)
+        val vacation = state.vacationUntilEpochMillis?.takeIf { it > toEpochMillis }
+        return state.copy(
+            needs = needs,
+            updatedAtEpochMillis = toEpochMillis,
+            napUntilEpochMillis = nap,
+            awakeUntilEpochMillis = upLate,
+            vacationUntilEpochMillis = vacation,
+            // Health ran out: the pet sets off on a journey (never death).
+            onJourney = state.onJourney || needs.health == 0L,
+        )
     }
 
     /** One stretch of time with constant rates (the pet neither falls asleep nor wakes up). */

@@ -12,6 +12,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,6 +51,19 @@ internal fun SettingsSheet(
             TimeStepper(stringResource(R.string.settings_bedtime), state.bedtimeMinute) { actions.onSleepWindow(it, state.wakeMinute) }
             TimeStepper(stringResource(R.string.settings_wake_up), state.wakeMinute) { actions.onSleepWindow(state.bedtimeMinute, it) }
             Text(
+                stringResource(R.string.settings_vacation_title),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(top = 12.dp),
+            )
+            Text(stringResource(R.string.settings_vacation_hint, state.name), style = MaterialTheme.typography.bodyLarge)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                VACATIONS.forEach { (days, label) ->
+                    OutlinedButton(onClick = { actions.onAway(AwayAction.Vacation(days)) }, modifier = Modifier.weight(1f)) {
+                        Text(stringResource(label))
+                    }
+                }
+            }
+            Text(
                 stringResource(R.string.settings_credits_title),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(top = 12.dp),
@@ -77,3 +91,6 @@ private fun Toggle(
         Switch(checked = checked, onCheckedChange = null)
     }
 }
+
+/** Vacation lengths offered, in days, up to the two weeks CLAUDE.md allows. */
+private val VACATIONS = listOf(3 to R.string.settings_vacation_3, 7 to R.string.settings_vacation_7, 14 to R.string.settings_vacation_14)

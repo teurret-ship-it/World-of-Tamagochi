@@ -171,8 +171,14 @@ the core care loop, and every iteration from 3 on pays the player something.
 - [ ] **13b. First-session guide.** Arrows and speech bubbles for the first
   feed, stroke and race; < 60 s to the first stroke; first race within the
   first session.
-- [ ] **14. Sickness without cruelty.** Sickness and medicine, "journey"
-  instead of death, rescue quest, vacation mode.
+- [x] **14. Sickness without cruelty.** Health below 50 makes the pet sick
+  (no growth); medicine is free and gives +35 health. A pet neglected for
+  about two days (sick after about one and a half) goes on a journey
+  instead of dying; three friendly rescue steps bring it home at 60 in every
+  need with nothing lost (stage, growth, items, coins). Vacation mode
+  ("staying at grandma's", 3, 7 or 14 days) stands the needs still; coming
+  home early works. Health loss per empty need lowered (40 -> 15) so one
+  forgotten day is never a journey.
 - [ ] **15. Leagues and weekend cups.** Divisions with weekly promotion and
   relegation, matchmaking by rating and stat division, cosmetic trophies.
 - [ ] **16. Friends.** Friend codes/QR, friend leaderboards, "a friend beat

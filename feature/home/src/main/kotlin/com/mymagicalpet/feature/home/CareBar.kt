@@ -53,13 +53,24 @@ internal fun CareBar(
             selected = state.washing,
         )
         CareButton(UiR.drawable.item_ball, stringResource(R.string.care_play), callbacks.onPlay, Modifier.weight(1f))
-        CareButton(
-            UiR.drawable.item_cookie,
-            stringResource(R.string.care_treat),
-            callbacks.onTreat,
-            Modifier.weight(1f),
-            badge = state.treatsLeft,
-        )
+        if (state.sick) {
+            // Sick: free medicine takes the treat's place, where a child looks first.
+            CareButton(
+                UiR.drawable.item_medicine,
+                stringResource(R.string.care_medicine),
+                callbacks.onMedicine,
+                Modifier.weight(1f),
+                selected = true,
+            )
+        } else {
+            CareButton(
+                UiR.drawable.item_cookie,
+                stringResource(R.string.care_treat),
+                callbacks.onTreat,
+                Modifier.weight(1f),
+                badge = state.treatsLeft,
+            )
+        }
         if (state.asleep) {
             CareButton(UiR.drawable.item_light, stringResource(R.string.care_lights_on), callbacks.onLights, Modifier.weight(1f))
         } else {

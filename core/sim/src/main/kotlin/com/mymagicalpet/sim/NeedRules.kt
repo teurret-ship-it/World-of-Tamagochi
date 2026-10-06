@@ -123,7 +123,7 @@ data class NeedRules(
                                 energyRecoveryAsleep = 120,
                             ),
                     ),
-                healthLossPerEmptyNeed = 40,
+                healthLossPerEmptyNeed = 15,
             )
     }
 }
