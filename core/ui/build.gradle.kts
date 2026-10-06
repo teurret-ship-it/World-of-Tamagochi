@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.worldoftamagochi.ui"
+    namespace = "com.mymagicalpet.ui"
 }
 
 dependencies {

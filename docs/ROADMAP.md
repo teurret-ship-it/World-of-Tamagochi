@@ -118,6 +118,22 @@ the core care loop, and every iteration from 3 on pays the player something.
   sleep window (up for an hour, needs drain at the daytime pace), Lights
   off sends the pet back to bed, the hint names the wake-up time, and the
   sleep time is set in settings (half-hour steps).
+- [x] **M1. My Magical Pet** (ADR-011). The game's new name everywhere:
+  app name, logo, application id `com.mymagicalpet`, Kotlin packages, docs.
+- [ ] **M2. Five species.** Dragon, griffin, unicorn, phoenix, kitsune,
+  chosen with the egg (each species has its own egg: scaly, feathered,
+  pearly, fiery, misty). The rig gets species parts: wings, horns, beak,
+  mane, crest, flame and fox tails. Existing pets keep their look as a
+  species chosen from their genome.
+- [ ] **M3. Growth stages.** Seven stages (egg, hatchling, baby, junior,
+  young, adult, majestic): the creature grows bigger, its proportions
+  mature, wings and horns lengthen; the majestic form glows. Growth points
+  from care, races and training over days (capped per day, so it takes
+  about three weeks to become majestic); an evolution ceremony at every
+  stage.
+- [ ] **M4. Care decides the form.** Two adult and majestic variants per
+  species from care quality and favourite discipline (merges with 12).
+
 - [ ] **10. Daily quests, streaks and achievements.** Three short daily
   quests (care + race), streak with a weekly freeze, sticker album of
   achievements.

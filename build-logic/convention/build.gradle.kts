@@ -2,7 +2,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "com.worldoftamagochi.buildlogic"
+group = "com.mymagicalpet.buildlogic"
 
 // Tryb JVM-only: srodowisko bez dostepu do Google Maven (dl.google.com)
 // buduje tylko moduly czysto kotlinowe. Patrz ADR-002 w docs/DECISIONS.md.

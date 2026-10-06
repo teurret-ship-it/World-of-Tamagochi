@@ -2,8 +2,8 @@ package android
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
-import com.worldoftamagochi.buildlogic.lib
-import com.worldoftamagochi.buildlogic.libs
+import com.mymagicalpet.buildlogic.lib
+import com.mymagicalpet.buildlogic.libs
 import io.github.takahirom.roborazzi.RoborazziExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project

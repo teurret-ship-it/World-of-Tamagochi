@@ -29,7 +29,7 @@ dependencyResolutionManagement {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "world-of-tamagochi"
+rootProject.name = "my-magical-pet"
 
 // JVM-only mode (ADR-002): environments without access to Google Maven build
 // and test only the pure Kotlin modules. CI always builds everything.

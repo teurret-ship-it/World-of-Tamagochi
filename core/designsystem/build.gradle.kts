@@ -4,5 +4,5 @@ plugins {
 }
 
 android {
-    namespace = "com.worldoftamagochi.designsystem"
+    namespace = "com.mymagicalpet.designsystem"
 }

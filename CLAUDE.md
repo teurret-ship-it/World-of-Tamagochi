@@ -1,4 +1,4 @@
-# World of Tamagochi: project constitution
+# My Magical Pet: project constitution
 
 This file is loaded into every Claude Code session. It defines the product,
 the rules that are never broken, the architecture, the quality gates and the
@@ -21,10 +21,14 @@ feature looks worse than theirs, the iteration is not done.
 ## 1. Product
 
 Retention sentence (everything else serves it):
-"The player cares for a pet that lives in real time, to raise it into a
-unique adult form and beat their friends in competitions, and comes back
-tomorrow because the pet needs them, something new is waiting, and someone
-has just beaten their record."
+"The player hatches and cares for a magical creature (a dragon, griffin,
+unicorn, phoenix or kitsune) that lives in real time, to raise it from a tiny
+hatchling into a unique, majestic legend and beat their friends in
+competitions, and comes back tomorrow because the creature needs them,
+something new is waiting, and someone has just beaten their record."
+
+Name: "My Magical Pet" (ADR-011). Never use "Tamagotchi" or a look-alike in
+the product, the store listing or the code: it is a Bandai trademark.
 
 Audience: casual, age 10+ (designed for the Google Play Families Policy even
 if the console rating ends up 13+). Sessions of 1-5 minutes, 3-6 a day.
@@ -32,8 +36,9 @@ if the console rating ends up 13+). Sessions of 1-5 minutes, 3-6 a day.
 Pillars (every iteration strengthens at least one):
 1. A LIVING PET: idle animation, facial expressions, reactions to touch,
    personality. The pet looks alive even when the player does nothing.
-2. CARE THAT MATTERS: needs, sickness, sleep and evolution. Quality of care
-   decides who the pet becomes.
+2. CARE THAT MATTERS: needs, sickness, sleep and growth. Every species grows
+   through many stages, from a tiny hatchling to a spectacular, majestic
+   legend; quality of care decides which form it takes.
 3. A WORLD OF YOUR OWN: cosmetics, a room to decorate, collections.
 4. TOGETHER: friends, visits, gifts, shared events.
 5. ALWAYS SOMETHING NEW: daily quests, seasonal events, season pass.
@@ -138,6 +143,13 @@ built-in Kotlin: modules do not apply `org.jetbrains.kotlin.android`.
 UI/MVI: every screen has an immutable `UiState`, a `UiEvent` and a
 `ViewModel` exposing `StateFlow`. One-off effects go through a `Channel`. No
 game logic in composables.
+
+Art direction (ADR-011): colourful, storybook and friendly to children,
+never neon. Soft, warm colours with capped saturation (pastel bodies, deeper
+accents), round shapes, big eyes, gentle outlines, soft shading. Babies are
+tiny, round and sweet; every stage grows bigger, sleeker and more impressive;
+the majestic form is spectacular (glow, sparkles, full wings) without
+becoming scary. No glowing neon, no hard gradients, no gore.
 
 Pet rendering: a parametric vector rig drawn in Compose Canvas: blob body,
 eyes, eyelids, pupils, mouth, ears/tail and accessories. Squash and stretch,

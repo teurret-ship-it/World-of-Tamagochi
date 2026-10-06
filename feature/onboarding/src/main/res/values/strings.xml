@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_title_small">World of</string>
-    <string name="app_title_big">Tamagochi</string>
-    <string name="title_tagline">Raise a pet. Race the world.</string>
+    <string name="app_title_small">My</string>
+    <string name="app_title_big">Magical Pet</string>
+    <string name="title_tagline">Hatch a legend. Race the world.</string>
     <string name="title_play">Play</string>
     <string name="title_start">Get your pet!</string>
     <string name="title_races">Races</string>

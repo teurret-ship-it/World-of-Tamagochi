@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.worldoftamagochi.feature.onboarding"
+    namespace = "com.mymagicalpet.feature.onboarding"
 }
 
 dependencies {

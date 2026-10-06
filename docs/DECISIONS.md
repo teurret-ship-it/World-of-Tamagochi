@@ -156,7 +156,7 @@ schema, trivial migrations by `version`. A corrupt file starts a fresh game
 instead of crashing. The ViewModel saves after every care action and every
 15 seconds. Room arrives when the data becomes collections that need
 queries (inventory, album, race history); the repository interface stays.
-No DI framework yet: `WotApplication` owns the repository and passes it to
+No DI framework yet: `MagicPetApplication` owns the repository and passes it to
 the screen; Hilt arrives with the second screen that needs shared objects.
 
 **Clock.** Time never runs backwards for the pet (iteration 1), and the
@@ -223,3 +223,37 @@ needs proof: it only lowers stats.
 trainer has, and stats move a run by at most 10% by design (CLAUDE.md
 section 2). Runs rejected for stats are dropped like any refused run. Cloud
 saves will replace the ceiling with the server's own copy of the pet.
+
+## ADR-011: My Magical Pet, a game of mythical creatures
+
+**Context.** The working title "World of Tamagochi" is too close to
+"Tamagotchi", a Bandai trademark: it could not be published safely. The
+product owner asked for "My Magical Pet" and for mythical creatures (dragons,
+griffins and others), each growing through many stages from tiny to
+spectacular and majestic.
+
+**Decision.** The game is "My Magical Pet": app name, logo, application id
+`com.mymagicalpet` and Kotlin packages `com.mymagicalpet.*` (renamed now,
+before any release, while it costs nothing to players). A web search found
+no game or trademark with that exact name, only similar ones ("My Magical
+Unicorn", the abandoned "MAGICAL PETS"); a formal EUIPO/USPTO search is part
+of release readiness (iteration 34). The pet becomes a creature of one of
+five species, chosen with the egg: dragon, griffin, unicorn, phoenix and
+kitsune. Each grows through seven stages (egg, hatchling, baby, junior,
+young, adult, majestic). Growth comes from care over days, never from
+money, and the majestic form is the long goal (Phase M in the roadmap).
+
+**Not changed.** The repository name is the product owner's to change. The
+build-logic plugin ids and Gradle properties keep their internal `wot`
+prefix (`wot.jvmOnly`, `wot.serverUrl`): renaming them would break every
+build command for no player benefit. The test signing key keeps its
+password.
+
+**Art direction.** Colourful and storybook, friendly to children and never
+neon: pastel bodies and softer accents with capped saturation, round shapes,
+big eyes; sweet babies that grow into impressive, majestic creatures that
+are never scary (CLAUDE.md section 3).
+
+**Consequences.** The test build has a new application id, so it installs
+as a new app next to the old one (the old save is not carried over; the old
+app can be uninstalled).

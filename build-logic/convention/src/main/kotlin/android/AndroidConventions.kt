@@ -3,7 +3,7 @@ package android
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.dsl.Lint
-import com.worldoftamagochi.buildlogic.JVM_TARGET
+import com.mymagicalpet.buildlogic.JVM_TARGET
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test

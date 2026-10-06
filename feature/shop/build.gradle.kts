@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.worldoftamagochi.feature.shop"
+    namespace = "com.mymagicalpet.feature.shop"
 }
 
 dependencies {

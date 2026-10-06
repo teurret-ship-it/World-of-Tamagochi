@@ -1,6 +1,6 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
-import com.worldoftamagochi.buildlogic.JVM_TARGET
-import com.worldoftamagochi.buildlogic.libs
+import com.mymagicalpet.buildlogic.JVM_TARGET
+import com.mymagicalpet.buildlogic.libs
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Plugin

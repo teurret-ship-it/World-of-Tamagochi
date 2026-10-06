@@ -3,7 +3,7 @@ plugins {
 }
 
 application {
-    mainClass.set("com.worldoftamagochi.server.MainKt")
+    mainClass.set("com.mymagicalpet.server.MainKt")
 }
 
 dependencies {

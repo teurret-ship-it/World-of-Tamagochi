@@ -1,6 +1,6 @@
-import com.worldoftamagochi.buildlogic.JVM_TARGET
-import com.worldoftamagochi.buildlogic.lib
-import com.worldoftamagochi.buildlogic.libs
+import com.mymagicalpet.buildlogic.JVM_TARGET
+import com.mymagicalpet.buildlogic.lib
+import com.mymagicalpet.buildlogic.libs
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.worldoftamagochi.feature.race"
+    namespace = "com.mymagicalpet.feature.race"
 }
 
 dependencies {

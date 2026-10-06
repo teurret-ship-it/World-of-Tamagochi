@@ -1,7 +1,8 @@
-# World of Tamagochi
+# My Magical Pet
 
-An online virtual-pet game for Android: raise a pet that lives in real time,
-watch it grow into a unique adult, decorate its world, visit friends, and race
+An online virtual-pet game for Android: hatch a magical creature (dragon,
+griffin, unicorn, phoenix or kitsune) that lives in real time, raise it from a
+tiny hatchling into a majestic legend, decorate its world, visit friends, and race
 other players' pets in sprints, agility courses and timed platformers.
 
 The game is built iteratively. `CLAUDE.md` is the project constitution
@@ -84,7 +85,7 @@ handled before anything else in the next iteration.
 Every green build of `main` is published as a pre-release:
 <https://github.com/teurret-ship-it/World-of-Tamagochi/releases/tag/test-build>.
 Open the link on an Android phone (Android 8 or newer), download
-`world-of-tamagochi.apk`, allow installing apps from that source when asked,
+`my-magical-pet.apk`, allow installing apps from that source when asked,
 and install. New builds install over the old one and keep the save. Online
 races appear once the racing server is deployed (ADR-008).
 

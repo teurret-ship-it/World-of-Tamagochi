@@ -83,11 +83,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp app/build/outputs/apk/release/app-release.apk world-of-tamagochi.apk
+          cp app/build/outputs/apk/release/app-release.apk my-magical-pet.apk
           gh release delete test-build --yes --cleanup-tag || true
-          gh release create test-build world-of-tamagochi.apk --prerelease --target "$GITHUB_SHA" \
+          gh release create test-build my-magical-pet.apk --prerelease --target "$GITHUB_SHA" \
             --title "Test build ${GITHUB_SHA::7}" \
-            --notes "Latest green build of main (${GITHUB_SHA::7}). On Android: open this page on the phone, download world-of-tamagochi.apk, allow installing from this source, install. Offline build: online races appear once the server is deployed (ADR-008)."
+            --notes "Latest green build of main (${GITHUB_SHA::7}). On Android: open this page on the phone, download my-magical-pet.apk, allow installing from this source, install. Offline build: online races appear once the server is deployed (ADR-008)."
 
       - name: Failure summary
         if: failure()

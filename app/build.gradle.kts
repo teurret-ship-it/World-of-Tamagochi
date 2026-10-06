@@ -4,10 +4,10 @@ plugins {
 }
 
 android {
-    namespace = "com.worldoftamagochi"
+    namespace = "com.mymagicalpet"
 
     defaultConfig {
-        applicationId = "com.worldoftamagochi"
+        applicationId = "com.mymagicalpet"
         versionCode = 1
         versionName = "0.1.0"
         // Racing server (ADR-008). Empty = offline build: online features stay hidden.
