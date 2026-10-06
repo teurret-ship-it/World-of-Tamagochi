@@ -130,7 +130,7 @@ the core care loop, and every iteration from 3 on pays the player something.
 - [ ] **12. Life cycle and evolution.** Egg -> baby -> child -> teen ->
   adult; at least 6 adult forms from care quality and favourite discipline;
   transformation animation; album.
-- [x] **13. Title screen and onboarding (FTUE).** Pulled ahead by playtest
+- [x] **13. Title screen and onboarding (FTUE).** (25465da) Pulled ahead by playtest
   feedback ("no pet choice, no main menu, no intro, no hatching").
   - Title screen as the main menu: bouncing logo, your pet saying hello,
     Play / Races / Shop; "Get your pet!" for a new player.

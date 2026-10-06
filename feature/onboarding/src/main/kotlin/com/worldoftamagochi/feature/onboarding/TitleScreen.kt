@@ -113,7 +113,11 @@ fun TitleScreen(
         )
         if (pet != null) {
             Pet(pet.genome, Expression.HAPPY, pet.name, Modifier.size(220.dp), animate = animate, wearing = pet.wearing)
-            Text(stringResource(R.string.title_greeting, pet.name), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.title_greeting, pet.name),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
         } else {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TITLE_EGGS.forEachIndexed { i, seed ->
