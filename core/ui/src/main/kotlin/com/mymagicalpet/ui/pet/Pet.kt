@@ -43,12 +43,13 @@ fun Pet(
     squash: Float = 0f,
     pose: PetPose = PetPose.REST,
     wearing: Collection<String> = emptyList(),
+    growth: Float = DEFAULT_GROWTH,
 ) {
     val description = stringResource(R.string.pet_description, name, stringResource(expression.descriptionRes()))
     val live = if (animate) livePose(expression, look, squash) else pose
     val outfit = rememberOutfit(wearing)
     Canvas(modifier = modifier.semantics { contentDescription = description }) {
-        drawPet(genome, expression, live, outfit)
+        drawPet(genome, expression, live, outfit, growth)
     }
 }
 

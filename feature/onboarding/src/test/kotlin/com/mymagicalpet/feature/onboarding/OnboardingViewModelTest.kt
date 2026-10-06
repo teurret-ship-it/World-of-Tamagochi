@@ -9,6 +9,7 @@ import com.mymagicalpet.sim.Needs
 import com.mymagicalpet.sim.PetNames
 import com.mymagicalpet.sim.PetState
 import com.mymagicalpet.sim.SleepWindow
+import com.mymagicalpet.sim.Species
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -45,7 +46,7 @@ class OnboardingViewModelTest {
     @Test
     fun `pick an egg, a name and a bedtime, then hatch the pet with five taps`() {
         val vm = onboarding()
-        assertEquals(4, vm.ui.eggs.size)
+        assertEquals(Species.entries, vm.ui.eggs.map(Species::of)) // one egg of every species
         assertFalse(vm.ui.canContinue)
         vm.onNext() // nothing chosen yet: stays
         assertEquals(OnboardingStep.CHOOSE_EGG, vm.ui.step)

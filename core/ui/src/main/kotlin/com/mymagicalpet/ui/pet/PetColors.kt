@@ -2,6 +2,7 @@ package com.mymagicalpet.ui.pet
 
 import androidx.compose.ui.graphics.Color
 import com.mymagicalpet.sim.Genome
+import com.mymagicalpet.sim.Species
 
 /** Colours derived from a [Genome]. Saturation and value are fixed so every pet stays soft and readable. */
 internal data class PetColors(
@@ -11,15 +12,19 @@ internal data class PetColors(
     val outline: Color,
 )
 
-internal fun Genome.colors(): PetColors =
-    PetColors(
-        body = Color.hsv(bodyHue.toFloat(), BODY_SATURATION, BODY_VALUE),
-        bodyShade = Color.hsv(bodyHue.toFloat(), BODY_SATURATION + SHADE_EXTRA_SATURATION, BODY_VALUE - SHADE_DARKER),
+internal fun Genome.colors(): PetColors {
+    // Unicorns are pearly: the same hue, much softer.
+    val saturation = if (species == Species.UNICORN) PEARL_SATURATION else BODY_SATURATION
+    return PetColors(
+        body = Color.hsv(bodyHue.toFloat(), saturation, BODY_VALUE),
+        bodyShade = Color.hsv(bodyHue.toFloat(), saturation + SHADE_EXTRA_SATURATION, BODY_VALUE - SHADE_DARKER),
         pattern = Color.hsv(patternHue.toFloat(), PATTERN_SATURATION, PATTERN_VALUE),
         outline = Color.hsv(bodyHue.toFloat(), OUTLINE_SATURATION, OUTLINE_VALUE),
     )
+}
 
 private const val BODY_SATURATION = 0.42f
+private const val PEARL_SATURATION = 0.16f
 private const val BODY_VALUE = 0.97f
 private const val SHADE_EXTRA_SATURATION = 0.12f
 private const val SHADE_DARKER = 0.12f

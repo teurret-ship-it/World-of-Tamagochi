@@ -14,6 +14,7 @@ enum class Pattern { PLAIN, SPOTS, STRIPES, PATCH, BELLY }
  * Proportions are per-mille of the standard body (1000 = standard).
  */
 data class Genome(
+    val species: Species,
     val bodyHue: Int,
     val patternHue: Int,
     val pattern: Pattern,
@@ -40,13 +41,16 @@ data class Genome(
         const val MIN_PATTERN_HUE_DISTANCE = 40
 
         fun fromSeed(seed: Long): Genome {
+            val species = Species.of(seed)
             val random = SeededRandom(seed)
-            val bodyHue = random.nextInt(HUES.first, HUES.last + 1)
+            val hues = random.pick(species.bodyHues)
+            val bodyHue = random.nextInt(hues.first, hues.last + 1)
             val offset = random.nextInt(MIN_PATTERN_HUE_DISTANCE, HUES.last + 2 - MIN_PATTERN_HUE_DISTANCE)
             return Genome(
+                species = species,
                 bodyHue = bodyHue,
                 patternHue = (bodyHue + offset) % HUES.count(),
-                pattern = random.pick(Pattern.entries),
+                pattern = random.pick(species.patterns),
                 ears = random.pick(EarShape.entries),
                 hasTail = random.nextInt(0, 2) == 1,
                 widthPerMille = random.nextInt(WIDTH.first, WIDTH.last + 1),

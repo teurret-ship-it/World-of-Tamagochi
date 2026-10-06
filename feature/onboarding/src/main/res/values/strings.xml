@@ -11,8 +11,7 @@
     <string name="back">Back</string>
     <string name="step">Step %1$d of %2$d</string>
     <string name="egg_title">Choose your egg!</string>
-    <string name="egg_hint">Every egg holds a different pet. The colours are a hint!</string>
-    <string name="egg_description">Egg %1$d of %2$d</string>
+    <string name="egg_hint">Which magical creature will you raise?</string>
     <string name="egg_chosen">Chosen</string>
     <string name="egg_more">Show me other eggs</string>
     <string name="egg_next">This one!</string>

@@ -12,6 +12,7 @@ import com.mymagicalpet.sim.Needs
 import com.mymagicalpet.sim.PetNames
 import com.mymagicalpet.sim.PetState
 import com.mymagicalpet.sim.SleepWindow
+import com.mymagicalpet.sim.Species
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -105,13 +106,13 @@ class OnboardingViewModel(
         }
     }
 
-    private fun newEggs(): List<Long> = List(EGGS) { random.nextLong() }
+    /** One egg of every species, in fresh colours each time. */
+    private fun newEggs(): List<Long> = Species.entries.map { Species.seedFor(it, random.nextLong()) }
 
     private fun newNames(): List<String> = PetNames.ALL.shuffled(random).take(NAMES)
 
     companion object {
         const val TAPS_TO_HATCH = 5
-        private const val EGGS = 4
         private const val NAMES = 8
     }
 }

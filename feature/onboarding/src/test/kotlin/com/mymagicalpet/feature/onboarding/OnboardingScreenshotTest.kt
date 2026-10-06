@@ -17,7 +17,7 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [36], qualifiers = "w411dp-h891dp-xxhdpi")
 class OnboardingScreenshotTest {
-    private val eggs = listOf(3L, 14L, 15L, 92L)
+    private val eggs = listOf(10L, 21L, 32L, 43L, 54L) // dragon, griffin, unicorn, phoenix, kitsune
     private val names = listOf("Mochi", "Pip", "Biscuit", "Noodle", "Maple", "Comet", "Tofu", "Kiwi")
     private val base = OnboardingUiState(eggs = eggs, names = names)
 
@@ -52,10 +52,10 @@ class OnboardingScreenshotTest {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-xhdpi")
     fun eggsTablet() =
-        capture("onboarding_eggs_tablet") { OnboardingScreen(base.copy(chosenEgg = 14L), OnboardingActions(), animate = false) }
+        capture("onboarding_eggs_tablet") { OnboardingScreen(base.copy(chosenEgg = 54L), OnboardingActions(), animate = false) }
 
     @Test
-    fun eggs() = capture("onboarding_eggs") { OnboardingScreen(base.copy(chosenEgg = 14L), OnboardingActions(), animate = false) }
+    fun eggs() = capture("onboarding_eggs") { OnboardingScreen(base.copy(chosenEgg = 54L), OnboardingActions(), animate = false) }
 
     @Test
     fun eggsDark() = capture("onboarding_eggs_dark", dark = true) { OnboardingScreen(base, OnboardingActions(), animate = false) }
@@ -63,14 +63,14 @@ class OnboardingScreenshotTest {
     @Test
     fun name() =
         capture("onboarding_name") {
-            OnboardingScreen(base.copy(step = OnboardingStep.NAME, chosenEgg = 14L, name = "Biscuit"), OnboardingActions(), animate = false)
+            OnboardingScreen(base.copy(step = OnboardingStep.NAME, chosenEgg = 54L, name = "Biscuit"), OnboardingActions(), animate = false)
         }
 
     @Test
     fun sleep() =
         capture("onboarding_sleep") {
             OnboardingScreen(
-                base.copy(step = OnboardingStep.SLEEP, chosenEgg = 14L, name = "Biscuit"),
+                base.copy(step = OnboardingStep.SLEEP, chosenEgg = 54L, name = "Biscuit"),
                 OnboardingActions(),
                 animate = false,
             )
@@ -80,7 +80,7 @@ class OnboardingScreenshotTest {
     fun hatchCracking() =
         capture("onboarding_hatch_cracking") {
             OnboardingScreen(
-                base.copy(step = OnboardingStep.HATCH, chosenEgg = 14L, name = "Biscuit", taps = 3),
+                base.copy(step = OnboardingStep.HATCH, chosenEgg = 54L, name = "Biscuit", taps = 3),
                 OnboardingActions(),
                 animate = false,
             )
@@ -90,7 +90,7 @@ class OnboardingScreenshotTest {
     fun hatched() =
         capture("onboarding_hatched") {
             OnboardingScreen(
-                base.copy(step = OnboardingStep.HATCH, chosenEgg = 14L, name = "Biscuit", taps = 5, hatched = true),
+                base.copy(step = OnboardingStep.HATCH, chosenEgg = 54L, name = "Biscuit", taps = 5, hatched = true),
                 OnboardingActions(),
                 animate = false,
             )

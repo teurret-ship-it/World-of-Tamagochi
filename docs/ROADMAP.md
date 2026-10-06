@@ -120,7 +120,7 @@ the core care loop, and every iteration from 3 on pays the player something.
   sleep time is set in settings (half-hour steps).
 - [x] **M1. My Magical Pet** (ADR-011). The game's new name everywhere:
   app name, logo, application id `com.mymagicalpet`, Kotlin packages, docs.
-- [ ] **M2. Five species.** Dragon, griffin, unicorn, phoenix, kitsune,
+- [x] **M2. Five species.** (art reviewed after CI) Dragon, griffin, unicorn, phoenix, kitsune,
   chosen with the egg (each species has its own egg: scaly, feathered,
   pearly, fiery, misty). The rig gets species parts: wings, horns, beak,
   mane, crest, flame and fox tails. Existing pets keep their look as a

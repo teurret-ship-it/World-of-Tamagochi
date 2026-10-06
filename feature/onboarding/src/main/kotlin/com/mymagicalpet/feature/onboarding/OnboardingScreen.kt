@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -38,7 +39,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mymagicalpet.data.GameRepository
 import com.mymagicalpet.sim.Genome
+import com.mymagicalpet.sim.Species
 import com.mymagicalpet.ui.pet.Egg
+import com.mymagicalpet.ui.pet.nameRes
 import com.mymagicalpet.ui.time.TimeStepper
 
 @Composable
@@ -144,16 +147,17 @@ private fun EggStep(
 ) {
     Title(stringResource(R.string.egg_title), stringResource(R.string.egg_hint))
     state.eggs.withIndex().chunked(2).forEach { row ->
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        // The odd egg out sits in the middle of the last row.
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally), modifier = Modifier.fillMaxWidth()) {
             row.forEach { (i, seed) ->
                 EggTile(
                     seed = seed,
-                    description = stringResource(R.string.egg_description, i + 1, state.eggs.size),
+                    description = stringResource(Species.of(seed).nameRes()),
                     chosen = seed == state.chosenEgg,
                     phase = i,
                     animate = animate,
                     onClick = { actions.onChooseEgg(seed) },
-                    modifier = Modifier.weight(1f),
+                    modifier = if (row.size == 1) Modifier.fillMaxWidth(HALF) else Modifier.weight(1f),
                 )
             }
         }
@@ -185,7 +189,10 @@ private fun EggTile(
             },
     ) {
         val wobble = if (animate) idleWobble(phase, excited = chosen) else 0f
-        Egg(Genome.fromSeed(seed), description, Modifier.fillMaxSize().padding(12.dp), wobble = wobble)
+        Column(Modifier.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Egg(Genome.fromSeed(seed), description, Modifier.weight(1f).fillMaxWidth(), wobble = wobble)
+            Text(description, style = MaterialTheme.typography.titleMedium, modifier = Modifier.clearAndSetSemantics {})
+        }
     }
 }
 
@@ -247,3 +254,5 @@ internal fun NextButton(
         Text(label, style = MaterialTheme.typography.headlineSmall)
     }
 }
+
+private const val HALF = 0.48f

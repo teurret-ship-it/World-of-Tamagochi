@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import com.mymagicalpet.sim.Genome
-import com.mymagicalpet.sim.Pattern
+import com.mymagicalpet.sim.Species
 
 // *Art.kt files hold shape coordinates: they are drawing data, not logic, so
 // detekt's MagicNumber rule does not apply to them (config/detekt/detekt.yml).
@@ -89,32 +89,7 @@ private fun DrawScope.drawShell(
     val base = colors.body.copy(alpha = alpha)
     drawPath(shell, base)
     clipPath(shell) {
-        val spots =
-            when (genome.pattern) {
-                Pattern.PLAIN -> emptyList()
-                Pattern.STRIPES -> null
-                else -> SPOTS
-            }
-        if (spots == null) {
-            listOf(0.3f, 0.55f).forEach { y ->
-                drawRect(
-                    colors.pattern.copy(alpha = alpha),
-                    Offset(egg.left, egg.top + egg.height * y),
-                    Size(egg.width, egg.height * 0.07f),
-                )
-            }
-        } else {
-            spots.forEach { (at, r) ->
-                drawCircle(
-                    colors.pattern.copy(alpha = alpha),
-                    egg.width * r,
-                    Offset(
-                        egg.left + egg.width * at.x,
-                        egg.top + egg.height * at.y,
-                    ),
-                )
-            }
-        }
+        drawShellMarks(egg, genome.species, colors.pattern.copy(alpha = alpha))
         // Shade at the bottom, a shine at the top left: it reads as round.
         drawOval(
             colors.bodyShade.copy(alpha = 0.35f * alpha),
@@ -182,11 +157,138 @@ private fun below(
         close()
     }
 
-private val SPOTS =
+/** Every species has its own shell: scales, feathers, stars, flames or swirls. */
+private fun DrawScope.drawShellMarks(
+    egg: Rect,
+    species: Species,
+    ink: Color,
+) {
+    when (species) {
+        Species.DRAGON -> drawScales(egg, ink)
+        Species.GRIFFIN -> drawFeatherMarks(egg, ink)
+        Species.UNICORN -> drawRainbowAndStars(egg, ink)
+        Species.PHOENIX -> drawFlames(egg, ink)
+        Species.KITSUNE -> drawSwirls(egg, ink)
+    }
+}
+
+private fun Rect.point(
+    x: Float,
+    y: Float,
+) = Offset(left + width * x, top + height * y)
+
+private fun DrawScope.drawScales(
+    egg: Rect,
+    ink: Color,
+) {
+    for (row in 0 until 6) {
+        val y = 0.22f + row * 0.12f
+        val shift = if (row % 2 == 0) 0f else 0.1f
+        for (col in 0 until 6) {
+            val c = egg.point(shift + col * 0.2f, y)
+            drawArc(
+                ink,
+                0f,
+                180f,
+                useCenter = false,
+                topLeft = Offset(c.x - egg.width * 0.08f, c.y - egg.width * 0.06f),
+                size = Size(egg.width * 0.16f, egg.width * 0.12f),
+                style = Stroke(egg.width * 0.025f),
+            )
+        }
+    }
+}
+
+private fun DrawScope.drawFeatherMarks(
+    egg: Rect,
+    ink: Color,
+) {
+    listOf(0.3f, 0.5f, 0.7f).forEach { y ->
+        val path =
+            Path().apply {
+                moveTo(egg.left + egg.width * 0.2f, egg.top + egg.height * y)
+                lineTo(egg.left + egg.width * 0.5f, egg.top + egg.height * (y + 0.07f))
+                lineTo(egg.left + egg.width * 0.8f, egg.top + egg.height * y)
+            }
+        drawPath(path, ink, style = Stroke(egg.width * 0.035f, cap = StrokeCap.Round, join = StrokeJoin.Round))
+    }
+    listOf(0.25f to 0.2f, 0.72f to 0.38f, 0.3f to 0.85f, 0.68f to 0.8f).forEach { (x, y) ->
+        drawCircle(ink, egg.width * 0.035f, egg.point(x, y))
+    }
+}
+
+private fun DrawScope.drawRainbowAndStars(
+    egg: Rect,
+    ink: Color,
+) {
+    RAINBOW.forEachIndexed { i, color ->
+        drawRect(color, Offset(egg.left, egg.top + egg.height * (0.55f + i * 0.035f)), Size(egg.width, egg.height * 0.035f))
+    }
+    listOf(Triple(0.3f, 0.28f, 0.07f), Triple(0.7f, 0.4f, 0.05f), Triple(0.62f, 0.82f, 0.05f)).forEach { (x, y, r) ->
+        drawStar(egg.point(x, y), egg.width * r, ink)
+    }
+}
+
+private fun DrawScope.drawFlames(
+    egg: Rect,
+    ink: Color,
+) {
+    listOf(0.18f to 0.55f, 0.5f to 0.42f, 0.82f to 0.55f).forEach { (x, top) ->
+        val base = egg.point(x, 1.02f)
+        val tip = egg.point(x, top)
+        val w = egg.width * 0.2f
+        val flame =
+            Path().apply {
+                moveTo(base.x - w, base.y)
+                quadraticTo(base.x - w, tip.y + (base.y - tip.y) * 0.4f, tip.x, tip.y)
+                quadraticTo(base.x + w, tip.y + (base.y - tip.y) * 0.4f, base.x + w, base.y)
+                close()
+            }
+        drawPath(flame, ink)
+    }
+}
+
+private fun DrawScope.drawSwirls(
+    egg: Rect,
+    ink: Color,
+) {
+    listOf(Triple(0.32f, 0.3f, 0.12f), Triple(0.7f, 0.55f, 0.14f), Triple(0.35f, 0.78f, 0.1f)).forEach { (x, y, r) ->
+        val c = egg.point(x, y)
+        drawArc(
+            ink,
+            200f,
+            250f,
+            useCenter = false,
+            topLeft = Offset(c.x - egg.width * r, c.y - egg.width * r),
+            size = Size(egg.width * r * 2, egg.width * r * 2),
+            style = Stroke(egg.width * 0.03f, cap = StrokeCap.Round),
+        )
+        drawCircle(ink, egg.width * 0.025f, c)
+    }
+}
+
+private fun DrawScope.drawStar(
+    center: Offset,
+    radius: Float,
+    color: Color,
+) {
+    val path = Path()
+    for (i in 0 until 10) {
+        val r = if (i % 2 == 0) radius else radius * 0.45f
+        val angle = Math.toRadians(-90.0 + i * 36.0)
+        val p = Offset(center.x + (r * kotlin.math.cos(angle)).toFloat(), center.y + (r * kotlin.math.sin(angle)).toFloat())
+        if (i == 0) path.moveTo(p.x, p.y) else path.lineTo(p.x, p.y)
+    }
+    path.close()
+    drawPath(path, color)
+}
+
+private val RAINBOW =
     listOf(
-        Offset(0.3f, 0.3f) to 0.1f,
-        Offset(0.7f, 0.22f) to 0.07f,
-        Offset(0.75f, 0.6f) to 0.11f,
-        Offset(0.25f, 0.7f) to 0.08f,
-        Offset(0.5f, 0.85f) to 0.06f,
+        Color(0xFFF9B4C8),
+        Color(0xFFFCD0A4),
+        Color(0xFFFBEAA6),
+        Color(0xFFB8E6CF),
+        Color(0xFFB9D6FA),
+        Color(0xFFD4C4F6),
     )

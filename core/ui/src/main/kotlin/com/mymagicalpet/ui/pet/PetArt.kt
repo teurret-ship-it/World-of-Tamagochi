@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.withTransform
-import com.mymagicalpet.sim.EarShape
 import com.mymagicalpet.sim.Expression
 import com.mymagicalpet.sim.Genome
 import com.mymagicalpet.sim.Pattern
@@ -26,6 +25,7 @@ internal fun DrawScope.drawPet(
     expression: Expression,
     pose: PetPose,
     outfit: List<WornItem> = emptyList(),
+    growth: Float = DEFAULT_GROWTH,
 ) {
     val colors = genome.colors()
     val unit = minOf(size.width, size.height)
@@ -41,10 +41,11 @@ internal fun DrawScope.drawPet(
         scale(scaleX = squashX / breathe.coerceAtLeast(1f) * breathe, scaleY = squashY * breathe, pivot = Offset(center.x, ground))
     }) {
         val body = Rect(center = center, radius = 0f).inflateTo(bodyW, bodyH)
-        if (genome.hasTail) drawTail(body, colors)
-        drawEars(genome.ears, body, colors)
+        drawSpeciesBehind(genome.species, body, colors, growth)
         drawBody(body, genome.pattern, colors)
+        drawSpeciesOverBody(genome.species, body, colors)
         drawFace(genome, expression, pose, body, colors)
+        drawSpeciesFront(genome.species, body, colors, growth)
         drawOutfit(outfit, body)
     }
 }
@@ -115,84 +116,6 @@ private fun DrawScope.drawBody(
         drawOval(colors.bodyShade.copy(alpha = 0.35f), body.at(Offset(-0.1f, 0.78f)), Size(body.width * 1.2f, body.height * 0.5f))
     }
     drawPath(path, colors.outline, style = Stroke(width = body.width * 0.025f))
-}
-
-private fun DrawScope.drawEars(
-    ears: EarShape,
-    body: Rect,
-    colors: PetColors,
-) {
-    val stroke = Stroke(width = body.width * 0.025f)
-    listOf(-1f, 1f).forEach { side ->
-        val base = body.at(Offset(0.5f + side * 0.27f, 0.1f))
-        val path =
-            when (ears) {
-                EarShape.NONE -> {
-                    return
-                }
-
-                EarShape.ROUND -> {
-                    Path().apply {
-                        addOval(
-                            Rect(
-                                center = base.copy(y = base.y - body.height * 0.08f),
-                                radius =
-                                    body.width * 0.13f,
-                            ),
-                        )
-                    }
-                }
-
-                EarShape.POINTY -> {
-                    Path().apply {
-                        moveTo(base.x - side * body.width * 0.14f, base.y + body.height * 0.06f)
-                        lineTo(base.x + side * body.width * 0.04f, base.y - body.height * 0.3f)
-                        lineTo(base.x + side * body.width * 0.16f, base.y + body.height * 0.04f)
-                        close()
-                    }
-                }
-
-                EarShape.FLOPPY -> {
-                    Path().apply {
-                        moveTo(base.x - side * body.width * 0.1f, base.y)
-                        quadraticTo(
-                            base.x + side * body.width * 0.28f,
-                            base.y - body.height * 0.12f,
-                            base.x + side * body.width * 0.3f,
-                            base.y + body.height * 0.25f,
-                        )
-                        quadraticTo(
-                            base.x + side * body.width * 0.12f,
-                            base.y + body.height * 0.2f,
-                            base.x + side * body.width * 0.06f,
-                            base.y + body.height * 0.08f,
-                        )
-                        close()
-                    }
-                }
-            }
-        drawPath(path, colors.bodyShade)
-        drawPath(path, colors.outline, style = stroke)
-    }
-}
-
-private fun DrawScope.drawTail(
-    body: Rect,
-    colors: PetColors,
-) {
-    val start = body.at(Offset(0.9f, 0.72f))
-    val path =
-        Path().apply {
-            moveTo(start.x, start.y)
-            quadraticTo(
-                start.x + body.width * 0.32f,
-                start.y - body.height * 0.05f,
-                start.x + body.width * 0.2f,
-                start.y - body.height * 0.38f,
-            )
-        }
-    drawPath(path, colors.outline, style = Stroke(width = body.width * 0.11f, cap = StrokeCap.Round))
-    drawPath(path, colors.bodyShade, style = Stroke(width = body.width * 0.07f, cap = StrokeCap.Round))
 }
 
 private fun DrawScope.drawFace(
@@ -374,3 +297,6 @@ private fun DrawScope.drawSnore(body: Rect) {
 
 /** A point inside [this] rect given as fractions of its width and height. */
 internal fun Rect.at(fraction: Offset): Offset = Offset(left + width * fraction.x, top + height * fraction.y)
+
+/** Until growth stages arrive (roadmap M3), every pet is drawn as a young creature. */
+internal const val DEFAULT_GROWTH = 0.3f

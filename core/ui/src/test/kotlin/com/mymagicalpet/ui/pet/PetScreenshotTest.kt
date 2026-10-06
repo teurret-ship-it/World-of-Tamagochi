@@ -18,6 +18,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.mymagicalpet.sim.Expression
 import com.mymagicalpet.sim.Genome
+import com.mymagicalpet.sim.Species
 import com.mymagicalpet.sim.shop.Catalog
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -65,6 +66,40 @@ class PetScreenshotTest {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    /** Every species at four points of growth, hatchling (top) to majestic (bottom). */
+    @Test
+    fun everySpeciesGrowing() {
+        captureRoboImage("src/test/screenshots/pet_species.png") {
+            Column(Modifier.background(Color(0xFFFFF8EE)).padding(8.dp)) {
+                listOf(0f, 0.33f, 0.66f, 1f).forEach { growth ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Species.entries.forEach { species ->
+                            Pet(
+                                Genome.fromSeed(Species.seedFor(species, 7)),
+                                Expression.HAPPY,
+                                "Mochi",
+                                animate = false,
+                                growth = growth,
+                                modifier = Modifier.size(150.dp),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun everySpeciesEgg() {
+        captureRoboImage("src/test/screenshots/pet_eggs.png") {
+            Row(Modifier.background(Color(0xFFFFF8EE)).padding(8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Species.entries.forEach { species ->
+                    Egg(Genome.fromSeed(Species.seedFor(species, 7)), species.name, Modifier.size(140.dp))
                 }
             }
         }

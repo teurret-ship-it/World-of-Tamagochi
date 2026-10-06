@@ -10,4 +10,9 @@
     <string name="expression_asleep">Is asleep.</string>
     <string name="time_earlier">%1$s earlier</string>
     <string name="time_later">%1$s later</string>
+    <string name="species_dragon">Dragon</string>
+    <string name="species_griffin">Griffin</string>
+    <string name="species_unicorn">Unicorn</string>
+    <string name="species_phoenix">Phoenix</string>
+    <string name="species_kitsune">Kitsune</string>
 </resources>

@@ -4,6 +4,24 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iterations M1-M2: My Magical Pet and five species
+
+- The game is now "My Magical Pet" (ADR-011): name, logo, application id
+  and code packages. Art direction: colourful and storybook, never neon.
+- Five magical species, each with its own look drawn on the rig: dragon
+  (horns, bat wings, back spikes, spade tail, belly plates), griffin (white
+  feathered head, beak, feathered wings, tufted tail), unicorn (pearly body,
+  golden horn, pastel rainbow mane and tail), phoenix (flame crest and
+  plumes, warm wings, small beak) and kitsune (big fox ears, white muzzle,
+  forehead mark, more tails as it grows: one to nine).
+- Each species has its own colours and its own egg: scales, feather
+  chevrons, a rainbow band with stars, rising flames, misty swirls.
+- A new game offers one egg of every species, named, so the player picks
+  the creature they want.
+
+Self-review: clarity 4, game feel 4, retention 5, ethics 5, performance 4,
+accessibility 4.
+
 ## Iteration 13: title screen and hatching (pulled forward by playtest)
 
 - A title screen opens the game: "World of Tamagochi" with bouncing,
