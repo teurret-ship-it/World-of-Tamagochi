@@ -1,6 +1,7 @@
 package com.mymagicalpet.ui.pet
 
 import androidx.annotation.StringRes
+import com.mymagicalpet.sim.Form
 import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Species
 import com.mymagicalpet.ui.R
@@ -32,3 +33,12 @@ fun LifeStage.labelRes(): Int =
 /** How grown-up the rig draws a stage: 0 hatchling .. 1 majestic. */
 fun LifeStage.growth(): Float =
     (ordinal - LifeStage.BABY.ordinal).coerceAtLeast(0) / (LifeStage.MAJESTIC.ordinal - LifeStage.BABY.ordinal).toFloat()
+
+/** The name of an adult form, as players read it. */
+@StringRes
+fun Form.labelRes(): Int =
+    when (this) {
+        Form.SWIFT -> R.string.form_swift
+        Form.GENTLE -> R.string.form_gentle
+        Form.RADIANT -> R.string.form_radiant
+    }

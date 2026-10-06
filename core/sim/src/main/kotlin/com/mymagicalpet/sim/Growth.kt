@@ -6,7 +6,25 @@ data class Growth(
     val today: Int = 0,
     /** Local epoch day the [today] counter belongs to. */
     val day: Long = 0,
+    /** Points that came from races and training; the rest came from care. They decide the adult [Form]. */
+    val sport: Int = 0,
 )
+
+/**
+ * The adult form, decided by how the creature was raised when it becomes an
+ * adult, and kept when it turns majestic (roadmap M4). Every form is a good
+ * one: they reward a play style, never punish a player.
+ */
+enum class Form {
+    /** Raised mostly through races and training. */
+    SWIFT,
+
+    /** Raised mostly through care. */
+    GENTLE,
+
+    /** Raised with a bit of everything. */
+    RADIANT,
+}
 
 /** What made the creature grow. */
 enum class GrowthSource { CARE, ANSWERED_NEED, RACE, TRAINING }
@@ -31,6 +49,10 @@ data class GrowthRules(
     val thresholds: Map<LifeStage, Int> = DEFAULT_THRESHOLDS,
     /** Below this health the creature is too poorly to grow. */
     val minHealth: Int = 50,
+    /** Share of growth from races and training (percent) that makes a SWIFT adult... */
+    val swiftFromPercent: Int = 55,
+    /** ...and at or below which the adult is GENTLE; between the two it is RADIANT. */
+    val gentleUpToPercent: Int = 25,
 ) {
     /** The stage [points] reach, never below [atLeast]. */
     fun stageFor(
@@ -65,12 +87,24 @@ data class GrowthRules(
         val day = maxOf(localEpochDay, growth.day)
         val today = if (growth.day == day) growth.today else 0
         val gained = points.getValue(source).coerceAtMost(dailyCap - today).coerceAtLeast(0)
-        val next = Growth(growth.points + gained, today + gained, day)
+        val sporty = source == GrowthSource.RACE || source == GrowthSource.TRAINING
+        val next = Growth(growth.points + gained, today + gained, day, growth.sport + if (sporty) gained else 0)
         val stage = stageFor(next.points, atLeast = pet.stage)
         return GrowthUpdate(next, stage, stage.takeIf { it > pet.stage })
     }
 
+    /** The form a creature growing up with [growth] takes. */
+    fun formFor(growth: Growth): Form {
+        val sportShare = if (growth.points == 0) 0 else growth.sport * PERCENT / growth.points
+        return when {
+            sportShare >= swiftFromPercent -> Form.SWIFT
+            sportShare <= gentleUpToPercent -> Form.GENTLE
+            else -> Form.RADIANT
+        }
+    }
+
     companion object {
+        private const val PERCENT = 100
         private val DEFAULT_POINTS =
             mapOf(
                 GrowthSource.CARE to 1,
@@ -90,5 +124,11 @@ data class GrowthRules(
     }
 }
 
-/** Applies a growth update to the pet. */
-fun PetState.grown(update: GrowthUpdate): PetState = copy(stage = update.stage, growth = update.growth)
+/** Applies a growth update to the pet; becoming an adult fixes its form. */
+fun PetState.grown(
+    update: GrowthUpdate,
+    rules: GrowthRules = GrowthRules.DEFAULT,
+): PetState {
+    val form = form ?: rules.formFor(update.growth).takeIf { update.stage >= LifeStage.ADULT }
+    return copy(stage = update.stage, growth = update.growth, form = form)
+}

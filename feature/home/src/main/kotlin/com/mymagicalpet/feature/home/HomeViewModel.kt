@@ -351,6 +351,7 @@ class HomeViewModel(
             species = genome.species,
             stage = pet.stage,
             growthProgress = rules.growth.progress(pet),
+            form = pet.form,
             journal = JournalRules.DEFAULT.today(journal, seed, localEpochDay(clock(), zone)),
             sick = pet.needs.gauge(Need.HEALTH).value < expressions.sickBelowHealth,
             onJourney = pet.onJourney,

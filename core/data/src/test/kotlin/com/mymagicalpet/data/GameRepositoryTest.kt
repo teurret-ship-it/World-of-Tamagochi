@@ -1,5 +1,6 @@
 package com.mymagicalpet.data
 
+import com.mymagicalpet.sim.Form
 import com.mymagicalpet.sim.Growth
 import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Needs
@@ -39,7 +40,8 @@ class GameRepositoryTest {
             updatedAtEpochMillis = 1_790_000_000_000,
             napUntilEpochMillis = 1_790_000_100_000,
             awakeUntilEpochMillis = 1_790_000_200_000,
-            growth = Growth(points = 95, today = 12, day = 20_000),
+            growth = Growth(points = 95, today = 12, day = 20_000, sport = 30),
+            form = Form.RADIANT,
             onJourney = true,
             rescueSteps = 2,
             vacationUntilEpochMillis = 1_790_000_300_000,

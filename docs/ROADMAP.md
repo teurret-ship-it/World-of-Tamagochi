@@ -142,8 +142,10 @@ the core care loop, and every iteration from 3 on pays the player something.
 4. **23. Cloud save / server-held pet** (below), so a future 3D client can
    play the same creature.
 5. **15. Leagues and weekend cups**, **16. Friends** (below).
-- [ ] **M4. Care decides the form.** Two adult and majestic variants per
-  species from care quality and favourite discipline (merges with 12).
+- [x] **M4. Care decides the form.** On becoming an adult the creature
+  takes a form from how it was raised: SWIFT (55%+ of growth from races and
+  training), GENTLE (25% or less) or RADIANT (in between); it keeps the form
+  as majestic. Every form is a good one. Shown as "Swift Adult Dragon".
 
 - [x] **10. Daily quests, streaks and achievements.** Three quests a day
   (from nine kinds: feed, wash, play, strokes, answer needs, races, a medal,

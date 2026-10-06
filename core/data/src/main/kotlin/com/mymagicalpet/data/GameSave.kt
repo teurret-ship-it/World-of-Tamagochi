@@ -1,5 +1,6 @@
 package com.mymagicalpet.data
 
+import com.mymagicalpet.sim.Form
 import com.mymagicalpet.sim.Growth
 import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Needs
@@ -58,6 +59,9 @@ data class PetSave(
     val growthPoints: Int = 0,
     val growthToday: Int = 0,
     val growthDay: Long = 0,
+    val growthSport: Int = 0,
+    /** Form name, fixed at adulthood; unknown names are ignored. */
+    val form: String? = null,
     val onJourney: Boolean = false,
     val rescueSteps: Int = 0,
     val vacationUntilEpochMillis: Long? = null,
@@ -141,7 +145,8 @@ fun PetSave.toState(): PetState =
         updatedAtEpochMillis = updatedAtEpochMillis,
         napUntilEpochMillis = napUntilEpochMillis,
         awakeUntilEpochMillis = awakeUntilEpochMillis,
-        growth = Growth(growthPoints, growthToday, growthDay),
+        growth = Growth(growthPoints, growthToday, growthDay, growthSport),
+        form = Form.entries.firstOrNull { it.name == form },
         onJourney = onJourney,
         rescueSteps = rescueSteps,
         vacationUntilEpochMillis = vacationUntilEpochMillis,
@@ -169,6 +174,8 @@ fun PetState.toSave(
         growthPoints = growth.points,
         growthToday = growth.today,
         growthDay = growth.day,
+        growthSport = growth.sport,
+        form = form?.name,
         onJourney = onJourney,
         rescueSteps = rescueSteps,
         vacationUntilEpochMillis = vacationUntilEpochMillis,

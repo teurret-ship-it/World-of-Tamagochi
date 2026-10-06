@@ -22,4 +22,7 @@
     <string name="stage_teen">Young</string>
     <string name="stage_adult">Adult</string>
     <string name="stage_majestic">Majestic</string>
+    <string name="form_swift">Swift</string>
+    <string name="form_gentle">Gentle</string>
+    <string name="form_radiant">Radiant</string>
 </resources>

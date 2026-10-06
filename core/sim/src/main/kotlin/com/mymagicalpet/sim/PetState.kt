@@ -12,6 +12,8 @@ data class PetState(
     val awakeUntilEpochMillis: Long? = null,
     /** How far it has grown towards the next life stage (GrowthRules). */
     val growth: Growth = Growth(),
+    /** Fixed when it becomes an adult: how it was raised shows (GrowthRules.formFor). */
+    val form: Form? = null,
     /**
      * Neglected until its health ran out, the pet went on a journey: it never
      * dies (CLAUDE.md section 2), and a short rescue brings it home

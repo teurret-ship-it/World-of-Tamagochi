@@ -4,6 +4,17 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration M4: care decides the form
+
+- A creature becoming an adult takes one of three forms from how it was
+  raised: Swift (mostly races and training), Gentle (mostly care) or
+  Radiant (a bit of everything), and keeps it as a majestic legend.
+- The home screen names it: "Swift Adult Dragon", "Radiant Majestic Phoenix".
+
+Self-review: clarity 4, game feel 3, retention 5, ethics 5, performance 5,
+accessibility 4.
+- Game feel 3: forms are names only until the 3D client (ADR-012).
+
 ## Iteration 14: sickness without cruelty
 
 - A pet whose health drops below 50 is sick: it stops growing, and a free

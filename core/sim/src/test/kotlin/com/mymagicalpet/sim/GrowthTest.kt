@@ -75,4 +75,23 @@ class GrowthTest {
         val capped = hatchling.copy(growth = Growth(40, 40, day))
         rules.grow(capped, GrowthSource.ANSWERED_NEED, day - 1).growth.points shouldBe 40
     }
+
+    /** Raises a hatchling to majestic with one day's routine repeated. */
+    private fun raise(daily: List<GrowthSource>): PetState {
+        var pet = hatchling
+        for (d in 1..60) daily.forEach { pet = pet.grown(rules.grow(pet, it, day + d)) }
+        return pet
+    }
+
+    @Test
+    fun `how a creature is raised decides its adult form, kept when majestic`() {
+        val racer = raise(List(10) { GrowthSource.RACE } + List(3) { GrowthSource.ANSWERED_NEED })
+        racer.stage shouldBe LifeStage.MAJESTIC
+        racer.form shouldBe Form.SWIFT
+        raise(List(10) { GrowthSource.ANSWERED_NEED } + List(1) { GrowthSource.RACE }).form shouldBe Form.GENTLE
+        raise(List(5) { GrowthSource.ANSWERED_NEED } + List(4) { GrowthSource.RACE } + List(2) { GrowthSource.TRAINING }).form shouldBe
+            Form.RADIANT
+        // Before adulthood there is no form yet.
+        hatchling.grown(rules.grow(hatchling, GrowthSource.RACE, day)).form shouldBe null
+    }
 }

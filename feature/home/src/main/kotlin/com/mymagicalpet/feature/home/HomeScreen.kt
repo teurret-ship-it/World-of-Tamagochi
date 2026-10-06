@@ -249,7 +249,10 @@ private fun Status(state: HomeUiState) {
 /** "Junior Dragon" and how far it is to the next stage. */
 @Composable
 private fun GrowthLine(state: HomeUiState) {
-    val title = stringResource(R.string.stage_title, stringResource(state.stage.labelRes()), stringResource(state.species.nameRes()))
+    val stageAndSpecies =
+        stringResource(R.string.stage_title, stringResource(state.stage.labelRes()), stringResource(state.species.nameRes()))
+    // "Swift Adult Dragon": an adult shows how it was raised.
+    val title = state.form?.let { stringResource(R.string.stage_title, stringResource(it.labelRes()), stageAndSpecies) } ?: stageAndSpecies
     val next = LifeStage.entries.getOrNull(state.stage.ordinal + 1)
     val text =
         if (next == null) {

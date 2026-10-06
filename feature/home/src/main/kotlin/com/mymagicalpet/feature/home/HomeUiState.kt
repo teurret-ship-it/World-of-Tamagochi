@@ -3,6 +3,7 @@ package com.mymagicalpet.feature.home
 import com.mymagicalpet.data.JournalNews
 import com.mymagicalpet.sim.CareAction
 import com.mymagicalpet.sim.Expression
+import com.mymagicalpet.sim.Form
 import com.mymagicalpet.sim.Genome
 import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Need
@@ -33,6 +34,8 @@ data class HomeUiState(
     val stage: LifeStage = LifeStage.BABY,
     /** 0..1 towards the next life stage (1 when majestic). */
     val growthProgress: Float = 0f,
+    /** The adult form, once it has one. */
+    val form: Form? = null,
     /** Today's quests, the streak and the sticker album. */
     val journal: Journal = Journal(),
     /** Health is low: medicine (free) helps. */
