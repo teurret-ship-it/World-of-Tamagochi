@@ -63,6 +63,7 @@ class TrainingViewModelTest {
         val saved = requireNotNull(repository.saved)
         assertEquals(StatsSave(agility = 8), saved.stats)
         assertEquals(Needs.FULL - Needs.points(12), saved.pet.energy)
+        assertEquals(4, saved.pet.growthPoints) // training helps the creature grow
     }
 
     @Test

@@ -15,4 +15,11 @@
     <string name="species_unicorn">Unicorn</string>
     <string name="species_phoenix">Phoenix</string>
     <string name="species_kitsune">Kitsune</string>
+    <string name="stage_egg">Egg</string>
+    <string name="stage_baby">Hatchling</string>
+    <string name="stage_child">Baby</string>
+    <string name="stage_junior">Junior</string>
+    <string name="stage_teen">Young</string>
+    <string name="stage_adult">Adult</string>
+    <string name="stage_majestic">Majestic</string>
 </resources>

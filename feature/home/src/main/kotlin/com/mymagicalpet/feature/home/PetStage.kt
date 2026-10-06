@@ -72,6 +72,7 @@ import com.mymagicalpet.ui.fx.ParticleField
 import com.mymagicalpet.ui.fx.ParticleLayer
 import com.mymagicalpet.ui.fx.rememberParticleField
 import com.mymagicalpet.ui.pet.Pet
+import com.mymagicalpet.ui.pet.growth
 import com.mymagicalpet.ui.sound.LocalGameSounds
 import com.mymagicalpet.ui.sound.Sfx
 import kotlinx.coroutines.delay
@@ -121,6 +122,7 @@ internal fun PetStage(
             animate = animate,
             look = look,
             squash = squash.value,
+            growth = state.stage.growth(),
             wearing = state.wearing,
             modifier = Modifier.fillMaxSize(),
         )

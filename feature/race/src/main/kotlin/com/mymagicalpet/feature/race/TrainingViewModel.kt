@@ -8,8 +8,11 @@ import com.mymagicalpet.data.toLog
 import com.mymagicalpet.data.toSave
 import com.mymagicalpet.data.toState
 import com.mymagicalpet.data.toStats
+import com.mymagicalpet.sim.GrowthRules
+import com.mymagicalpet.sim.GrowthSource
 import com.mymagicalpet.sim.Need
 import com.mymagicalpet.sim.NeedsSimulation
+import com.mymagicalpet.sim.grown
 import com.mymagicalpet.sim.race.RaceForm
 import com.mymagicalpet.sim.race.RaceStats
 import com.mymagicalpet.sim.training.Exercise
@@ -55,6 +58,7 @@ class TrainingViewModel(
     private val clock: () -> Long = System::currentTimeMillis,
     private val zone: ZoneId = ZoneId.systemDefault(),
     private val rules: TrainingRules = TrainingRules.DEFAULT,
+    private val growth: GrowthRules = GrowthRules.DEFAULT,
 ) : ViewModel() {
     val state: StateFlow<TrainingUiState?> =
         repository.game
@@ -72,8 +76,9 @@ class TrainingViewModel(
                 val result = rules.train(pet, game.stats.toStats(), game.training.toLog(), exercise, today())
                 outcome = result
                 if (result is TrainingResult.Done) {
+                    val grown = result.pet.grown(growth.grow(result.pet, GrowthSource.TRAINING, today()))
                     game.copy(
-                        pet = result.pet.toSave(game.pet.seed, game.pet.name),
+                        pet = grown.toSave(game.pet.seed, game.pet.name),
                         stats = result.stats.toSave(),
                         training = result.log.toSave(),
                     )

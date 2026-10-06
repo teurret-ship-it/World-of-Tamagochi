@@ -257,3 +257,22 @@ are never scary (CLAUDE.md section 3).
 **Consequences.** The test build has a new application id, so it installs
 as a new app next to the old one (the old save is not carried over; the old
 app can be uninstalled).
+
+## ADR-012: Mechanics first; the client will be rebuilt in 3D
+
+**Context.** The product owner plans to rebuild the game's presentation in
+3D and asked to focus on game mechanics, not on the 2D visuals.
+
+**Decision.** Visuals stay at their current, working placeholder level: no
+more art polish on the Canvas rig, eggs or screens unless a mechanic needs
+something to be visible. Every rule lives in `:core:sim` (pure Kotlin,
+engine-agnostic, fully tested) or on `:server`, never in UI code, so a 3D
+client can reuse the server and port or call the rules unchanged. The
+current Compose app stays the reference client and the test harness for
+mechanics. Priority goes to mechanics with the biggest retention impact:
+growth stages, daily quests and streaks, sickness without cruelty, care
+deciding the adult form, and a server-held pet (cloud save) that any client
+can use.
+
+**Consequences.** Screenshot tests remain as a smoke check, not as an art
+review. The roadmap is reordered (ROADMAP.md, "Mechanics first").

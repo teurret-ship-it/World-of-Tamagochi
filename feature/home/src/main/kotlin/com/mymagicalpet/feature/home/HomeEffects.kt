@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mymagicalpet.sim.CareAction
+import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Need
 import com.mymagicalpet.sim.Refusal
 import com.mymagicalpet.ui.fx.FxKind
@@ -88,6 +89,7 @@ internal fun EffectsPlayer(
     onBubble: (String?) -> Unit,
     onLevelUp: (Int) -> Unit,
     shake: Animatable<Float, AnimationVector1D>,
+    evolvedLines: Map<LifeStage, String>,
 ) {
     val sounds = LocalGameSounds.current
     val haptics = LocalHapticFeedback.current
@@ -101,6 +103,14 @@ internal fun EffectsPlayer(
                     haptics.performHapticFeedback(HapticFeedbackType.Reject)
                     onBubble(refusals.getValue(effect.reason))
                     shake.animateTo(0f, SHAKE_SPEC)
+                }
+
+                is HomeEffect.Evolved -> {
+                    sounds.play(Sfx.CELEBRATION)
+                    haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                    fx.burst(FxKind.STAR, CENTER, count = LEVEL_UP_STARS)
+                    fx.burst(FxKind.SPARKLE, TOP, count = BURST_LARGE)
+                    onBubble(evolvedLines[effect.stage])
                 }
 
                 is HomeEffect.Cared -> {

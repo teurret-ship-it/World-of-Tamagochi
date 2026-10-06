@@ -120,17 +120,28 @@ the core care loop, and every iteration from 3 on pays the player something.
   sleep time is set in settings (half-hour steps).
 - [x] **M1. My Magical Pet** (ADR-011). The game's new name everywhere:
   app name, logo, application id `com.mymagicalpet`, Kotlin packages, docs.
-- [x] **M2. Five species.** (art reviewed after CI) Dragon, griffin, unicorn, phoenix, kitsune,
+- [x] **M2. Five species.** (d1b9e91) Dragon, griffin, unicorn, phoenix, kitsune,
   chosen with the egg (each species has its own egg: scaly, feathered,
   pearly, fiery, misty). The rig gets species parts: wings, horns, beak,
   mane, crest, flame and fox tails. Existing pets keep their look as a
   species chosen from their genome.
-- [ ] **M3. Growth stages.** Seven stages (egg, hatchling, baby, junior,
-  young, adult, majestic): the creature grows bigger, its proportions
-  mature, wings and horns lengthen; the majestic form glows. Growth points
-  from care, races and training over days (capped per day, so it takes
-  about three weeks to become majestic); an evolution ceremony at every
-  stage.
+- [x] **M3. Growth stages.** Seven stages (egg, hatchling, baby, junior,
+  young, adult, majestic). Growth points from care that answers a need (4),
+  other care (1), races (3) and training (4); 40 a day at most; a sick
+  creature (health < 50) does not grow; stages never go back. First
+  evolution in the first session, majestic in about three weeks. The home
+  screen shows "Junior Dragon · 45% to Young" and celebrates each new stage
+  (also when it happened in a race or training). Rig parts scale with the
+  stage (placeholder art, ADR-012).
+
+### Mechanics first (ADR-012): the next iterations, in order
+
+1. **10. Daily quests, streaks and achievements** (below).
+2. **14. Sickness without cruelty** (below).
+3. **M4. Care decides the form** (below).
+4. **23. Cloud save / server-held pet** (below), so a future 3D client can
+   play the same creature.
+5. **15. Leagues and weekend cups**, **16. Friends** (below).
 - [ ] **M4. Care decides the form.** Two adult and majestic variants per
   species from care quality and favourite discipline (merges with 12).
 

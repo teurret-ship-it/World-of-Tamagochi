@@ -10,6 +10,8 @@ data class PetState(
     val napUntilEpochMillis: Long? = null,
     /** Woken up during its night: the pet stays up until this moment, then dozes off again (or null). */
     val awakeUntilEpochMillis: Long? = null,
+    /** How far it has grown towards the next life stage (GrowthRules). */
+    val growth: Growth = Growth(),
 ) {
     fun isAsleep(): Boolean = isAsleepAt(updatedAtEpochMillis)
 

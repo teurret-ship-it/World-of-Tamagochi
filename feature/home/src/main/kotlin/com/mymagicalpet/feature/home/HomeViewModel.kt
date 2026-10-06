@@ -15,6 +15,7 @@ import com.mymagicalpet.sim.CareResult
 import com.mymagicalpet.sim.CareRules
 import com.mymagicalpet.sim.ExpressionRules
 import com.mymagicalpet.sim.Genome
+import com.mymagicalpet.sim.GrowthRules
 import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Need
 import com.mymagicalpet.sim.Needs
@@ -24,6 +25,7 @@ import com.mymagicalpet.sim.PlayerProgress
 import com.mymagicalpet.sim.ProgressRules
 import com.mymagicalpet.sim.SleepWindow
 import com.mymagicalpet.sim.TreatRules
+import com.mymagicalpet.sim.grown
 import com.mymagicalpet.sim.localEpochDay
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -42,6 +44,7 @@ data class HomeRules(
     val progression: ProgressRules = ProgressRules.DEFAULT,
     val expressions: ExpressionRules = ExpressionRules.DEFAULT,
     val treats: TreatRules = TreatRules.DEFAULT,
+    val growth: GrowthRules = GrowthRules.DEFAULT,
 )
 
 /**
@@ -219,6 +222,8 @@ class HomeViewModel(
             is CareResult.Done -> {
                 pet = result.pet
                 val day = localEpochDay(clock(), zone)
+                val grown = action.growthSource(result.answeredNeed)?.let { rules.growth.grow(pet, it, day) }
+                grown?.let { pet = pet.grown(it) }
                 val paid = if (action == CareAction.TREAT) treats.pay(progress, day) else progress
                 val update = progression.reward(paid, result, action, day)
                 progress = update.progress
@@ -226,6 +231,8 @@ class HomeViewModel(
                 if (action == CareAction.STROKE) strokes++
                 if (action == CareAction.NAP) washing = false
                 _effects.trySend(HomeEffect.Cared(action, result.changes, update.earned, update.levelUp))
+                // The care reaction first, then the big moment.
+                grown?.evolvedTo?.let { _effects.trySend(HomeEffect.Evolved(it)) }
                 saveAsync()
             }
         }
@@ -275,7 +282,10 @@ class HomeViewModel(
     private fun adoptIfChangedElsewhere(saved: PetSave) {
         if (lastSaved == null || saved == lastSaved || genome == null) return
         lastSaved = saved
+        val before = pet.stage
         pet = NeedsSimulation.advance(saved.toState().let { it.copy(sleep = it.sleep.copy(zone = zone)) }, clock())
+        // Grown up during a race or training: celebrate it here too.
+        if (pet.stage > before) _effects.trySend(HomeEffect.Evolved(pet.stage))
     }
 
     private fun publish() {
@@ -300,6 +310,9 @@ class HomeViewModel(
             treatsLeft = treats.leftToday(progress, localEpochDay(clock(), zone)),
             treatPrice = treats.price,
             wearing = wearing,
+            species = genome.species,
+            stage = pet.stage,
+            growthProgress = rules.growth.progress(pet),
             napping = pet.isNapping(),
             upLate = pet.isUpLate(),
             bedtimeMinute = pet.sleep.startMinuteOfDay,

@@ -4,6 +4,25 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration M3: growth stages
+
+- Creatures grow through seven stages: egg, hatchling, baby, junior, young,
+  adult and majestic.
+- Growth comes from care that answers a need, other care, races and
+  training, at most 40 points a day; strokes, naps and waking never count
+  (nothing to farm). A sick creature does not grow, so care matters.
+- The first evolution happens in the first session; a daily player reaches
+  majestic in about three weeks (tested).
+- The home screen shows the stage and the way to the next one ("Junior
+  Dragon · 45% to Young") and celebrates every new stage, also one reached
+  in a race or training.
+- ADR-012: mechanics first, visuals stay placeholders until the 3D rebuild.
+
+Self-review: clarity 4, game feel 3, retention 5, ethics 5, performance 5,
+accessibility 4.
+- Game feel 3: the evolution ceremony is a bubble and stars (placeholder,
+  ADR-012); the 3D client owns the real ceremony.
+
 ## Iterations M1-M2: My Magical Pet and five species
 
 - The game is now "My Magical Pet" (ADR-011): name, logo, application id

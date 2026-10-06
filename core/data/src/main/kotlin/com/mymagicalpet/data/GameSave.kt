@@ -1,5 +1,6 @@
 package com.mymagicalpet.data
 
+import com.mymagicalpet.sim.Growth
 import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Needs
 import com.mymagicalpet.sim.PetState
@@ -52,6 +53,9 @@ data class PetSave(
     val updatedAtEpochMillis: Long,
     val napUntilEpochMillis: Long? = null,
     val awakeUntilEpochMillis: Long? = null,
+    val growthPoints: Int = 0,
+    val growthToday: Int = 0,
+    val growthDay: Long = 0,
 )
 
 @Serializable
@@ -132,6 +136,7 @@ fun PetSave.toState(): PetState =
         updatedAtEpochMillis = updatedAtEpochMillis,
         napUntilEpochMillis = napUntilEpochMillis,
         awakeUntilEpochMillis = awakeUntilEpochMillis,
+        growth = Growth(growthPoints, growthToday, growthDay),
     )
 
 fun PetState.toSave(
@@ -153,6 +158,9 @@ fun PetState.toSave(
         updatedAtEpochMillis = updatedAtEpochMillis,
         napUntilEpochMillis = napUntilEpochMillis,
         awakeUntilEpochMillis = awakeUntilEpochMillis,
+        growthPoints = growth.points,
+        growthToday = growth.today,
+        growthDay = growth.day,
     )
 
 fun ProgressSave.toProgress(): PlayerProgress =

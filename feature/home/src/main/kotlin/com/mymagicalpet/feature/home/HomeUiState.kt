@@ -3,10 +3,12 @@ package com.mymagicalpet.feature.home
 import com.mymagicalpet.sim.CareAction
 import com.mymagicalpet.sim.Expression
 import com.mymagicalpet.sim.Genome
+import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Need
 import com.mymagicalpet.sim.Refusal
 import com.mymagicalpet.sim.Reward
 import com.mymagicalpet.sim.SleepWindow
+import com.mymagicalpet.sim.Species
 
 /** Everything the home screen shows. Built from the pet state; no game logic in UI. */
 data class HomeUiState(
@@ -25,6 +27,10 @@ data class HomeUiState(
     val treatPrice: Int = 0,
     /** Ids of the cosmetics the pet wears. */
     val wearing: List<String> = emptyList(),
+    val species: Species = Species.DRAGON,
+    val stage: LifeStage = LifeStage.BABY,
+    /** 0..1 towards the next life stage (1 when majestic). */
+    val growthProgress: Float = 0f,
     /** True while a lights-off nap runs (the player can wake the pet). */
     val napping: Boolean = false,
     /** Woken during its night: up for a while, lights off sends it back to bed. */
@@ -63,5 +69,10 @@ sealed interface HomeEffect {
     data class Refused(
         val action: CareAction,
         val reason: Refusal,
+    ) : HomeEffect
+
+    /** The creature grew into its next life stage. */
+    data class Evolved(
+        val stage: LifeStage,
     ) : HomeEffect
 }

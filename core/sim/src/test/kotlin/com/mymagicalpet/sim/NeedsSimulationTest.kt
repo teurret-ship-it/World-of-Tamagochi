@@ -119,7 +119,7 @@ class NeedsSimulationTest {
         // care is enough. Care refills satiety, hygiene and happiness; energy comes
         // only from sleep (22:00-07:00).
         val checkIns = setOf(8, 14, 20)
-        for (stage in listOf(LifeStage.BABY, LifeStage.CHILD, LifeStage.TEEN, LifeStage.ADULT)) {
+        for (stage in LifeStage.entries - LifeStage.EGG) {
             var state = pet(stage = stage, sleep = SleepWindow(zone = WARSAW), at = local(WARSAW, "2026-03-01T07:00"))
             val end = state.updatedAtEpochMillis + 7 * 24 * HOUR
             while (state.updatedAtEpochMillis < end) {

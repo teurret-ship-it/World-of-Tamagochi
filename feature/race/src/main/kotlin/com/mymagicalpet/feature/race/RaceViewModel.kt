@@ -13,9 +13,12 @@ import com.mymagicalpet.network.OnlineRacing
 import com.mymagicalpet.network.Upload
 import com.mymagicalpet.network.toStats
 import com.mymagicalpet.sim.Genome
+import com.mymagicalpet.sim.GrowthRules
+import com.mymagicalpet.sim.GrowthSource
 import com.mymagicalpet.sim.NeedsSimulation
 import com.mymagicalpet.sim.ProgressUpdate
 import com.mymagicalpet.sim.Reward
+import com.mymagicalpet.sim.grown
 import com.mymagicalpet.sim.race.Autopilot
 import com.mymagicalpet.sim.race.Discipline
 import com.mymagicalpet.sim.race.InputLog
@@ -53,6 +56,7 @@ class RaceViewModel(
     private val zone: ZoneId = ZoneId.systemDefault(),
     private val rewards: RaceRewards = RaceRewards.DEFAULT,
     private val online: OnlineRacing? = null,
+    private val growthRules: GrowthRules = GrowthRules.DEFAULT,
 ) : ViewModel() {
     /** Trained stats after race-day form; a rookie's until the save is loaded. */
     private var stats = RaceStats.ROOKIE
@@ -202,7 +206,10 @@ class RaceViewModel(
                     } else {
                         game.records
                     }
-                game.copy(progress = reward.progress.toSave(), records = records)
+                // Racing helps the creature grow too (GrowthRules, daily cap).
+                val pet = game.pet.toState()
+                val grown = pet.grown(growthRules.grow(pet, GrowthSource.RACE, day))
+                game.copy(progress = reward.progress.toSave(), records = records, pet = grown.toSave(game.pet.seed, game.pet.name))
             }
             val paid = update
             summary =

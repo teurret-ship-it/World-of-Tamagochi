@@ -3,6 +3,7 @@ package com.mymagicalpet.feature.home
 import com.mymagicalpet.data.toState
 import com.mymagicalpet.sim.CareAction
 import com.mymagicalpet.sim.Expression
+import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Need
 import com.mymagicalpet.sim.Needs
 import com.mymagicalpet.sim.Refusal
@@ -260,6 +261,24 @@ class HomeViewModelTest {
         assertEquals(23 * 60 + 30, requireNotNull(repository.saved).pet.sleepStartMinute)
         assertEquals(0, shiftTime(23 * 60 + 30, 30))
         assertEquals(23 * 60 + 30, shiftTime(0, -30))
+    }
+
+    @Test
+    fun `care makes the creature grow, and reaching a stage is celebrated`() {
+        val vm = viewModel()
+        kotlinx.coroutines.runBlocking { repository.updateGame { it.copy(pet = it.pet.copy(growthPoints = 18)) } }
+        dispatcher.scheduler.runCurrent()
+        now = at(hour = 16) // hungry: feeding answers a need (+4 growth)
+        val effects = vm.effectsOf { onFeed() }
+        assertEquals(HomeEffect.Evolved(LifeStage.CHILD), effects.last())
+        assertEquals(LifeStage.CHILD, vm.ui.stage)
+        dispatcher.scheduler.runCurrent()
+        repeat(20) { vm.tick() }
+        dispatcher.scheduler.runCurrent()
+        assertEquals(22, requireNotNull(repository.saved).pet.growthPoints)
+        assertEquals(LifeStage.CHILD, requireNotNull(repository.saved).pet.stage)
+        // Strokes never count towards growth.
+        assertTrue(vm.effectsOf { onStroke() }.none { it is HomeEffect.Evolved })
     }
 
     @Test

@@ -24,6 +24,10 @@
     <string name="care_lights_off">Lights off</string>
     <string name="care_lights_on">Wake up</string>
     <string name="care_treat">Treat</string>
+    <string name="evolved">%1$s grew up: %2$s %3$s!</string>
+    <string name="stage_title">%1$s %2$s</string>
+    <string name="growth_progress">%1$s · %2$d%% to %3$s</string>
+    <string name="growth_full">%1$s · fully grown!</string>
     <plurals name="treats_left">
         <item quantity="one">%1$s, %2$d treat left today</item>
         <item quantity="other">%1$s, %2$d treats left today</item>

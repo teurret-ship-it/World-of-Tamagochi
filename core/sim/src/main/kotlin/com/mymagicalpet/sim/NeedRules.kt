@@ -78,6 +78,17 @@ data class NeedRules(
                                 energyDrainAwake = 60,
                                 energyRecoveryAsleep = 130,
                             ),
+                        LifeStage.JUNIOR to
+                            NeedRates(
+                                satietyAwake = 110,
+                                satietyAsleep = 27,
+                                hygieneAwake = 65,
+                                hygieneAsleep = 15,
+                                happinessAwake = 95,
+                                happinessAsleep = 0,
+                                energyDrainAwake = 60,
+                                energyRecoveryAsleep = 125,
+                            ),
                         LifeStage.TEEN to
                             NeedRates(
                                 satietyAwake = 100,
@@ -98,6 +109,17 @@ data class NeedRules(
                                 happinessAwake = 80,
                                 happinessAsleep = 0,
                                 energyDrainAwake = 55,
+                                energyRecoveryAsleep = 120,
+                            ),
+                        LifeStage.MAJESTIC to
+                            NeedRates(
+                                satietyAwake = 80,
+                                satietyAsleep = 18,
+                                hygieneAwake = 45,
+                                hygieneAsleep = 10,
+                                happinessAwake = 70,
+                                happinessAsleep = 0,
+                                energyDrainAwake = 50,
                                 energyRecoveryAsleep = 120,
                             ),
                     ),

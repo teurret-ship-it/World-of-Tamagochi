@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -30,6 +31,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -66,6 +68,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mymagicalpet.data.GameRepository
 import com.mymagicalpet.sim.CareAction
+import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Need
 import com.mymagicalpet.sim.Refusal
 import com.mymagicalpet.ui.fx.FxKind
@@ -73,6 +76,8 @@ import com.mymagicalpet.ui.fx.ParticleField
 import com.mymagicalpet.ui.fx.ParticleLayer
 import com.mymagicalpet.ui.fx.rememberParticleField
 import com.mymagicalpet.ui.pet.Pet
+import com.mymagicalpet.ui.pet.labelRes
+import com.mymagicalpet.ui.pet.nameRes
 import com.mymagicalpet.ui.sound.LocalGameSounds
 import com.mymagicalpet.ui.sound.Sfx
 import com.mymagicalpet.ui.time.clockTime
@@ -134,7 +139,12 @@ fun HomeScreen(
     var draggedFood by remember { mutableStateOf<Offset?>(null) }
     var settingsOpen by remember { mutableStateOf(false) }
 
-    EffectsPlayer(effects, fx, onBubble = { bubble = it }, onLevelUp = { levelUp = it }, shake = shake)
+    val speciesName = stringResource(state.species.nameRes())
+    val evolvedLines =
+        LifeStage.entries.associateWith {
+            stringResource(R.string.evolved, state.name, stringResource(it.labelRes()), speciesName)
+        }
+    EffectsPlayer(effects, fx, onBubble = { bubble = it }, onLevelUp = { levelUp = it }, shake = shake, evolvedLines = evolvedLines)
 
     val stage: @Composable (Modifier) -> Unit = { mod ->
         PetStage(
@@ -224,6 +234,34 @@ private fun Status(state: HomeUiState) {
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
         )
+        GrowthLine(state)
         NeedBars(needs = state.needs, urgent = state.urgentNeed, modifier = Modifier.widthIn(max = 520.dp))
     }
 }
+
+/** "Junior Dragon" and how far it is to the next stage. */
+@Composable
+private fun GrowthLine(state: HomeUiState) {
+    val title = stringResource(R.string.stage_title, stringResource(state.stage.labelRes()), stringResource(state.species.nameRes()))
+    val next = LifeStage.entries.getOrNull(state.stage.ordinal + 1)
+    val text =
+        if (next == null) {
+            stringResource(R.string.growth_full, title)
+        } else {
+            stringResource(R.string.growth_progress, title, (state.growthProgress * PERCENT).toInt(), stringResource(next.labelRes()))
+        }
+    Text(
+        text,
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onBackground,
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+    )
+    LinearProgressIndicator(
+        progress = { state.growthProgress },
+        drawStopIndicator = {},
+        modifier = Modifier.widthIn(max = 520.dp).fillMaxWidth().height(8.dp),
+    )
+}
+
+private const val PERCENT = 100
