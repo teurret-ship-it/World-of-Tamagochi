@@ -96,6 +96,8 @@ class RaceViewModelTest {
         val saved = requireNotNull(repository.saved)
         assertEquals(68L, saved.progress.coins)
         assertEquals(3, saved.pet.growthPoints) // a race helps the creature grow
+        assertEquals(1L, saved.journal.counts["RACE"]) // and counts for quests and stickers
+        assertTrue("FIRST_RACE" in saved.journal.stickers)
         val record = requireNotNull(saved.records[track.id])
         assertEquals(result.finishMicros, record.finishMicros)
         assertEquals(Autopilot(track).play(RaceStats.ROOKIE).second, InputLog.fromCodes(record.log))

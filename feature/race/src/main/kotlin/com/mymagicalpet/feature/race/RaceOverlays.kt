@@ -90,11 +90,7 @@ internal fun FinishCard(
                         color = MaterialTheme.colorScheme.tertiary,
                     )
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Text(stringResource(R.string.finish_xp, summary.reward.xp), style = MaterialTheme.typography.titleMedium)
-                    Text(stringResource(R.string.finish_coins, summary.reward.coins), style = MaterialTheme.typography.titleMedium)
-                }
-                summary.faults?.let { FaultsLine(it) }
+                RewardLines(summary)
                 summary.online?.let { OnlineLine(it) }
                 val next = summary.nextMedal
                 Text(
@@ -156,3 +152,20 @@ private fun FaultsLine(faults: Int) {
 }
 
 private const val FAULT_SECONDS = 2
+
+/** XP and coins, agility faults and quests the race finished. */
+@Composable
+private fun RewardLines(summary: RaceSummary) {
+    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        Text(stringResource(R.string.finish_xp, summary.reward.xp), style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.finish_coins, summary.reward.coins), style = MaterialTheme.typography.titleMedium)
+    }
+    summary.faults?.let { FaultsLine(it) }
+    if (summary.questCoins > 0) {
+        Text(
+            stringResource(R.string.finish_quest, summary.questCoins),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.tertiary,
+        )
+    }
+}

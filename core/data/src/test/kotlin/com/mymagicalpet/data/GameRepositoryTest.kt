@@ -6,6 +6,8 @@ import com.mymagicalpet.sim.Needs
 import com.mymagicalpet.sim.PetState
 import com.mymagicalpet.sim.PlayerProgress
 import com.mymagicalpet.sim.SleepWindow
+import com.mymagicalpet.sim.journal.JournalRules
+import com.mymagicalpet.sim.journal.Sticker
 import com.mymagicalpet.sim.shop.Slot
 import com.mymagicalpet.sim.shop.Wardrobe
 import kotlinx.coroutines.CoroutineScope
@@ -63,6 +65,30 @@ class GameRepositoryTest {
         assertEquals(wardrobe, wardrobe.toSave().toWardrobe())
         val old = WardrobeSave(owned = listOf("cap", "retired_hat"), worn = listOf("retired_hat", "cap", "bell"))
         assertEquals(Wardrobe(owned = setOf("cap"), equipped = mapOf(Slot.HEAD to "cap")), old.toWardrobe())
+    }
+
+    @Test
+    fun `deeds go into the journal and quest rewards into the coins, and the journal survives a round trip`() {
+        val game = GameSave(pet = pet.toSave(42, "Mochi"), progress = PlayerProgress(coins = 10).toSave())
+        val day = 20_000L
+        val quests = JournalRules.DEFAULT.questsFor(42, day)
+        var save = game
+        var coins = 0
+        quests.forEach { q ->
+            repeat(q.kind.target) {
+                save.record(listOf(q.kind.deed), day).let { (s, news) ->
+                    save = s
+                    coins += news.coins
+                }
+            }
+        }
+        assertEquals(quests.sumOf { it.kind.coins } + JournalRules.DEFAULT.allDoneBonus, coins)
+        assertEquals(10L + coins, save.progress.coins)
+        val journal = save.journal.toJournal()
+        assertEquals(journal, journal.toSave().toJournal())
+        assertEquals(1, journal.streak.days)
+        // Unknown names from an older or newer game are dropped, not fatal.
+        assertEquals(emptySet<Sticker>(), JournalSave(stickers = listOf("NO_SUCH_STICKER")).toJournal().stickers)
     }
 
     @Test

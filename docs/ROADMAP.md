@@ -145,12 +145,14 @@ the core care loop, and every iteration from 3 on pays the player something.
 - [ ] **M4. Care decides the form.** Two adult and majestic variants per
   species from care quality and favourite discipline (merges with 12).
 
-- [ ] **10. Daily quests, streaks and achievements.** Three short daily
-  quests (care + race), streak with a weekly freeze, sticker album of
-  achievements.
-
-## Phase B: Grow, belong, compete more
-
+- [x] **10. Daily quests, streaks and achievements.** Three quests a day
+  (from nine kinds: feed, wash, play, strokes, answer needs, races, a medal,
+  training), the same all day, derived from the pet seed and the day so the
+  server can check them; rewards paid at once and a bonus for all three. A
+  streak of days with a quest done, with one free freeze a week and coin
+  milestones (3, 7, 14, 30, 60, 100 days); losing it costs nothing else. A
+  sticker album of 13 achievements from lifetime counts. Care, races,
+  training and shopping all count, through one shared rule.
 - [ ] **11. Timed platformer.** 30-90 s levels, jump and double jump,
   checkpoints, instant restart, medals, online ghosts; art from a
   production-quality source per ADR-006.

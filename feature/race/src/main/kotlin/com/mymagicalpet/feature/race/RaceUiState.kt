@@ -46,6 +46,8 @@ data class RaceSummary(
     val online: OnlineOutcome? = null,
     /** Agility faults (each added 2 s); null in sprint races. */
     val faults: Int? = null,
+    /** Coins from quests this race completed (0 when none). */
+    val questCoins: Int = 0,
 )
 
 sealed interface OnlineOutcome {

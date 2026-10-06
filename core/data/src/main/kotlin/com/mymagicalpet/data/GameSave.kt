@@ -31,6 +31,8 @@ data class GameSave(
     /** Race stats grown by training, and today's sessions. */
     val stats: StatsSave = StatsSave(),
     val training: TrainingSave = TrainingSave(),
+    /** Daily quests, the streak and the sticker album. */
+    val journal: JournalSave = JournalSave(),
 ) {
     companion object {
         const val CURRENT_VERSION = 1

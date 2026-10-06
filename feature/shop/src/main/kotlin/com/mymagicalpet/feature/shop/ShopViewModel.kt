@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mymagicalpet.data.GameRepository
 import com.mymagicalpet.data.GameSave
+import com.mymagicalpet.data.record
 import com.mymagicalpet.data.toSave
 import com.mymagicalpet.data.toWardrobe
 import com.mymagicalpet.sim.Genome
+import com.mymagicalpet.sim.journal.Deed
+import com.mymagicalpet.sim.localEpochDay
 import com.mymagicalpet.sim.shop.Catalog
 import com.mymagicalpet.sim.shop.Purchase
 import com.mymagicalpet.sim.shop.Shop
@@ -19,10 +22,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.ZoneId
 
 /** The shop: try on for free, buy with coins, put on and take off. Rules live in [Shop]. */
 class ShopViewModel(
     private val repository: GameRepository,
+    private val clock: () -> Long = System::currentTimeMillis,
+    private val zone: ZoneId = ZoneId.systemDefault(),
 ) : ViewModel() {
     private val selectedId = MutableStateFlow<String?>(null)
 
@@ -48,7 +54,10 @@ class ShopViewModel(
                 val purchase = Shop.buy(game.progress.coins, game.wardrobe.toWardrobe(), item)
                 outcome = purchase
                 if (purchase is Purchase.Bought) {
-                    game.copy(progress = game.progress.copy(coins = purchase.coinsLeft), wardrobe = purchase.wardrobe.toSave())
+                    game
+                        .copy(progress = game.progress.copy(coins = purchase.coinsLeft), wardrobe = purchase.wardrobe.toSave())
+                        .record(listOf(Deed.PURCHASE), localEpochDay(clock(), zone))
+                        .first
                 } else {
                     game
                 }

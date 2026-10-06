@@ -4,6 +4,23 @@ Newest first. Each iteration ends with a market self-review (CLAUDE.md 5.7):
 1-5 on clarity, game feel, retention hooks, ethics, performance,
 accessibility. Every score below 4 has a matching task in ROADMAP.md.
 
+## Iteration 10: daily quests, streaks and stickers
+
+- Three daily quests on the home screen ("Feed your pet (2/3)"), new each
+  day; coins are paid the moment a quest is done, plus a bonus for all
+  three.
+- A streak of days with at least one quest done, protected by one free
+  freeze a week; coin rewards at 3, 7, 14, 30, 60 and 100 days. Losing a
+  streak costs nothing but the streak (CLAUDE.md section 2).
+- A sticker album: 13 achievements (First Meal, Gourmet, Golden, Legend...).
+- Care, races (with medals), training and shop purchases all count; races
+  show quest coins on the finish card.
+
+Self-review: clarity 4, game feel 3, retention 5, ethics 5, performance 5,
+accessibility 4.
+- Game feel 3: quest news is a speech bubble and coins (placeholder UI,
+  ADR-012).
+
 ## Iteration M3: growth stages
 
 - Creatures grow through seven stages: egg, hatchling, baby, junior, young,

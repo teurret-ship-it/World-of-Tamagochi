@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mymagicalpet.data.GameRepository
 import com.mymagicalpet.data.GameSave
+import com.mymagicalpet.data.JournalNews
 import com.mymagicalpet.data.PetSave
 import com.mymagicalpet.data.Settings
+import com.mymagicalpet.data.record
+import com.mymagicalpet.data.toJournal
 import com.mymagicalpet.data.toProgress
 import com.mymagicalpet.data.toSave
 import com.mymagicalpet.data.toState
@@ -26,6 +29,9 @@ import com.mymagicalpet.sim.ProgressRules
 import com.mymagicalpet.sim.SleepWindow
 import com.mymagicalpet.sim.TreatRules
 import com.mymagicalpet.sim.grown
+import com.mymagicalpet.sim.journal.Deed
+import com.mymagicalpet.sim.journal.Journal
+import com.mymagicalpet.sim.journal.JournalRules
 import com.mymagicalpet.sim.localEpochDay
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -69,6 +75,7 @@ class HomeViewModel(
     private lateinit var pet: PetState
     private var progress = PlayerProgress()
     private var wearing: List<String> = emptyList()
+    private var journal = Journal()
 
     /** The pet as this screen last wrote it; anything else in the save was changed elsewhere (training). */
     private var lastSaved: PetSave? = null
@@ -104,6 +111,7 @@ class HomeViewModel(
                                 .toWardrobe()
                                 .equipped.values
                                 .toList()
+                        journal = it.journal.toJournal()
                         adoptIfChangedElsewhere(it.pet)
                         publish()
                     }
@@ -227,7 +235,16 @@ class HomeViewModel(
                 val paid = if (action == CareAction.TREAT) treats.pay(progress, day) else progress
                 val update = progression.reward(paid, result, action, day)
                 progress = update.progress
-                viewModelScope.launch { repository.updateGame { it.copy(progress = update.progress.toSave()) } }
+                val deeds = action.deeds(result.answeredNeed) + listOfNotNull(Deed.EVOLUTION.takeIf { grown?.evolvedTo != null })
+                viewModelScope.launch {
+                    var news = JournalNews()
+                    repository.updateGame { game ->
+                        val (recorded, journalNews) = game.copy(progress = update.progress.toSave()).record(deeds, day)
+                        news = journalNews
+                        recorded
+                    }
+                    if (!news.isEmpty) _effects.send(HomeEffect.QuestNews(news))
+                }
                 if (action == CareAction.STROKE) strokes++
                 if (action == CareAction.NAP) washing = false
                 _effects.trySend(HomeEffect.Cared(action, result.changes, update.earned, update.levelUp))
@@ -313,6 +330,7 @@ class HomeViewModel(
             species = genome.species,
             stage = pet.stage,
             growthProgress = rules.growth.progress(pet),
+            journal = JournalRules.DEFAULT.today(journal, seed, localEpochDay(clock(), zone)),
             napping = pet.isNapping(),
             upLate = pet.isUpLate(),
             bedtimeMinute = pet.sleep.startMinuteOfDay,

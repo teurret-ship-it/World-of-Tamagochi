@@ -223,3 +223,16 @@ pop), so the very first thing a child does is play. We do not take a timed
 wait for the egg (a first session must end with a pet), free-text names
 (child safety), or a long tutorial before play.
 
+## Iteration 10: daily quests, streaks and stickers
+
+Duolingo made the daily streak with a "streak freeze" the reference
+retention mechanic; Pokémon GO and Clash Royale pay small daily quests
+(three to five) that steer players to different parts of the game;
+Animal Crossing's Nook Miles and Neopets' trophies show that a collection of
+achievements keeps long-term players going. We take: three short quests a
+day across care, racing and training, paid at once (no claim button to
+forget), a streak with a free weekly freeze, milestone rewards, and a
+sticker album. We do not take paid streak repairs, quest rerolls for money
+or loss-aversion messages ("your streak will die!"): losing a streak costs
+nothing but the number.
+

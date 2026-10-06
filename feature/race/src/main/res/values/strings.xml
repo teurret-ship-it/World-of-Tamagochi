@@ -63,6 +63,7 @@
     <string name="finish_xp">XP: +%1$d</string>
     <string name="finish_coins">Coins: +%1$d</string>
     <string name="finish_retry">Again!</string>
+    <string name="finish_quest">Quest done! Coins: +%1$d</string>
     <string name="finish_clean">Clean run!</string>
     <plurals name="finish_faults">
         <item quantity="one">%1$d fault (+%2$d s)</item>

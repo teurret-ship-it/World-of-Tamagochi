@@ -3,7 +3,10 @@ package com.mymagicalpet.feature.race
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mymagicalpet.data.GameRepository
+import com.mymagicalpet.data.GameSave
+import com.mymagicalpet.data.JournalNews
 import com.mymagicalpet.data.RecordSave
+import com.mymagicalpet.data.record
 import com.mymagicalpet.data.toProgress
 import com.mymagicalpet.data.toSave
 import com.mymagicalpet.data.toState
@@ -19,6 +22,7 @@ import com.mymagicalpet.sim.NeedsSimulation
 import com.mymagicalpet.sim.ProgressUpdate
 import com.mymagicalpet.sim.Reward
 import com.mymagicalpet.sim.grown
+import com.mymagicalpet.sim.journal.Deed
 import com.mymagicalpet.sim.race.Autopilot
 import com.mymagicalpet.sim.race.Discipline
 import com.mymagicalpet.sim.race.InputLog
@@ -195,22 +199,10 @@ class RaceViewModel(
                 .toLocalDate()
                 .toEpochDay()
         viewModelScope.launch {
-            var update: ProgressUpdate? = null
-            repository.updateGame { game ->
-                val best = game.records[track.id]
-                val reward = rewards.reward(game.progress.toProgress(), true, medal, medals.medalFor(best?.finishMicros), day)
-                update = reward
-                val records =
-                    if (best == null || finishMicros < best.finishMicros) {
-                        game.records + (track.id to RecordSave(finishMicros, log.toCodes(), stats.toSave()))
-                    } else {
-                        game.records
-                    }
-                // Racing helps the creature grow too (GrowthRules, daily cap).
-                val pet = game.pet.toState()
-                val grown = pet.grown(growthRules.grow(pet, GrowthSource.RACE, day))
-                game.copy(progress = reward.progress.toSave(), records = records, pet = grown.toSave(game.pet.seed, game.pet.name))
-            }
+            var settled: Settled? = null
+            repository.updateGame { game -> settle(game, finishMicros, medal, log, day).also { settled = it }.game }
+            val update = settled?.update
+            val news = settled?.news ?: JournalNews()
             val paid = update
             summary =
                 RaceSummary(
@@ -222,6 +214,7 @@ class RaceViewModel(
                     levelUp = paid?.levelUp,
                     nextMedal = nextMedal(medal),
                     faults = race.runner.faults.takeIf { track.discipline == Discipline.AGILITY },
+                    questCoins = news.coins,
                 )
             if (newRecord) {
                 bestMicros = finishMicros
@@ -236,6 +229,50 @@ class RaceViewModel(
             online?.let { racing -> uploadRun(racing, log) }
         }
         publish(countdown = null)
+    }
+
+    /** What a finish changes in the save: rewards, the record, growth and quests. */
+    private class Settled(
+        val game: GameSave,
+        val update: ProgressUpdate,
+        val news: JournalNews,
+    )
+
+    private fun settle(
+        game: GameSave,
+        finishMicros: Long,
+        medal: Medal?,
+        log: InputLog,
+        day: Long,
+    ): Settled {
+        val best = game.records[track.id]
+        val reward = rewards.reward(game.progress.toProgress(), true, medal, medals.medalFor(best?.finishMicros), day)
+        val records =
+            if (best == null || finishMicros < best.finishMicros) {
+                game.records + (track.id to RecordSave(finishMicros, log.toCodes(), stats.toSave()))
+            } else {
+                game.records
+            }
+        // Racing helps the creature grow too (GrowthRules, daily cap).
+        val pet = game.pet.toState()
+        val grown = pet.grown(growthRules.grow(pet, GrowthSource.RACE, day))
+        val deeds =
+            listOfNotNull(
+                Deed.RACE,
+                Deed.MEDAL.takeIf { medal != null },
+                Deed.GOLD_MEDAL.takeIf {
+                    medal != null &&
+                        medal >= Medal.GOLD
+                },
+            )
+        val (recorded, news) =
+            game
+                .copy(
+                    progress = reward.progress.toSave(),
+                    records = records,
+                    pet = grown.toSave(game.pet.seed, game.pet.name),
+                ).record(deeds, day)
+        return Settled(recorded, reward, news)
     }
 
     private suspend fun uploadRun(

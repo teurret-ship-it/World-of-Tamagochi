@@ -235,6 +235,7 @@ private fun Status(state: HomeUiState) {
             modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
         )
         GrowthLine(state)
+        QuestCard(state.journal)
         NeedBars(needs = state.needs, urgent = state.urgentNeed, modifier = Modifier.widthIn(max = 520.dp))
     }
 }

@@ -7,6 +7,7 @@ import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Need
 import com.mymagicalpet.sim.Needs
 import com.mymagicalpet.sim.Refusal
+import com.mymagicalpet.sim.journal.Sticker
 import com.mymagicalpet.ui.time.shiftTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -87,7 +88,7 @@ class HomeViewModelTest {
         val vm = viewModel()
         now = at(hour = 16)
         val effects = vm.effectsOf { onFeed() }
-        val cared = effects.single() as HomeEffect.Cared
+        val cared = effects.filterIsInstance<HomeEffect.Cared>().single()
         assertEquals(CareAction.FEED, cared.action)
         assertEquals(35, cared.changes[Need.SATIETY])
         assertEquals(5, cared.reward.coins)
@@ -270,13 +271,19 @@ class HomeViewModelTest {
         dispatcher.scheduler.runCurrent()
         now = at(hour = 16) // hungry: feeding answers a need (+4 growth)
         val effects = vm.effectsOf { onFeed() }
-        assertEquals(HomeEffect.Evolved(LifeStage.CHILD), effects.last())
+        assertTrue(HomeEffect.Evolved(LifeStage.CHILD) in effects)
+        // The first meal also wins a sticker.
+        assertTrue(effects.any { it is HomeEffect.QuestNews && Sticker.FIRST_MEAL in it.news.stickers })
         assertEquals(LifeStage.CHILD, vm.ui.stage)
         dispatcher.scheduler.runCurrent()
         repeat(20) { vm.tick() }
         dispatcher.scheduler.runCurrent()
         assertEquals(22, requireNotNull(repository.saved).pet.growthPoints)
         assertEquals(LifeStage.CHILD, requireNotNull(repository.saved).pet.stage)
+        val journal = requireNotNull(repository.saved).journal
+        assertEquals(1L, journal.counts["FEED"])
+        assertEquals(1L, journal.counts["EVOLUTION"])
+        assertEquals(3, vm.ui.journal.quests.size)
         // Strokes never count towards growth.
         assertTrue(vm.effectsOf { onStroke() }.none { it is HomeEffect.Evolved })
     }

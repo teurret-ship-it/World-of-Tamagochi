@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mymagicalpet.data.GameRepository
 import com.mymagicalpet.data.GameSave
+import com.mymagicalpet.data.record
 import com.mymagicalpet.data.toLog
 import com.mymagicalpet.data.toSave
 import com.mymagicalpet.data.toState
@@ -13,6 +14,7 @@ import com.mymagicalpet.sim.GrowthSource
 import com.mymagicalpet.sim.Need
 import com.mymagicalpet.sim.NeedsSimulation
 import com.mymagicalpet.sim.grown
+import com.mymagicalpet.sim.journal.Deed
 import com.mymagicalpet.sim.race.RaceForm
 import com.mymagicalpet.sim.race.RaceStats
 import com.mymagicalpet.sim.training.Exercise
@@ -77,11 +79,13 @@ class TrainingViewModel(
                 outcome = result
                 if (result is TrainingResult.Done) {
                     val grown = result.pet.grown(growth.grow(result.pet, GrowthSource.TRAINING, today()))
-                    game.copy(
-                        pet = grown.toSave(game.pet.seed, game.pet.name),
-                        stats = result.stats.toSave(),
-                        training = result.log.toSave(),
-                    )
+                    game
+                        .copy(
+                            pet = grown.toSave(game.pet.seed, game.pet.name),
+                            stats = result.stats.toSave(),
+                            training = result.log.toSave(),
+                        ).record(listOf(Deed.TRAINING), today())
+                        .first
                 } else {
                     game
                 }

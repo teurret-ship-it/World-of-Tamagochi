@@ -1,5 +1,6 @@
 package com.mymagicalpet.feature.home
 
+import android.content.res.Resources
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -51,6 +52,7 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
@@ -64,6 +66,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mymagicalpet.data.JournalNews
 import com.mymagicalpet.sim.CareAction
 import com.mymagicalpet.sim.LifeStage
 import com.mymagicalpet.sim.Need
@@ -91,6 +94,7 @@ internal fun EffectsPlayer(
     shake: Animatable<Float, AnimationVector1D>,
     evolvedLines: Map<LifeStage, String>,
 ) {
+    val resources = LocalResources.current
     val sounds = LocalGameSounds.current
     val haptics = LocalHapticFeedback.current
     val refusals = Refusal.entries.associateWith { stringResource(it.messageRes()) }
@@ -103,6 +107,14 @@ internal fun EffectsPlayer(
                     haptics.performHapticFeedback(HapticFeedbackType.Reject)
                     onBubble(refusals.getValue(effect.reason))
                     shake.animateTo(0f, SHAKE_SPEC)
+                }
+
+                is HomeEffect.QuestNews -> {
+                    delay(REWARD_SOUND_DELAY_MILLIS)
+                    sounds.play(Sfx.REWARD)
+                    haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                    fx.burst(FxKind.COIN, TOP, count = effect.news.coins.coerceIn(1, MAX_COINS_SHOWN))
+                    onBubble(newsLine(resources, effect.news))
                 }
 
                 is HomeEffect.Evolved -> {
@@ -177,4 +189,16 @@ private fun Refusal.messageRes(): Int =
         Refusal.NO_COINS -> R.string.refused_no_coins
         Refusal.NO_TREATS_LEFT -> R.string.refused_no_treats
         Refusal.NOT_NAPPING, Refusal.EGG -> R.string.refused_other
+    }
+
+/** The bubble line for quest news: a sticker beats a streak beats all-done beats one quest. */
+private fun newsLine(
+    resources: Resources,
+    news: JournalNews,
+): String =
+    when {
+        news.stickers.isNotEmpty() -> resources.getString(R.string.news_sticker, resources.getString(news.stickers.last().nameRes()))
+        news.streakMilestone != null -> resources.getString(R.string.news_streak, news.streakMilestone, news.coins)
+        news.allDone -> resources.getString(R.string.news_all_done, news.coins)
+        else -> resources.getString(R.string.news_quest, news.coins)
     }
