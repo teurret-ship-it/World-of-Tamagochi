@@ -26,7 +26,7 @@ class GenomeTest {
     }
 
     @Test
-    fun `markings always contrast with the body`(): Unit =
+    fun `markings never share the body colour`(): Unit =
         runBlocking {
             checkAll(Arb.long()) { seed ->
                 val g = Genome.fromSeed(seed)
@@ -38,7 +38,8 @@ class GenomeTest {
     @Test
     fun `a thousand eggs hatch into a varied population`() {
         val pets = (1L..1000L).map(Genome::fromSeed)
-        pets.map { it.pattern }.toSet() shouldContainAll Pattern.entries
+        pets.map { it.pattern }.toSet() shouldContainAll Species.entries.flatMap { it.patterns }
+        pets.map { it.species }.toSet() shouldBe Species.entries.toSet()
         pets.map { it.ears }.toSet() shouldContainAll EarShape.entries
         pets.map { it.hasTail }.toSet() shouldBe setOf(true, false)
         pets.map { it.bodyHue / 30 }.toSet().size shouldBeGreaterThan 10

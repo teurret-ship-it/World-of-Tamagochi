@@ -37,15 +37,15 @@ data class Genome(
         val HEIGHT = 900..1100
         val EYES = 850..1200
 
-        /** Pattern hue sits at least this far from the body hue, so markings are always visible. */
-        const val MIN_PATTERN_HUE_DISTANCE = 40
+        /** Markings always differ from the body by at least this much hue (the rest is species taste). */
+        const val MIN_PATTERN_HUE_DISTANCE = 5
 
         fun fromSeed(seed: Long): Genome {
             val species = Species.of(seed)
             val random = SeededRandom(seed)
             val hues = random.pick(species.bodyHues)
             val bodyHue = random.nextInt(hues.first, hues.last + 1)
-            val offset = random.nextInt(MIN_PATTERN_HUE_DISTANCE, HUES.last + 2 - MIN_PATTERN_HUE_DISTANCE)
+            val offset = random.nextInt(species.patternOffsets.first, species.patternOffsets.last + 1)
             return Genome(
                 species = species,
                 bodyHue = bodyHue,
