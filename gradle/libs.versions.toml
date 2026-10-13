@@ -13,7 +13,7 @@ androidx-datastore = "1.1.7"
 
 ktor = "3.6.0"
 logback = "1.6.5"
-flyway = "13.9.0"
+flyway = "13.10.0"
 postgresql = "42.7.13"
 h2 = "2.5.252"
 hikari = "7.1.0"
